@@ -6,7 +6,6 @@ using NML.App.Services;
 using NML.Core;
 using NML.Core.Instances;
 using NML.Core.Modloaders;
-using NML.Core.Instances;
 
 namespace NML.App.ViewModels.Pages;
 

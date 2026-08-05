@@ -31,7 +31,8 @@ public sealed class DpapiSecretStore : ISecretStore
             : XorFallback(plain); // non-Windows: weak obfuscation only
 
         File.WriteAllBytes(path, cipher);
-        TryRestrictPermissions(path);
+        if (OperatingSystem.IsWindows())
+            TryRestrictPermissions(path);
         return Task.CompletedTask;
     }
 

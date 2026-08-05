@@ -18,7 +18,7 @@ public abstract class PageViewModelBase : ObservableObject
     public abstract string TitleKey { get; }
 
     /// <summary>Icon glyph shown in the sidebar (emoji for simplicity).</summary>
-    public virtual string Icon { get; }
+    public virtual string Icon { get; } = "";
 
     /// <summary>
     /// The localized title, resolved from <see cref="TitleKey"/> against the current culture.

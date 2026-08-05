@@ -156,7 +156,7 @@ public sealed class VanillaInstaller
     /// Extract native JARs (the platform-specific classifier for each lib with a
     /// <c>natives</c> map) into <c>bin/natives</c>, honoring <c>extract.exclude</c>.
     /// </summary>
-    private async Task ExtractNativesAsync(
+    private Task ExtractNativesAsync(
         VersionInfo info, MinecraftDirectory mc, RuleContext ruleCtx, CancellationToken ct)
     {
         Directory.CreateDirectory(mc.NativesDir);
@@ -193,6 +193,8 @@ public sealed class VanillaInstaller
 
             _logger.LogDebug("Extracted natives from {Jar}.", jarPath);
         }
+
+        return Task.CompletedTask;
     }
 
     private static bool IsExcluded(string path, HashSet<string> exclude)

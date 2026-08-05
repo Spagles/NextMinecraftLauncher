@@ -24,7 +24,7 @@ public partial class AccountsPageViewModel : PageViewModelBase
     private readonly MicrosoftAuthProvider _microsoft;
     private readonly AccountStore _accountStore;
     private readonly SkinService _skinService;
-    private readonly SkinUploadService _skinUpload;
+    private readonly SkinUploadService? _skinUpload;
     private readonly ICommunitySkinSource _communitySource;
     private readonly ILogger<AccountsPageViewModel> _logger;
 
@@ -94,7 +94,8 @@ public partial class AccountsPageViewModel : PageViewModelBase
         _serverStore = serverStore;
         _authlibProvider = authlibProvider;
         _skinUpload = skinUpload;
-        _communitySource = communitySource!; // DI always provides one; null only in design-time data
+        _communitySource = communitySource ?? new MineSkinSource(
+            new NML.Core.Download.HttpClientHttpFetcher(new System.Net.Http.HttpClient()));
         _logger = logger;
         EnsureLanguageSubscribed();
 
@@ -356,17 +357,18 @@ public partial class AccountsPageViewModel : PageViewModelBase
 
     /// <summary>Download a community skin PNG and set it as the upload target (preview before upload).</summary>
     [RelayCommand]
-    private async Task InstallCommunitySkinAsync(CommunitySkin skin)
+    private Task InstallCommunitySkinAsync(CommunitySkin skin)
     {
-        if (skin is null) return;
+        if (skin is null) return Task.CompletedTask;
         try
         {
             // Download the skin PNG into the skins cache for preview.
             string? cacheDir = Path.GetDirectoryName(ActiveSkinPngPath ?? string.Empty);
-            if (string.IsNullOrEmpty(cacheDir)) { Status = "common.error"; return; }
+            if (string.IsNullOrEmpty(cacheDir)) { Status = "common.error"; return Task.CompletedTask; }
             UploadVariant = skin.Model == "slim" ? SkinVariant.Slim : SkinVariant.Classic;
             Status = "skins.community_install";
         }
         catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+        return Task.CompletedTask;
     }
 }

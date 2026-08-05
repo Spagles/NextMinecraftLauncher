@@ -186,7 +186,7 @@ public sealed class ModpackInstaller
     {
         foreach (ZipArchiveEntry entry in archive.Entries)
         {
-            string prefix = entry.FullName.StartsWith("overrides/", StringComparison.OrdinalIgnoreCase)
+            string? prefix = entry.FullName.StartsWith("overrides/", StringComparison.OrdinalIgnoreCase)
                 ? "overrides/"
                 : entry.FullName.StartsWith("client-overrides/", StringComparison.OrdinalIgnoreCase)
                     ? "client-overrides/"
