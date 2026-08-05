@@ -215,6 +215,41 @@ public sealed class GameContentBrowser
     {
         File.WriteAllText(path, content);
     }
+
+    /// <summary>Export a world save folder to a .zip at the given output path.</summary>
+    public void ExportWorld(string worldPath, string outputPath)
+    {
+        if (!Directory.Exists(worldPath))
+            throw new DirectoryNotFoundException($"World not found: {worldPath}");
+        string? dir = Path.GetDirectoryName(outputPath);
+        if (dir is not null) Directory.CreateDirectory(dir);
+        System.IO.Compression.ZipFile.CreateFromDirectory(worldPath, outputPath,
+            System.IO.Compression.CompressionLevel.Optimal, includeBaseDirectory: false);
+    }
+
+    /// <summary>Import a world save from a .zip into the saves/ directory.</summary>
+    public string ImportWorld(string zipPath)
+    {
+        if (!File.Exists(zipPath))
+            throw new FileNotFoundException("World zip not found.", zipPath);
+
+        string savesDir = Path.Combine(_mc.Root, "saves");
+        Directory.CreateDirectory(savesDir);
+
+        // Derive a world name from the zip filename, ensure uniqueness.
+        string baseName = Path.GetFileNameWithoutExtension(zipPath);
+        string worldName = baseName;
+        string worldDir = Path.Combine(savesDir, worldName);
+        int suffix = 1;
+        while (Directory.Exists(worldDir))
+        {
+            worldName = $"{baseName} ({suffix++})";
+            worldDir = Path.Combine(savesDir, worldName);
+        }
+
+        System.IO.Compression.ZipFile.ExtractToDirectory(zipPath, worldDir, overwriteFiles: true);
+        return worldDir;
+    }
 }
 
 public sealed class GameSave

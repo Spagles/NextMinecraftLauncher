@@ -152,6 +152,7 @@
   "content.open_folder": "Open folder",
   "content.empty": "Nothing here yet",
   "content.backup": "Backup",
+  "content.export": "Export",
   "content.open": "Open",
   "content.delete": "Delete",
   "content.world_size": "{0} files",

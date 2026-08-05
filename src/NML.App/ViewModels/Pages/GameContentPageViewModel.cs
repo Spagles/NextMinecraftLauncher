@@ -173,6 +173,38 @@ public partial class GameContentPageViewModel : PageViewModelBase
     }
 
     [RelayCommand]
+    private void ExportWorld(GameSave save)
+    {
+        try
+        {
+            Instance? inst = _instances.LoadAll().FirstOrDefault();
+            if (inst is null) return;
+            var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
+            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string zipPath = Path.Combine(desktop, $"{save.Name}.zip");
+            browser.ExportWorld(save.Path, zipPath);
+            Status = $"home.exported,{zipPath}";
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    [RelayCommand]
+    private void ImportWorld(string zipPath)
+    {
+        if (string.IsNullOrEmpty(zipPath)) return;
+        try
+        {
+            Instance? inst = _instances.LoadAll().FirstOrDefault();
+            if (inst is null) return;
+            var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
+            string worldDir = browser.ImportWorld(zipPath);
+            Status = $"home.installed,{Path.GetFileName(worldDir)}";
+            Refresh();
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    [RelayCommand]
     private void DeleteWorld(GameSave save)
     {
         try

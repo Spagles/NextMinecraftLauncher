@@ -30,6 +30,10 @@
                                             Command="{Binding #Root.DataContext.BackupWorldCommand}"
                                             CommandParameter="{Binding}"
                                             IsVisible="{Binding #Root.DataContext.IsSavesTab}" Margin="4,0"/>
+                                    <Button Grid.Column="2" Content="{loc:Loc 'content.export'}" Classes="small"
+                                            Command="{Binding #Root.DataContext.ExportWorldCommand}"
+                                            CommandParameter="{Binding}"
+                                            IsVisible="{Binding #Root.DataContext.IsSavesTab}" Margin="4,0"/>
                                     <Button Grid.Column="2" Content="{loc:Loc 'content.open'}" Classes="small"
                                             Command="{Binding #Root.DataContext.OpenScreenshotCommand}"
                                             CommandParameter="{Binding}"

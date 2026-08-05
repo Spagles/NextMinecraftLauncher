@@ -152,6 +152,7 @@
   "content.open_folder": "打开目录",
   "content.empty": "暂无内容",
   "content.backup": "备份",
+  "content.export": "导出",
   "content.open": "打开",
   "content.delete": "删除",
   "content.world_size": "{0} 项文件",
