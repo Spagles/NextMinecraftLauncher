@@ -304,4 +304,22 @@ public partial class HomePageViewModel : PageViewModelBase
         }
         catch (Exception ex) { Status = $"home.launch_failed,{ex.Message}"; _logger.LogError(ex, "Clone failed."); }
     }
+
+    /// <summary>Apply JVM auto-tuning recommendations to the selected instance.</summary>
+    [RelayCommand]
+    private void ApplyJvmTuning()
+    {
+        if (SelectedInstance is null) return;
+        try
+        {
+            var rec = JvmTuningService.Recommend();
+            SelectedInstance.MaxMemoryMb = rec.RecommendedMemoryMb;
+            SelectedInstance.CustomJvmArgs = rec.FullArgs;
+            // Trigger re-render of bound properties.
+            OnPropertyChanged(nameof(SelectedMaxMemory));
+            OnPropertyChanged(nameof(CustomJvmArgs));
+            Status = $"home.tuning_applied,{rec.RecommendedMemoryMb}";
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
 }

@@ -45,7 +45,10 @@
                     <TextBox Text="{Binding SelectedWindowHeight}" MinWidth="60" FontSize="11"/>
                 </StackPanel>
                 <TextBlock Text="{loc:Loc 'home.jvm_args'}" Foreground="#aaa" FontSize="11"/>
-                <TextBox Text="{Binding CustomJvmArgs}" Watermark="-XX:+UseG1GC -Dfml.ignoreInvalidMinecraftCertificates=true" MinWidth="500" FontSize="11" FontFamily="Cascadia Code,Consolas,monospace"/>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBox Text="{Binding CustomJvmArgs}" Watermark="-XX:+UseG1GC -Dfml.ignoreInvalidMinecraftCertificates=true" MinWidth="400" FontSize="11" FontFamily="Cascadia Code,Consolas,monospace"/>
+                    <Button Content="{loc:Loc 'home.auto_tune'}" Command="{Binding ApplyJvmTuningCommand}" Classes="small" ToolTip.Tip="{loc:Loc 'home.auto_tune_hint'}"/>
+                </StackPanel>
                 <TextBlock Text="{loc:Loc 'home.game_args'}" Foreground="#aaa" FontSize="11"/>
                 <TextBox Text="{Binding CustomGameArgs}" Watermark="--fullscreen" MinWidth="500" FontSize="11" FontFamily="Cascadia Code,Consolas,monospace"/>
             </StackPanel>
