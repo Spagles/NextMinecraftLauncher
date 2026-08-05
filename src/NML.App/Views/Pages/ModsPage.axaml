@@ -29,7 +29,10 @@
                                     <TextBlock Text="{Binding Description}" Foreground="#aaa" FontSize="11" TextTrimming="CharacterEllipsis"/>
                                 </StackPanel>
                                 <TextBlock Grid.Column="2" Text="{Binding Downloads, StringFormat=\{0:N0\}}" Foreground="#888" FontSize="11" VerticalAlignment="Center"/>
-                                <Button Grid.Column="3" Content="{loc:Loc 'mods.install'}" Classes="small" VerticalAlignment="Center"/>
+                                <Button Grid.Column="3" Content="{loc:Loc 'mods.install'}" Classes="small" VerticalAlignment="Center"
+                                        Command="{Binding #Root.DataContext.InstallModCommand}"
+                                        CommandParameter="{Binding}"
+                                        IsEnabled="{Binding #Root.DataContext.!IsInstalling}"/>
                             </Grid>
                         </Border>
                     </DataTemplate>
