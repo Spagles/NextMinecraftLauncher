@@ -47,3 +47,6 @@ secrets.json
 appsettings.*.local.json
 *.local.json
 .zcode/
+
+# Build publish artifacts (large self-contained exe — use releases, not git)
+publish/
