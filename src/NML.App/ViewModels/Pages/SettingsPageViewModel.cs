@@ -79,8 +79,9 @@ public partial class SettingsPageViewModel : PageViewModelBase
     {
         PersistSettings();
         // Sync to MainWindowVM so the background Image layer updates live (not just on restart).
-        if (_mainWindowVm is not null)
-            _mainWindowVm.BackgroundImagePath = string.IsNullOrEmpty(value) ? null : value;
+        var mvm = GetMainWindowVm();
+        if (mvm is not null)
+            mvm.BackgroundImagePath = string.IsNullOrEmpty(value) ? null : value;
     }
 
     [ObservableProperty] private string _updateStatus = string.Empty;
@@ -105,7 +106,14 @@ public partial class SettingsPageViewModel : PageViewModelBase
         PersistSettings();
     }
 
-    private readonly MainWindowViewModel? _mainWindowVm;
+    /// <summary>Resolved lazily to avoid circular DI (MainWindowVM depends on SettingsPageVM).</summary>
+    private MainWindowViewModel? _mainWindowVm;
+
+    private MainWindowViewModel? GetMainWindowVm() =>
+        _mainWindowVm ??= Avalonia.Application.Current?.ApplicationLifetime
+            is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
+                ? desktop.MainWindow?.DataContext as MainWindowViewModel
+                : null;
 
     public SettingsPageViewModel(
         SettingsStore settings,
@@ -113,8 +121,7 @@ public partial class SettingsPageViewModel : PageViewModelBase
         ChatClientFactory factory,
         JavaRuntimeDetector javaDetector,
         ILogger<SettingsPageViewModel> logger,
-        UpdateChecker? updateChecker = null,
-        MainWindowViewModel? mainWindowVm = null)
+        UpdateChecker? updateChecker = null)
     {
         _settings = settings;
         _probe = probe;
@@ -122,7 +129,6 @@ public partial class SettingsPageViewModel : PageViewModelBase
         _javaDetector = javaDetector;
         _logger = logger;
         _updateChecker = updateChecker;
-        _mainWindowVm = mainWindowVm;
         EnsureLanguageSubscribed();
 
         // Populate the language picker from the registered cultures.
