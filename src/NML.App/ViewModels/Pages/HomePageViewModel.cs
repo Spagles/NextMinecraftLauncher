@@ -206,27 +206,34 @@ public partial class HomePageViewModel : PageViewModelBase
                              ?? runtimes.FirstOrDefault();
             if (java is null) { Status = $"home.no_java,{requiredMajor}"; return; }
 
-            // Default to an offline account; if the active account is an authlib-injector
-            // (external Yggdrasil) one, use it instead and prepare the java agent.
+            // Default to an offline account; if the active account is Microsoft or
+            // authlib-injector (external Yggdrasil), use it instead.
             Account account = _offline.Create(OfflineUsername);
             AuthlibInjectorServer? authlibServer = null;
             string? authlibJarPath = null;
 
-            // Pull the active account from the AccountStore and, if it's external-login,
-            // reconstruct the server + ensure the agent jar is cached before launching.
-            Account? activeExternal = _activeAccountStore?.LoadAll()
-                .FirstOrDefault(a => a.Uuid == _activeAccountStore?.GetActiveUuid()
-                                     && a.AccountType == "authlib-injector");
-            if (activeExternal is not null && _authlibInjectorSetup is not null
-                && !string.IsNullOrEmpty(activeExternal.Xuid))
+            // Pull the active account from the AccountStore.
+            Account? activeAccount = _activeAccountStore?.LoadAll()
+                .FirstOrDefault(a => a.Uuid == _activeAccountStore?.GetActiveUuid());
+
+            if (activeAccount is not null)
             {
-                account = activeExternal;
-                authlibServer = new AuthlibInjectorServer
+                // Use the real account (Microsoft or authlib-injector) instead of offline.
+                account = activeAccount;
+
+                // If it's an authlib-injector account, reconstruct the server + ensure the
+                // agent jar is cached before launching.
+                if (activeAccount.AccountType == "authlib-injector"
+                    && _authlibInjectorSetup is not null
+                    && !string.IsNullOrEmpty(activeAccount.Xuid))
                 {
-                    Name = activeExternal.Username,
-                    ApiUrl = activeExternal.Xuid, // server URL is stashed here on login
-                };
-                authlibJarPath = await _authlibInjectorSetup.EnsureAgentJarAsync();
+                    authlibServer = new AuthlibInjectorServer
+                    {
+                        Name = activeAccount.Username,
+                        ApiUrl = activeAccount.Xuid, // server URL is stashed here on login
+                    };
+                    authlibJarPath = await _authlibInjectorSetup.EnsureAgentJarAsync();
+                }
             }
 
             var assemblyVersion = System.Reflection.Assembly.GetExecutingAssembly()
