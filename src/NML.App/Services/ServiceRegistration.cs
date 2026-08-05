@@ -54,6 +54,7 @@ public static class ServiceRegistration
         services.AddSingleton<QuiltInstaller>();
         services.AddSingleton<ForgeInstaller>();
         services.AddSingleton<NeoForgeInstaller>();
+        services.AddSingleton<OptiFineInstaller>();
 
         // --- Auth ---
         services.AddSingleton<IOfflineAuthProvider, OfflineAuthProvider>();
