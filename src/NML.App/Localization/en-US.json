@@ -173,6 +173,9 @@
   "settings.about": "About",
   "settings.version": "Version",
   "settings.repo": "Repository",
+  "settings.check_update": "Check for updates",
+  "update.up_to_date": "You're up to date",
+  "update.available": "New version {0} available — click to view",
 
   "common.cancel": "Cancel",
   "common.confirm": "OK",

@@ -41,6 +41,16 @@
                 </ItemsControl>
             </StackPanel>
 
+            <!-- Update check -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="{loc:Loc 'settings.check_update'}" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Content="{loc:Loc 'settings.check_update'}" Command="{Binding CheckForUpdatesCommand}"
+                            IsEnabled="{Binding !IsCheckingUpdate}" Classes="small"/>
+                    <TextBlock Text="{Binding UpdateStatus}" Foreground="#4fc3f7" VerticalAlignment="Center" FontSize="13"/>
+                </StackPanel>
+            </StackPanel>
+
             <!-- AI -->
             <StackPanel Spacing="8">
                 <TextBlock Text="{loc:Loc 'settings.ai'}" FontSize="16" FontWeight="SemiBold" Foreground="White"/>

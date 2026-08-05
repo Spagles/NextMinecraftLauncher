@@ -8,6 +8,7 @@ using NML.AICore.LocalModels;
 using NML.App.Localization;
 using NML.App.Services;
 using NML.Core.Java;
+using NML.Core.Update;
 
 namespace NML.App.ViewModels.Pages;
 
@@ -42,6 +43,11 @@ public partial class SettingsPageViewModel : PageViewModelBase
     /// <summary>Active UI theme: "dark", "light", or "system".</summary>
     [ObservableProperty] private string _theme = "dark";
 
+    [ObservableProperty] private string _updateStatus = string.Empty;
+    [ObservableProperty] private string _updateUrl = string.Empty;
+    [ObservableProperty] private bool _isCheckingUpdate;
+    private readonly UpdateChecker? _updateChecker;
+
     /// <summary>Available theme choices for the dropdown.</summary>
     public IReadOnlyList<string> ThemeChoices { get; } = new[] { "dark", "light", "system" };
 
@@ -62,13 +68,15 @@ public partial class SettingsPageViewModel : PageViewModelBase
         LocalModelProbe probe,
         ChatClientFactory factory,
         JavaRuntimeDetector javaDetector,
-        ILogger<SettingsPageViewModel> logger)
+        ILogger<SettingsPageViewModel> logger,
+        UpdateChecker? updateChecker = null)
     {
         _settings = settings;
         _probe = probe;
         _factory = factory;
         _javaDetector = javaDetector;
         _logger = logger;
+        _updateChecker = updateChecker;
         EnsureLanguageSubscribed();
 
         // Populate the language picker from the registered cultures.
@@ -157,6 +165,34 @@ public partial class SettingsPageViewModel : PageViewModelBase
         s.ActiveProviderName = ActiveProvider?.Name;
         s.MinecraftRoot = MinecraftPath;
         _settings.Save(s);
+    }
+
+    [RelayCommand]
+    private async Task CheckForUpdatesAsync()
+    {
+        if (_updateChecker is null) { UpdateStatus = "common.error"; return; }
+        IsCheckingUpdate = true;
+        UpdateStatus = "common.loading";
+        try
+        {
+            var info = await _updateChecker.CheckAsync("0.1.0");
+            if (info is null || !info.IsNewer)
+            {
+                UpdateStatus = "update.up_to_date";
+                UpdateUrl = string.Empty;
+            }
+            else
+            {
+                UpdateStatus = $"update.available,{info.TagName}";
+                UpdateUrl = info.HtmlUrl;
+            }
+        }
+        catch (Exception ex)
+        {
+            UpdateStatus = $"common.error,{ex.Message}";
+            _logger.LogError(ex, "Update check failed.");
+        }
+        finally { IsCheckingUpdate = false; }
     }
 }
 

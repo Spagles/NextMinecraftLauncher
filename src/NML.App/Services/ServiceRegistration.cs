@@ -16,6 +16,7 @@ using NML.Core.Launch;
 using NML.Core.Modloaders;
 using NML.Core.Modpacks;
 using NML.Core.Skins;
+using NML.Core.Update;
 
 namespace NML.App.Services;
 
@@ -104,6 +105,11 @@ public static class ServiceRegistration
 
         // --- Game content browser ---
         services.AddSingleton<GameContentBrowser>();
+
+        // --- Auto-update checker ---
+        services.AddSingleton<UpdateChecker>(_ =>
+            new UpdateChecker("weige0831", "NextMinecraftLauncher",
+                (url, ct) => _.GetRequiredService<IHttpFetcher>().GetStringAsync(url, ct)));
 
         // --- Skin rendering ---
         services.AddSingleton<SkinService>(sp =>
