@@ -168,6 +168,25 @@ public sealed class GameContentBrowser
         if (File.Exists(path)) File.Delete(path);
     }
 
+    /// <summary>
+    /// Extract the pack.png thumbnail from a resource pack .zip (returns null if absent).
+    /// Resource packs always carry a pack.png at the archive root.
+    /// </summary>
+    public byte[]? GetResourcePackThumbnail(string zipPath)
+    {
+        try
+        {
+            using var archive = System.IO.Compression.ZipFile.OpenRead(zipPath);
+            var entry = archive.GetEntry("pack.png");
+            if (entry is null) return null;
+            using var s = entry.Open();
+            using var ms = new MemoryStream();
+            s.CopyTo(ms);
+            return ms.ToArray();
+        }
+        catch { return null; }
+    }
+
     /// <summary>Read the most recent launch log file (if any) and return its content.</summary>
     public string ReadLatestLog(int maxChars = 50000)
     {
