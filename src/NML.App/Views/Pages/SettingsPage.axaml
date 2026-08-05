@@ -20,6 +20,13 @@
                     <TextBlock Text="{loc:Loc 'settings.minecraft_path'}" Foreground="#ccc"/>
                     <TextBox Text="{Binding MinecraftPath}" MinWidth="500"/>
                 </StackPanel>
+                <StackPanel Spacing="6">
+                    <TextBlock Text="{loc:Loc 'settings.background_image'}" Foreground="#ccc"/>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBox Text="{Binding BackgroundImagePath}" Watermark="C:\path\to\image.png" MinWidth="400"/>
+                        <Button Content="{loc:Loc 'settings.background_clear'}" Click="ClearBackground_Click" Classes="small"/>
+                    </StackPanel>
+                </StackPanel>
             </StackPanel>
 
             <!-- Java -->

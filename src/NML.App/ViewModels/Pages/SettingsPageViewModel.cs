@@ -43,6 +43,9 @@ public partial class SettingsPageViewModel : PageViewModelBase
     /// <summary>Active UI theme: "dark", "light", or "system".</summary>
     [ObservableProperty] private string _theme = "dark";
 
+    /// <summary>Custom background image path (PCL-style). Empty = default.</summary>
+    [ObservableProperty] private string _backgroundImagePath = string.Empty;
+
     [ObservableProperty] private string _updateStatus = string.Empty;
     [ObservableProperty] private string _updateUrl = string.Empty;
     [ObservableProperty] private bool _isCheckingUpdate;
@@ -84,6 +87,7 @@ public partial class SettingsPageViewModel : PageViewModelBase
 
         LauncherSettings s = settings.Load();
         MinecraftPath = s.MinecraftRoot ?? string.Empty;
+        BackgroundImagePath = s.BackgroundImagePath ?? string.Empty;
         foreach (ChatProviderConfig p in s.Providers) Providers.Add(p);
         SelectedLanguage = AvailableLanguages.FirstOrDefault(c =>
             c.Name.Equals(LocalizationService.Instance.CurrentCulture.Name, StringComparison.OrdinalIgnoreCase));
@@ -164,6 +168,7 @@ public partial class SettingsPageViewModel : PageViewModelBase
         s.Providers = Providers.ToList();
         s.ActiveProviderName = ActiveProvider?.Name;
         s.MinecraftRoot = MinecraftPath;
+        s.BackgroundImagePath = string.IsNullOrEmpty(BackgroundImagePath) ? null : BackgroundImagePath;
         _settings.Save(s);
     }
 

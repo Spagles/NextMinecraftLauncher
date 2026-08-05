@@ -19,6 +19,9 @@ public sealed class LauncherSettings
     /// <summary>Path to the shared <c>.minecraft</c> directory (or null = use default).</summary>
     public string? MinecraftRoot { get; set; }
 
+    /// <summary>Custom background image path for the launcher window (PCL-style). Null = default dark background.</summary>
+    public string? BackgroundImagePath { get; set; }
+
     /// <summary>Launcher settings directory (where this file, instances.json, secrets live).</summary>
     public string SettingsDir { get; set; } = string.Empty;
 }
