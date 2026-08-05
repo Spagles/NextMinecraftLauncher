@@ -40,6 +40,7 @@
   "home.tuning_applied": "추천 설정 적용됨: {0}MB RAM",
   "home.window_size": "창 크기",
   "home.export_all": "모두 내보내기",
+  "home.deleted_all": "모든 인스턴스가 삭제됨",
   "home.delete_all": "모두 삭제",
   "home.export_instance": "인스턴스 내보내기",
   "home.import_instance": "인스턴스 가져오기",

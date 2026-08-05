@@ -40,6 +40,7 @@
   "home.tuning_applied": "已应用推荐设置：内存 {0}MB",
   "home.window_size": "窗口大小",
   "home.export_all": "导出全部",
+  "home.deleted_all": "已删除所有实例",
   "home.delete_all": "删除全部",
   "home.export_instance": "导出实例",
   "home.import_instance": "导入实例",

@@ -40,6 +40,7 @@
   "home.tuning_applied": "Применены рекомендации: {0}МБ ОЗУ",
   "home.window_size": "Размер окна",
   "home.export_all": "Экспорт всех",
+  "home.deleted_all": "Все экземпляры удалены",
   "home.delete_all": "Удалить все",
   "home.export_instance": "Экспорт экземпляра",
   "home.import_instance": "Импорт экземпляра",
