@@ -25,6 +25,12 @@ public sealed class Instance
     public int WindowWidth { get; set; } = 854;
     public int WindowHeight { get; set; } = 480;
 
+    /// <summary>Custom JVM arguments appended after the built-in ones (e.g. "-XX:+UseG1GC -Dfml.ignoreInvalidMinecraftCertificates=true").</summary>
+    public string CustomJvmArgs { get; set; } = string.Empty;
+
+    /// <summary>Custom game arguments appended after the version.json game args.</summary>
+    public string CustomGameArgs { get; set; } = string.Empty;
+
     /// <summary>Java runtime to use. If null, the launcher picks one at launch time.</summary>
     public JavaRuntime? Java { get; set; }
 

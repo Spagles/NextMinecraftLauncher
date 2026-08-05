@@ -84,6 +84,48 @@ public partial class HomePageViewModel : PageViewModelBase
         }
     }
 
+    /// <summary>Two-way bindable custom JVM args for the selected instance.</summary>
+    public string CustomJvmArgs
+    {
+        get => SelectedInstance?.CustomJvmArgs ?? string.Empty;
+        set
+        {
+            if (SelectedInstance is not null)
+            {
+                SelectedInstance.CustomJvmArgs = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    /// <summary>Two-way bindable custom game args for the selected instance.</summary>
+    public string CustomGameArgs
+    {
+        get => SelectedInstance?.CustomGameArgs ?? string.Empty;
+        set
+        {
+            if (SelectedInstance is not null)
+            {
+                SelectedInstance.CustomGameArgs = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    /// <summary>Two-way bindable window width for the selected instance.</summary>
+    public int SelectedWindowWidth
+    {
+        get => SelectedInstance?.WindowWidth ?? 854;
+        set { if (SelectedInstance is not null) { SelectedInstance.WindowWidth = value; OnPropertyChanged(); } }
+    }
+
+    /// <summary>Two-way bindable window height for the selected instance.</summary>
+    public int SelectedWindowHeight
+    {
+        get => SelectedInstance?.WindowHeight ?? 480;
+        set { if (SelectedInstance is not null) { SelectedInstance.WindowHeight = value; OnPropertyChanged(); } }
+    }
+
     public HomePageViewModel(
         VersionManifestService manifest,
         VanillaInstaller vanillaInstaller,
@@ -180,6 +222,9 @@ public partial class HomePageViewModel : PageViewModelBase
                 Version = version, Mc = mc, Account = account, Java = java,
                 MinMemoryMb = inst.MinMemoryMb, MaxMemoryMb = inst.MaxMemoryMb,
                 WindowWidth = inst.WindowWidth, WindowHeight = inst.WindowHeight,
+                ExtraJvmArgs = string.IsNullOrWhiteSpace(inst.CustomJvmArgs)
+                    ? Array.Empty<string>()
+                    : inst.CustomJvmArgs.Split(' ', StringSplitOptions.RemoveEmptyEntries),
                 AuthlibInjectorServer = authlibServer,
                 AuthlibInjectorJarPath = authlibJarPath,
             };
