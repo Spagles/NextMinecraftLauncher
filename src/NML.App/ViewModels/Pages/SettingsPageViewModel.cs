@@ -231,7 +231,10 @@ public partial class SettingsPageViewModel : PageViewModelBase
         UpdateStatus = "common.loading";
         try
         {
-            var info = await _updateChecker.CheckAsync("0.1.0");
+            // Read the actual running version from the assembly, not a hardcoded string.
+            string currentVersion = System.Reflection.Assembly.GetExecutingAssembly()
+                .GetName().Version?.ToString(3) ?? "0.1.0";
+            var info = await _updateChecker.CheckAsync(currentVersion);
             if (info is null || !info.IsNewer)
             {
                 UpdateStatus = "update.up_to_date";
