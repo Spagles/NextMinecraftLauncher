@@ -1,7 +1,10 @@
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Web;
 using Microsoft.Extensions.Logging;
 using NML.Core.Download;
+using NML.Core.Modpacks;
 
 namespace NML.Data.CurseForge;
 
@@ -10,7 +13,7 @@ namespace NML.Data.CurseForge;
 /// user-supplied API key (from curseforge.com developer console) sent as the <c>x-api-key</c>
 /// header. gameId 432 = Minecraft, classId 6 = mods.
 /// </summary>
-public sealed class CurseForgeCatalog : IModCatalog
+public sealed class CurseForgeCatalog : IModCatalog, ICurseForgeFileResolver
 {
     private const string BaseUrl = "https://api.curseforge.com/v1";
     private const int MinecraftGameId = 432;
@@ -132,6 +135,76 @@ public sealed class CurseForgeCatalog : IModCatalog
         return files;
     }
 
+    /// <summary>
+    /// Batch-resolve modpack file descriptors. The CurseForge modpack <c>manifest.json</c>
+    /// lists each mod as <c>{ projectID, fileID }</c>; this endpoint turns those into real
+    /// download URLs + metadata. POSTs to <c>/mods/files</c> with the id pairs in the body.
+    /// Requires the configured <c>x-api-key</c> (CurseForge policy).
+    /// </summary>
+    public async Task<IReadOnlyList<CurseForgeModpackFile>> ResolveModpackFilesAsync(
+        IReadOnlyList<(int ProjectId, int FileId)> ids, CancellationToken ct = default)
+    {
+        if (ids.Count == 0) return Array.Empty<CurseForgeModpackFile>();
+
+        // The /mods/files endpoint accepts a JSON body { "fileIds": [ { "modId":.., "fileId":.. } ] }.
+        string body = JsonSerializer.Serialize(new
+        {
+            fileIds = ids.Select(p => new { modId = p.ProjectId, fileId = p.FileId }),
+        });
+
+        using var client = new HttpClient();
+        client.DefaultRequestHeaders.Add("x-api-key", _apiKey);
+        client.DefaultRequestHeaders.Accept.Add(
+            new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+        using var content = new StringContent(body, System.Text.Encoding.UTF8, "application/json");
+        using var resp = await client.PostAsync($"{BaseUrl}/mods/files", content, ct);
+        resp.EnsureSuccessStatusCode();
+        string json = await resp.Content.ReadAsStringAsync(ct);
+        using var doc = JsonDocument.Parse(json);
+        var data = doc.RootElement.GetProperty("data");
+
+        var resolved = new List<CurseForgeModpackFile>();
+        foreach (var f in data.EnumerateArray())
+        {
+            int modId = GetInt(f, "modId");
+            int fileId = GetInt(f, "id");
+            resolved.Add(new CurseForgeModpackFile
+            {
+                ProjectId = modId,
+                FileId = fileId,
+                FileName = GetString(f, "fileName"),
+                DownloadUrl = GetString(f, "downloadUrl"),
+                Sha1 = f.TryGetProperty("hashes", out var hashes) &&
+                       hashes.EnumerateArray().Any(h => GetInt(h, "algo") == 1)
+                    ? hashes.EnumerateArray().First(h => GetInt(h, "algo") == 1)
+                          .TryGetProperty("value", out var v) ? v.GetString() : null
+                    : null,
+                Size = GetLong(f, "fileLength"),
+            });
+        }
+        return resolved;
+    }
+
+    /// <summary>
+    /// <see cref="ICurseForgeFileResolver"/> implementation: batch-resolve (projectID, fileID)
+    /// pairs into <see cref="CurseForgeResolvedFile"/>s for the modpack installer.
+    /// </summary>
+    public async Task<IReadOnlyList<CurseForgeResolvedFile>> ResolveAsync(
+        IReadOnlyList<(int ProjectId, int FileId)> ids, CancellationToken ct = default)
+    {
+        IReadOnlyList<CurseForgeModpackFile> resolved = await ResolveModpackFilesAsync(ids, ct);
+        return resolved.Select(f => new CurseForgeResolvedFile
+        {
+            ProjectId = f.ProjectId,
+            FileId = f.FileId,
+            FileName = f.FileName,
+            DownloadUrl = f.DownloadUrl,
+            Sha1 = f.Sha1,
+            Size = f.Size,
+        }).ToList();
+    }
+
     private static int LoaderInt(ModLoader l) => l switch
     {
         ModLoader.Fabric => 4,
@@ -152,4 +225,15 @@ public sealed class CurseForgeCatalog : IModCatalog
     private static long GetLong(JsonElement el, string name) =>
         el.TryGetProperty(name, out var v) && v.ValueKind == JsonValueKind.Number
             ? v.GetInt64() : 0;
+}
+
+/// <summary>A CurseForge modpack file resolved from a (projectID, fileID) pair.</summary>
+public sealed class CurseForgeModpackFile
+{
+    public int ProjectId { get; init; }
+    public int FileId { get; init; }
+    public string FileName { get; init; } = string.Empty;
+    public string DownloadUrl { get; init; } = string.Empty;
+    public string? Sha1 { get; init; }
+    public long Size { get; init; }
 }

@@ -13,6 +13,7 @@ using NML.Core.Instances;
 using NML.Core.Java;
 using NML.Core.Launch;
 using NML.Core.Modloaders;
+using NML.Core.Modpacks;
 
 namespace NML.App.Services;
 
@@ -102,6 +103,18 @@ public static class ServiceRegistration
         services.AddSingleton<NML.Data.Modrinth.ModrinthCatalog>();
         services.AddSingleton<NML.Data.IModCatalog>(sp => sp.GetRequiredService<NML.Data.Modrinth.ModrinthCatalog>());
         services.AddTransient<ModRecommenderFactory>();
+
+        // --- Modpacks ---
+        // ModpackInstaller optionally takes a CurseForge resolver; it's wired only when the
+        // user has configured a CurseForge API key (resolved lazily at install time).
+        services.AddSingleton<ModpackInstaller>(sp =>
+        {
+            var fetcher = sp.GetRequiredService<IHttpFetcher>();
+            var downloader = sp.GetRequiredService<Downloader>();
+            var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ModpackInstaller>.Instance;
+            // CurseForge resolver is resolved lazily (key may be set/unset after DI build).
+            return new ModpackInstaller(fetcher, downloader, logger, curseForgeResolver: null);
+        });
 
         // --- Page view models (one singleton each; reused across navigations) ---
         services.AddSingleton<ViewModels.Pages.HomePageViewModel>();

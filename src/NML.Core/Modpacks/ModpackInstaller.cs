@@ -18,12 +18,18 @@ public sealed class ModpackInstaller
     private readonly IHttpFetcher _http;
     private readonly Downloader _downloader;
     private readonly ILogger<ModpackInstaller> _logger;
+    private readonly ICurseForgeFileResolver? _curseForgeResolver;
 
-    public ModpackInstaller(IHttpFetcher http, Downloader downloader, ILogger<ModpackInstaller> logger)
+    public ModpackInstaller(
+        IHttpFetcher http,
+        Downloader downloader,
+        ILogger<ModpackInstaller> logger,
+        ICurseForgeFileResolver? curseForgeResolver = null)
     {
         _http = http;
         _downloader = downloader;
         _logger = logger;
+        _curseForgeResolver = curseForgeResolver;
     }
 
     /// <summary>
@@ -110,17 +116,69 @@ public sealed class ModpackInstaller
         using var doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
         JsonElement root = doc.RootElement;
 
-        // manifest.json: { "minecraft": { "version": "1.20.1", "modLoaders": [...] }, "files": [ { "projectID":..., "fileID":..., "required": true } ] }
-        // CurseForge mod files require the API to resolve download URLs (need an API key).
-        // For the MVP we log a warning — full CurseForge modpack support needs the CF key + API.
-        if (root.TryGetProperty("files", out var files) && files.GetArrayLength() > 0)
+        // manifest.json: { "minecraft": { "version": "1.20.1", "modLoaders": [...] },
+        //                  "files": [ { "projectID":.., "fileID":.., "required": true } ] }
+        if (!root.TryGetProperty("files", out var files) || files.GetArrayLength() == 0)
+        {
+            _logger.LogInformation("CurseForge modpack has no mod files; only overrides will be extracted.");
+            return;
+        }
+
+        // Collect (projectID, fileID) pairs, honoring the "required" flag (skip optional).
+        var ids = new List<(int ProjectId, int FileId)>();
+        foreach (var f in files.EnumerateArray())
+        {
+            bool required = !f.TryGetProperty("required", out var r) || r.ValueKind != JsonValueKind.False || r.GetBoolean();
+            if (!required) continue;
+            int pid = f.TryGetProperty("projectID", out var pe) ? pe.GetInt32() : 0;
+            int fid = f.TryGetProperty("fileID", out var fe) ? fe.GetInt32() : 0;
+            if (pid != 0 && fid != 0) ids.Add((pid, fid));
+        }
+
+        if (ids.Count == 0) return;
+
+        // Without a CurseForge API key (no resolver injected), we cannot resolve the mod URLs —
+        // log clearly so the user knows what to do, and only overrides get extracted.
+        if (_curseForgeResolver is null)
         {
             _logger.LogWarning(
-                "CurseForge modpack has {Count} mod files requiring the CurseForge API to resolve. " +
-                "Configure a CurseForge API key for full modpack support; overrides still extracted.",
-                files.GetArrayLength());
+                "CurseForge modpack has {Count} mod files but no CurseForge API key is configured. " +
+                "Add a CurseForge API key in Settings to download them; overrides still extracted.",
+                ids.Count);
+            return;
         }
-        await Task.CompletedTask;
+
+        _logger.LogInformation("Resolving {Count} CurseForge mod files via the API…", ids.Count);
+        IReadOnlyList<CurseForgeResolvedFile> resolved = await _curseForgeResolver.ResolveAsync(ids, ct);
+
+        // Queue each resolved mod for download into the instance's mods/ directory.
+        var toFetch = new List<(Downloadable File, string RelativePath)>();
+        foreach (CurseForgeResolvedFile f in resolved)
+        {
+            if (string.IsNullOrEmpty(f.DownloadUrl)) continue;
+            // CurseForge mod files go under mods/<filename>.jar.
+            string rel = Path.Combine("mods", f.FileName);
+            toFetch.Add((new Downloadable
+            {
+                Url = f.DownloadUrl,
+                Sha1 = f.Sha1 ?? string.Empty,
+                Size = f.Size,
+                Path = rel,
+            }, rel));
+        }
+
+        if (toFetch.Count > 0)
+        {
+            _logger.LogInformation("Downloading {Count} CurseForge mod files…", toFetch.Count);
+            await _downloader.DownloadBatchAsync(toFetch, mc.Root, maxConcurrency: 8,
+                cancel, progress, ct);
+        }
+
+        if (resolved.Count < ids.Count)
+        {
+            _logger.LogWarning("{Missing} of {Total} CurseForge files could not be resolved.",
+                ids.Count - resolved.Count, ids.Count);
+        }
     }
 
     /// <summary>Extract every entry under <c>overrides/</c> (or <c>client-overrides/</c>) into the game dir.</summary>
