@@ -5,6 +5,7 @@
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Spacing="8" Margin="24,16,24,8">
             <TextBox Text="{Binding SearchText}" Watermark="{loc:Loc 'mods.search_placeholder'}" MinWidth="400"/>
+            <ComboBox ItemsSource="{Binding AvailableSources}" SelectedItem="{Binding SelectedSource}" MinWidth="120"/>
             <Button Content="{loc:Loc 'mods.search'}" Command="{Binding SearchCommand}" HorizontalAlignment="Left"/>
             <Border Background="#2a2a30" Padding="12" CornerRadius="4">
                 <StackPanel Spacing="6">

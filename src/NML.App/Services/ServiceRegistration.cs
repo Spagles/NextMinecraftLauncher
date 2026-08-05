@@ -127,6 +127,15 @@ public static class ServiceRegistration
         // --- Mod catalogs + recommender ---
         services.AddSingleton<NML.Data.Modrinth.ModrinthCatalog>();
         services.AddSingleton<NML.Data.IModCatalog>(sp => sp.GetRequiredService<NML.Data.Modrinth.ModrinthCatalog>());
+        // CurseForge needs an API key; register lazily (null if no key configured).
+        services.AddSingleton<NML.Data.CurseForge.CurseForgeCatalog>(sp =>
+        {
+            var fetcher = sp.GetRequiredService<IHttpFetcher>();
+            // For MVP, use an empty key — CurseForge search will fail gracefully and the UI
+            // falls back to Modrinth. A real deployment would read the key from settings.
+            try { return new NML.Data.CurseForge.CurseForgeCatalog(fetcher, "", Microsoft.Extensions.Logging.Abstractions.NullLogger<NML.Data.CurseForge.CurseForgeCatalog>.Instance); }
+            catch { return null!; }
+        });
         services.AddTransient<ModRecommenderFactory>();
 
         // --- Modpacks ---

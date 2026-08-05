@@ -19,6 +19,12 @@ public partial class ModsPageViewModel : PageViewModelBase
     private readonly InstanceStore _instances;
     private readonly NML.Core.Download.Downloader _downloader;
     private readonly ILogger<ModsPageViewModel> _logger;
+    private readonly NML.Data.CurseForge.CurseForgeCatalog? _curseForge;
+
+    /// <summary>Available mod sources for the dropdown.</summary>
+    public IReadOnlyList<string> AvailableSources { get; } = new[] { "Modrinth", "CurseForge" };
+
+    [ObservableProperty] private string _selectedSource = "Modrinth";
 
     public ObservableCollection<ModSearchResult> Results { get; } = new();
 
@@ -35,13 +41,15 @@ public partial class ModsPageViewModel : PageViewModelBase
         ModRecommenderFactory recommenderFactory,
         InstanceStore instances,
         NML.Core.Download.Downloader downloader,
-        ILogger<ModsPageViewModel> logger)
+        ILogger<ModsPageViewModel> logger,
+        NML.Data.CurseForge.CurseForgeCatalog? curseForge = null)
     {
         _catalog = catalog;
         _recommenderFactory = recommenderFactory;
         _instances = instances;
         _downloader = downloader;
         _logger = logger;
+        _curseForge = curseForge;
         EnsureLanguageSubscribed();
     }
 
@@ -54,7 +62,10 @@ public partial class ModsPageViewModel : PageViewModelBase
         Status = "common.loading";
         try
         {
-            IReadOnlyList<ModSearchResult> r = await _catalog.SearchAsync(SearchText.Trim());
+            IModCatalog catalog = SelectedSource == "CurseForge" && _curseForge is not null
+                ? _curseForge
+                : _catalog;
+            IReadOnlyList<ModSearchResult> r = await catalog.SearchAsync(SearchText.Trim());
             foreach (ModSearchResult m in r) Results.Add(m);
             Status = r.Count > 0 ? $"mods.results,{r.Count}" : "mods.no_results";
         }
@@ -117,11 +128,13 @@ public partial class ModsPageViewModel : PageViewModelBase
         try
         {
             // Fetch the mod's version files for the instance's MC version.
-            var files = await _catalog.GetFilesAsync(mod.ProjectId, inst.VersionId, NML.Data.ModLoader.Fabric);
+            IModCatalog catalog = SelectedSource == "CurseForge" && _curseForge is not null
+                ? _curseForge
+                : _catalog;
+            var files = await catalog.GetFilesAsync(mod.ProjectId, inst.VersionId, NML.Data.ModLoader.Fabric);
             if (files.Count == 0)
             {
-                // Try without a specific loader filter.
-                files = await _catalog.GetFilesAsync(mod.ProjectId, inst.VersionId, NML.Data.ModLoader.Any);
+                files = await catalog.GetFilesAsync(mod.ProjectId, inst.VersionId, NML.Data.ModLoader.Any);
             }
             if (files.Count == 0)
             {
