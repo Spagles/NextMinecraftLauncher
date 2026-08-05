@@ -59,6 +59,7 @@
   "download.install": "安装",
   "download.installed": "已安装",
   "download.loading": "正在加载版本列表…",
+  "download.network_error": "网络错误，无法获取版本列表",
   "download.load_failed": "加载失败：{0}",
   "download.column_version": "版本",
   "download.column_type": "类型",

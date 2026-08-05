@@ -59,6 +59,7 @@
   "download.install": "Установить",
   "download.installed": "Установлено",
   "download.loading": "Загрузка версий…",
+  "download.network_error": "Ошибка сети: не удалось получить список версий",
   "download.load_failed": "Ошибка загрузки: {0}",
   "download.column_version": "Версия",
   "download.column_type": "Тип",

@@ -72,7 +72,11 @@ public partial class DownloadPageViewModel : PageViewModelBase
         }
         catch (Exception ex)
         {
-            Status = $"download.load_failed,{ex.Message}";
+            // Distinguish network errors (show a friendly localized message) from other errors.
+            if (ex is System.Net.Http.HttpRequestException || ex is TaskCanceledException)
+                Status = "download.network_error";
+            else
+                Status = $"download.load_failed,{ex.Message}";
             _logger.LogError(ex, "Version manifest load failed.");
         }
         finally { IsLoading = false; }

@@ -59,6 +59,7 @@
   "download.install": "Install",
   "download.installed": "Installed",
   "download.loading": "Loading versions…",
+  "download.network_error": "Network error: could not fetch version list",
   "download.load_failed": "Load failed: {0}",
   "download.column_version": "Version",
   "download.column_type": "Type",

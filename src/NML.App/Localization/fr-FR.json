@@ -59,6 +59,7 @@
   "download.install": "Installer",
   "download.installed": "Installé",
   "download.loading": "Chargement des versions…",
+  "download.network_error": "Erreur réseau : impossible de récupérer la liste des versions",
   "download.load_failed": "Échec du chargement : {0}",
   "download.column_version": "Version",
   "download.column_type": "Type",
