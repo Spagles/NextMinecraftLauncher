@@ -56,6 +56,55 @@ public sealed class InstanceStore
     public string GameDirFor(string name) =>
         Path.Combine(InstancesRoot, SafeName(name), ".minecraft");
 
+    /// <summary>
+    /// Clone an existing instance: creates a new Instance with the given name (sharing the
+    /// same version/modloader/Java settings) and recursively copies the source game directory
+    /// (mods/config/saves/etc.) so the clone is independently playable.
+    /// </summary>
+    public Instance Clone(Instance source, string newName)
+    {
+        if (string.IsNullOrWhiteSpace(newName))
+            throw new ArgumentException("Clone name is required.", nameof(newName));
+
+        // Ensure unique name.
+        var existing = LoadAll();
+        string name = newName;
+        int suffix = 1;
+        while (existing.Any(i => string.Equals(i.Name, name, StringComparison.OrdinalIgnoreCase)))
+            name = $"{newName} ({suffix++})";
+
+        var clone = new Instance
+        {
+            Name = name,
+            VersionId = source.VersionId,
+            Modloader = source.Modloader,
+            MinMemoryMb = source.MinMemoryMb,
+            MaxMemoryMb = source.MaxMemoryMb,
+            WindowWidth = source.WindowWidth,
+            WindowHeight = source.WindowHeight,
+            Java = source.Java,
+        };
+
+        // Recursively copy the game directory.
+        string srcDir = GameDirFor(source.Name);
+        string dstDir = GameDirFor(name);
+        if (Directory.Exists(srcDir))
+        {
+            Directory.CreateDirectory(dstDir);
+            foreach (string file in Directory.EnumerateFiles(srcDir, "*", SearchOption.AllDirectories))
+            {
+                string rel = Path.GetRelativePath(srcDir, file);
+                string dest = Path.Combine(dstDir, rel);
+                string? dir = Path.GetDirectoryName(dest);
+                if (dir is not null) Directory.CreateDirectory(dir);
+                File.Copy(file, dest, overwrite: true);
+            }
+        }
+
+        Add(clone);
+        return clone;
+    }
+
     /// <summary>Load all instances, or an empty list if none configured.</summary>
     public List<Instance> LoadAll()
     {

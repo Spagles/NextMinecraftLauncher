@@ -208,4 +208,19 @@ public partial class HomePageViewModel : PageViewModelBase
         }
         catch (Exception ex) { Status = $"home.launch_failed,{ex.Message}"; _logger.LogError(ex, "Import failed."); }
     }
+
+    /// <summary>Clone the selected instance (copy config + game dir to a new name).</summary>
+    [RelayCommand]
+    private void CloneInstance(Instance instance)
+    {
+        if (instance is null) return;
+        try
+        {
+            Instance clone = _instances.Clone(instance, $"{instance.Name} (copy)");
+            Instances.Add(clone);
+            SelectedInstance = clone;
+            Status = $"home.installed,{clone.Name}";
+        }
+        catch (Exception ex) { Status = $"home.launch_failed,{ex.Message}"; _logger.LogError(ex, "Clone failed."); }
+    }
 }

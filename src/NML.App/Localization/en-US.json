@@ -34,6 +34,7 @@
   "home.window_size": "Window size",
   "home.export_instance": "Export instance",
   "home.import_instance": "Import instance",
+  "home.clone_instance": "Clone instance",
   "home.exported": "Exported to {0}",
 
   "download.title": "Download Center",
