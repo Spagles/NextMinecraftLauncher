@@ -7,7 +7,7 @@ namespace NML.Core.Auth;
 /// Represents an authenticated Minecraft account, independent of which provider
 /// produced it. This is the value object the launcher stores and uses at launch time.
 /// </summary>
-public sealed class Account
+public sealed record Account
 {
     public string Username { get; init; } = string.Empty;
 

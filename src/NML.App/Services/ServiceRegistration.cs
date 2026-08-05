@@ -79,7 +79,7 @@ public static class ServiceRegistration
 
         // --- Settings & secrets ---
         services.AddSingleton(_ => new SettingsStore(settingsDir));
-        services.AddSingleton<AccountStore>(_ => new AccountStore(settingsDir));
+        services.AddSingleton<AccountStore>(sp => new AccountStore(settingsDir, sp.GetRequiredService<ISecretStore>()));
         services.AddSingleton<AuthlibInjectorServerStore>(_ => new AuthlibInjectorServerStore(settingsDir));
         services.AddSingleton<AuthlibInjectorProvider>();
         services.AddSingleton<ISecretStore>(sp =>
