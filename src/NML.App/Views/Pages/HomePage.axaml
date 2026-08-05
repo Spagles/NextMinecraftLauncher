@@ -20,9 +20,12 @@
 
             <!-- Per-instance actions + batch operations -->
             <StackPanel Orientation="Horizontal" Spacing="4">
-                <Button Content="📋 Clone" Command="{Binding CloneInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"/>
-                <Button Content="📦 Export" Command="{Binding ExportInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"/>
-                <Button Content="🗑 Remove" Command="{Binding RemoveInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small danger"/>
+                <Button Content="📋 Clone" Command="{Binding CloneInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"
+                        IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                <Button Content="📦 Export" Command="{Binding ExportInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"
+                        IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                <Button Content="🗑 Remove" Command="{Binding RemoveInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small danger"
+                        IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}"/>
                 <Button Content="{loc:Loc 'home.export_all'}" Command="{Binding ExportAllInstancesCommand}" Classes="small"/>
                 <Button Content="{loc:Loc 'home.delete_all'}" Command="{Binding DeleteAllInstancesCommand}" Classes="small"/>
             </StackPanel>
@@ -30,7 +33,8 @@
             <!-- Share code -->
             <StackPanel Spacing="4">
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                    <Button Content="🔗 Share" Command="{Binding ShareInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"/>
+                    <Button Content="🔗 Share" Command="{Binding ShareInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"
+                            IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}"/>
                     <TextBox Text="{Binding ShareCode}" Watermark="NML#..." MinWidth="300" FontFamily="Cascadia Code,Consolas,monospace" FontSize="11" IsReadOnly="True"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="6">
