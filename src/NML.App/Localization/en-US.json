@@ -67,6 +67,17 @@
   "accounts.ms_success": "Signed in: {0}",
   "accounts.ms_failed": "Login failed: {0}",
 
+  "accounts.authlib_servers": "External login servers",
+  "accounts.authlib_add_server": "Add server",
+  "accounts.authlib_edit_server": "Edit",
+  "accounts.authlib_delete_server": "Remove",
+  "accounts.authlib_server_name": "Server name",
+  "accounts.authlib_server_url": "Server API URL",
+  "accounts.authlib_use_server": "Sign in with this server",
+  "accounts.authlib_no_servers": "No servers yet — add one (e.g. https://littleskin.cn/api/yggdrasil)",
+  "accounts.authlib_login": "Username / email",
+  "accounts.authlib_password": "Password",
+
   "mods.title": "Mod Center",
   "mods.search_placeholder": "Search mods (e.g. Sodium shaders)…",
   "mods.search": "Search",

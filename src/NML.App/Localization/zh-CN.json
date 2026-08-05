@@ -67,6 +67,17 @@
   "accounts.ms_success": "登录成功：{0}",
   "accounts.ms_failed": "登录失败：{0}",
 
+  "accounts.authlib_servers": "外置登录服务器",
+  "accounts.authlib_add_server": "添加服务器",
+  "accounts.authlib_edit_server": "编辑",
+  "accounts.authlib_delete_server": "删除",
+  "accounts.authlib_server_name": "服务器名称",
+  "accounts.authlib_server_url": "服务器 API 地址",
+  "accounts.authlib_use_server": "使用此服务器登录",
+  "accounts.authlib_no_servers": "还没有服务器，添加一个（如 https://littleskin.cn/api/yggdrasil）",
+  "accounts.authlib_login": "用户名/邮箱",
+  "accounts.authlib_password": "密码",
+
   "mods.title": "Mod 中心",
   "mods.search_placeholder": "搜索 Mod（如 Sodium 光影）…",
   "mods.search": "搜索",

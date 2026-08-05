@@ -35,6 +35,51 @@
                 </StackPanel>
             </Border>
 
+            <!-- authlib-injector (external login) server management -->
+            <Border Background="#1f1f25" CornerRadius="4" Padding="14,12" Margin="0,4">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="{loc:Loc 'accounts.authlib_servers'}" Foreground="#4fc3f7" FontSize="13" FontWeight="SemiBold"/>
+
+                    <!-- Add a new server -->
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBox Text="{Binding NewServerName}" Watermark="{loc:Loc 'accounts.authlib_server_name'}" MinWidth="120"/>
+                        <TextBox Text="{Binding NewServerUrl}" Watermark="{loc:Loc 'accounts.authlib_server_url'}" MinWidth="280"/>
+                        <Button Content="{loc:Loc 'accounts.authlib_add_server'}" Command="{Binding AddAuthlibServerCommand}"/>
+                    </StackPanel>
+
+                    <!-- Saved servers list -->
+                    <ItemsControl ItemsSource="{Binding AuthlibServers}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#2a2a30" CornerRadius="4" Padding="10,8" Margin="0,2">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="{Binding Name}" Foreground="White"/>
+                                            <TextBlock Text="{Binding ApiUrl}" FontSize="10" Foreground="#888"/>
+                                        </StackPanel>
+                                        <Button Grid.Column="1" Content="{loc:Loc 'accounts.authlib_delete_server'}" Classes="small danger"
+                                                Command="{Binding #Root.DataContext.RemoveAuthlibServerCommand}" CommandParameter="{Binding}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock Text="{loc:Loc 'accounts.authlib_no_servers'}" Foreground="#888" FontSize="11"
+                               IsVisible="{Binding !HasAuthlibServers}"/>
+
+                    <!-- Login via selected server -->
+                    <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,4,0,0" IsVisible="{Binding HasAuthlibServers}">
+                        <ComboBox ItemsSource="{Binding AuthlibServers}" SelectedItem="{Binding SelectedAuthlibServer}" MinWidth="160"/>
+                        <TextBox Text="{Binding AuthlibLoginName}" Watermark="{loc:Loc 'accounts.authlib_login'}" MinWidth="140"/>
+                        <TextBox Text="{Binding AuthlibPassword}" Watermark="{loc:Loc 'accounts.authlib_password'}" MinWidth="120" PasswordChar="•"/>
+                        <Button Content="{loc:Loc 'accounts.authlib_use_server'}" Classes="small"
+                                Command="{Binding LoginWithServerCommand}"
+                                CommandParameter="{Binding SelectedAuthlibServer}"
+                                IsEnabled="{Binding !IsBusy}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
             <!-- Account list -->
             <ItemsControl ItemsSource="{Binding Accounts}">
                 <ItemsControl.ItemTemplate>

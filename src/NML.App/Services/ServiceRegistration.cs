@@ -7,6 +7,7 @@ using NML.AICore.Tools;
 using NML.App.Services;
 using NML.Core;
 using NML.Core.Auth;
+using NML.Core.Auth.AuthlibInjector;
 using NML.Core.Auth.Microsoft;
 using NML.Core.Download;
 using NML.Core.Instances;
@@ -75,6 +76,8 @@ public static class ServiceRegistration
         // --- Settings & secrets ---
         services.AddSingleton(_ => new SettingsStore(settingsDir));
         services.AddSingleton<AccountStore>(_ => new AccountStore(settingsDir));
+        services.AddSingleton<AuthlibInjectorServerStore>(_ => new AuthlibInjectorServerStore(settingsDir));
+        services.AddSingleton<AuthlibInjectorProvider>();
         services.AddSingleton<ISecretStore>(sp =>
         {
             var settings = sp.GetRequiredService<SettingsStore>();
