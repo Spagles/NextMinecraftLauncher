@@ -48,6 +48,42 @@ public partial class HomePageViewModel : PageViewModelBase
     [ObservableProperty] private bool _isBusy;
     [ObservableProperty] private int _installProgressPercent;
 
+    /// <summary>System total RAM in MB (drives the slider max + recommended hint).</summary>
+    public long SystemRamMb
+    {
+        get
+        {
+            try
+            {
+                // GCMemoryInfo.TotalAvailableMemoryBytes gives total physical RAM on most platforms.
+                return GC.GetGCMemoryInfo().TotalAvailableMemoryBytes / (1024 * 1024);
+            }
+            catch { return 0; }
+        }
+    }
+
+    /// <summary>Max memory slider value (clamp to system RAM, min 1024).</summary>
+    public long SliderMax => Math.Max(1024, SystemRamMb > 0 ? SystemRamMb : 16384);
+
+    /// <summary>Recommended memory for the selected instance (2/3 of system, clamped 1024..SliderMax).</summary>
+    public long RecommendedMemory => SystemRamMb > 0
+        ? Math.Clamp((long)(SystemRamMb * 0.66), 1024, SliderMax)
+        : 4096;
+
+    /// <summary>Two-way bindable max-memory for the selected instance.</summary>
+    public int SelectedMaxMemory
+    {
+        get => SelectedInstance?.MaxMemoryMb ?? 2048;
+        set
+        {
+            if (SelectedInstance is not null)
+            {
+                SelectedInstance.MaxMemoryMb = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
     public HomePageViewModel(
         VersionManifestService manifest,
         VanillaInstaller vanillaInstaller,

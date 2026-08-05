@@ -23,6 +23,18 @@
                 <TextBox Text="{Binding OfflineUsername}" MinWidth="240"/>
             </StackPanel>
 
+            <!-- Memory allocation slider -->
+            <StackPanel Spacing="6">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="{loc:Loc 'home.memory'}" Foreground="#ccc" FontSize="13" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding SelectedMaxMemory}" Foreground="#4fc3f7" FontSize="13" VerticalAlignment="Center"/>
+                    <TextBlock Text="MB" Foreground="#888" FontSize="11" VerticalAlignment="Center"/>
+                </StackPanel>
+                <Slider Minimum="512" Maximum="{Binding SliderMax}" Value="{Binding SelectedMaxMemory}"
+                        TickFrequency="512" IsSnapToTickEnabled="True" MinWidth="400"/>
+                <TextBlock Text="{loc:Loc 'home.memory_recommended'}" Foreground="#888" FontSize="11"/>
+            </StackPanel>
+
             <Button Content="{loc:Loc 'home.launch'}" Command="{Binding LaunchCommand}"
                     IsEnabled="{Binding !IsBusy}"
                     FontSize="15" FontWeight="Bold" Background="#4caf50" Foreground="White"
