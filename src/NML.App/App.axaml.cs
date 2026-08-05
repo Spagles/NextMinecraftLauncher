@@ -31,21 +31,27 @@ public partial class App : Application
             var splash = new SplashScreenWindow();
             splash.Show();
 
-            // Play the splash sequence. When done, build + show the main window.
+            // Play the splash sequence. When done (or on error), build + show the main window.
             // MainWindow construction (DI + ViewLocator + page VM resolution) is deferred
             // until after the splash animation so it doesn't block the fade.
-            splash.PlayAsync().ContinueWith(_ =>
+            // Use NotOnFaulted explicitly + a catch-all to ensure the main window ALWAYS shows,
+            // even if the animation throws (e.g. in headless/no-GPU environments).
+            splash.PlayAsync().ContinueWith(t =>
             {
                 Avalonia.Threading.Dispatcher.UIThread.Post(() =>
                 {
-                    desktop.MainWindow = new MainWindow
+                    try
                     {
-                        DataContext = _services.GetService<MainWindowViewModel>(),
-                    };
-                    desktop.MainWindow.Show();
+                        desktop.MainWindow = new MainWindow
+                        {
+                            DataContext = _services.GetService<MainWindowViewModel>(),
+                        };
+                        desktop.MainWindow.Show();
+                    }
+                    catch { /* if main window fails, nothing more we can do */ }
                     splash.Close();
                 });
-            });
+            }, TaskScheduler.Default);
         }
 
         _services.GetRequiredService<ILogger<App>>()
