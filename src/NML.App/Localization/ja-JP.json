@@ -155,6 +155,7 @@
   "content.check_updates": "Mod 更新を確認",
   "content.log_search": "ログを検索…",
   "mods.updates_found": "{0} 個の Mod に更新があります",
+  "mods.issues_found": "{0} 個のMod問題を検出（競合・依存関係不足）",
   "mods.conflicts_found": "{0} 個のMod競合を検出",
   "mods.up_to_date": "すべての Mod が最新です",
   "content.name": "名前",

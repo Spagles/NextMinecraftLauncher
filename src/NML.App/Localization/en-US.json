@@ -155,6 +155,7 @@
   "content.check_updates": "Check for mod updates",
   "content.log_search": "Search log…",
   "mods.updates_found": "{0} mods have updates available",
+  "mods.issues_found": "{0} mod issues found (conflicts or missing deps)",
   "mods.conflicts_found": "{0} mod conflicts detected",
   "mods.up_to_date": "All mods are up to date",
   "content.name": "Name",

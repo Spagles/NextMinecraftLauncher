@@ -358,11 +358,15 @@ public partial class GameContentPageViewModel : PageViewModelBase
             var conflicts = ModConflictDetector.Detect(installed);
             int conflictCount = conflicts.Count;
 
+            // Check for missing dependencies and breaks conflicts.
+            var depIssues = ModDependencyChecker.Check(installed, modsDir);
+            int depIssueCount = depIssues.Count;
+
             string updateStatus = UpdatesAvailable > 0
                 ? $"mods.updates_found,{UpdatesAvailable}"
                 : "mods.up_to_date";
-            Status = conflictCount > 0
-                ? $"mods.conflicts_found,{conflictCount}"
+            Status = conflictCount + depIssueCount > 0
+                ? $"mods.issues_found,{conflictCount + depIssueCount}"
                 : updateStatus;
         }
         catch (Exception ex)

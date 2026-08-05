@@ -155,6 +155,7 @@
   "content.check_updates": "检查 Mod 更新",
   "content.log_search": "搜索日志…",
   "mods.updates_found": "发现 {0} 个可更新的 Mod",
+  "mods.issues_found": "发现 {0} 个 Mod 问题（冲突或缺失依赖）",
   "mods.conflicts_found": "发现 {0} 个 Mod 冲突",
   "mods.up_to_date": "所有 Mod 都是最新版本",
   "content.name": "名称",

@@ -157,6 +157,7 @@
   "content.import_world": "Импорт мира",
   "content.import_world_placeholder": "Вставьте путь к .zip…",
   "mods.updates_found": "У {0} модов есть обновления",
+  "mods.issues_found": "Обнаружено {0} проблем модов (конфликты или зависимости)",
   "mods.conflicts_found": "Обнаружено {0} конфликтов модов",
   "mods.up_to_date": "Все моды актуальны",
   "content.name": "Имя",
