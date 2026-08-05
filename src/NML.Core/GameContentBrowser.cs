@@ -183,12 +183,37 @@ public sealed class GameContentBrowser
         try
         {
             string content = File.ReadAllText(latest.FullName);
-            // Return the tail if the log is very large (shows the crash/end, not the start).
             if (content.Length > maxChars)
                 content = "…[earlier lines truncated]…\n" + content[^maxChars..];
             return content;
         }
         catch { return string.Empty; }
+    }
+
+    /// <summary>List config files under config/ (common mod-config formats: .toml/.cfg/.json/.txt/.properties).</summary>
+    public IReadOnlyList<GameFile> ListConfigFiles()
+    {
+        string dir = Path.Combine(_mc.Root, "config");
+        return ListEntries(dir,
+            includeExtensions: new[] { ".toml", ".cfg", ".json", ".txt", ".properties", ".ini", ".conf" },
+            map: (name, full) =>
+            {
+                var fi = new FileInfo(full);
+                return new GameFile { Name = name, Path = full, SizeBytes = fi.Length, LastModified = fi.LastWriteTimeUtc };
+            }).Cast<GameFile>().ToList();
+    }
+
+    /// <summary>Read a config file's text content for editing.</summary>
+    public string ReadConfigFile(string path)
+    {
+        if (!File.Exists(path)) return string.Empty;
+        return File.ReadAllText(path);
+    }
+
+    /// <summary>Write edited content back to a config file.</summary>
+    public void WriteConfigFile(string path, string content)
+    {
+        File.WriteAllText(path, content);
     }
 }
 

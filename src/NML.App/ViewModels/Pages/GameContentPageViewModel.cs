@@ -45,8 +45,19 @@ public partial class GameContentPageViewModel : PageViewModelBase
     /// <summary>True when the logs tab is active (shows the log viewer).</summary>
     public bool IsLogsTab => Tab == "logs";
 
+    /// <summary>True when the configs tab is active (shows the config editor).</summary>
+    public bool IsConfigsTab => Tab == "configs";
+
+    /// <summary>True when the main file-list should be shown (not logs or configs tab).</summary>
+    public bool IsFileListVisible => !IsLogsTab && !IsConfigsTab;
+
     [ObservableProperty] private string _logContent = string.Empty;
     [ObservableProperty] private string _logSearchText = string.Empty;
+
+    /// <summary>Currently-edited config file content.</summary>
+    [ObservableProperty] private string _configContent = string.Empty;
+    /// <summary>Path of the currently-selected config file.</summary>
+    private GameFile? _selectedConfigFile;
 
     public override Task OnNavigatedToAsync() { Refresh(); return Task.CompletedTask; }
 
@@ -56,6 +67,8 @@ public partial class GameContentPageViewModel : PageViewModelBase
         OnPropertyChanged(nameof(IsScreenshotsTab));
         OnPropertyChanged(nameof(IsResourcePacksTab));
         OnPropertyChanged(nameof(IsLogsTab));
+        OnPropertyChanged(nameof(IsConfigsTab));
+        OnPropertyChanged(nameof(IsFileListVisible));
         if (value == "logs") _ = LoadLogAsync();
         Refresh();
     }
@@ -116,6 +129,9 @@ public partial class GameContentPageViewModel : PageViewModelBase
                     break;
                 case "mods":
                     foreach (GameFile f in browser.ListMods()) Items.Add(f);
+                    break;
+                case "configs":
+                    foreach (GameFile f in browser.ListConfigFiles()) Items.Add(f);
                     break;
             }
             IsEmpty = Items.Count == 0;
@@ -207,6 +223,35 @@ public partial class GameContentPageViewModel : PageViewModelBase
             var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
             browser.DeleteResourcePack(file.Path);
             Refresh();
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    [RelayCommand]
+    private void SelectConfig(GameFile file)
+    {
+        try
+        {
+            Instance? inst = _instances.LoadAll().FirstOrDefault();
+            if (inst is null) return;
+            _selectedConfigFile = file;
+            var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
+            ConfigContent = browser.ReadConfigFile(file.Path);
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    [RelayCommand]
+    private void SaveConfig()
+    {
+        try
+        {
+            if (_selectedConfigFile is null) return;
+            Instance? inst = _instances.LoadAll().FirstOrDefault();
+            if (inst is null) return;
+            var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
+            browser.WriteConfigFile(_selectedConfigFile.Path, ConfigContent);
+            Status = "common.save";
         }
         catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
     }

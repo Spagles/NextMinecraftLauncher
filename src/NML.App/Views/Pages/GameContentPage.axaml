@@ -10,13 +10,14 @@
             <Button Content="{loc:Loc 'content.resource_packs'}" Click="SelectTab" Tag="resourcepacks" Classes="tabbtn"/>
             <Button Content="{loc:Loc 'content.mods'}"           Click="SelectTab" Tag="mods" Classes="tabbtn"/>
             <Button Content="{loc:Loc 'content.logs'}"           Click="SelectTab" Tag="logs" Classes="tabbtn"/>
+            <Button Content="{loc:Loc 'content.configs'}"        Click="SelectTab" Tag="configs" Classes="tabbtn"/>
             <Button Content="{loc:Loc 'content.open_folder'}" Command="{Binding OpenFolderCommand}" Classes="small" Margin="16,0,0,0"/>
         </StackPanel>
 
         <ScrollViewer Padding="24,0,24,24">
             <StackPanel>
                 <!-- File/content list (hidden on logs tab) -->
-                <ItemsControl ItemsSource="{Binding Items}" IsVisible="{Binding !IsLogsTab}">
+                <ItemsControl ItemsSource="{Binding Items}" IsVisible="{Binding IsFileListVisible}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Background="#1f1f25" CornerRadius="4" Padding="12,8" Margin="0,2">
@@ -66,6 +67,25 @@
                                                  TextWrapping="NoWrap"/>
                         </ScrollViewer>
                     </Border>
+                </StackPanel>
+
+                <!-- Config editor (visible on the configs tab) -->
+                <StackPanel IsVisible="{Binding IsConfigsTab}" Spacing="8" Margin="0,12,0,0">
+                    <!-- File list with select buttons -->
+                    <ItemsControl ItemsSource="{Binding Items}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Content="{Binding Name}" Classes="small"
+                                        Command="{Binding #Root.DataContext.SelectConfigCommand}"
+                                        CommandParameter="{Binding}" Margin="0,2" HorizontalAlignment="Left"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <!-- Editable text area + save button -->
+                    <TextBox Text="{Binding ConfigContent}" AcceptsReturn="True" FontFamily="Cascadia Code,Consolas,monospace"
+                             FontSize="11" MinHeight="200" MaxHeight="400" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             TextWrapping="NoWrap"/>
+                    <Button Content="{loc:Loc 'common.save'}" Command="{Binding SaveConfigCommand}" Classes="small" HorizontalAlignment="Left"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
