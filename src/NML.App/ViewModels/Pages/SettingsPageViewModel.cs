@@ -75,7 +75,13 @@ public partial class SettingsPageViewModel : PageViewModelBase
         PersistSettings();
     }
 
-    partial void OnBackgroundImagePathChanged(string value) => PersistSettings();
+    partial void OnBackgroundImagePathChanged(string value)
+    {
+        PersistSettings();
+        // Sync to MainWindowVM so the background Image layer updates live (not just on restart).
+        if (_mainWindowVm is not null)
+            _mainWindowVm.BackgroundImagePath = string.IsNullOrEmpty(value) ? null : value;
+    }
 
     [ObservableProperty] private string _updateStatus = string.Empty;
     [ObservableProperty] private string _updateUrl = string.Empty;
@@ -99,13 +105,16 @@ public partial class SettingsPageViewModel : PageViewModelBase
         PersistSettings();
     }
 
+    private readonly MainWindowViewModel? _mainWindowVm;
+
     public SettingsPageViewModel(
         SettingsStore settings,
         LocalModelProbe probe,
         ChatClientFactory factory,
         JavaRuntimeDetector javaDetector,
         ILogger<SettingsPageViewModel> logger,
-        UpdateChecker? updateChecker = null)
+        UpdateChecker? updateChecker = null,
+        MainWindowViewModel? mainWindowVm = null)
     {
         _settings = settings;
         _probe = probe;
@@ -113,6 +122,7 @@ public partial class SettingsPageViewModel : PageViewModelBase
         _javaDetector = javaDetector;
         _logger = logger;
         _updateChecker = updateChecker;
+        _mainWindowVm = mainWindowVm;
         EnsureLanguageSubscribed();
 
         // Populate the language picker from the registered cultures.
