@@ -32,6 +32,9 @@
                     <Button Content="🔗 Share" Command="{Binding ShareInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"/>
                     <TextBox Text="{Binding ShareCode}" Watermark="NML#..." MinWidth="300" FontFamily="Cascadia Code,Consolas,monospace" FontSize="11" IsReadOnly="True"/>
                 </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <Button Content="📥 Import code" Command="{Binding ImportFromShareCodeCommand}" CommandParameter="{Binding ShareCode}" Classes="small"/>
+                </StackPanel>
             </StackPanel>
 
             <StackPanel Spacing="6">
