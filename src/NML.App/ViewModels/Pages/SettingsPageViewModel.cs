@@ -68,11 +68,14 @@ public partial class SettingsPageViewModel : PageViewModelBase
         {
             if (string.IsNullOrEmpty(value)) return;
             var color = Avalonia.Media.Color.Parse(value);
-            // Set the theme accent resource.
             Avalonia.Application.Current!.Resources["SystemAccentColor"] = color;
         }
         catch { /* invalid hex — ignore */ }
+        // Persist so the accent survives restarts.
+        PersistSettings();
     }
+
+    partial void OnBackgroundImagePathChanged(string value) => PersistSettings();
 
     [ObservableProperty] private string _updateStatus = string.Empty;
     [ObservableProperty] private string _updateUrl = string.Empty;
