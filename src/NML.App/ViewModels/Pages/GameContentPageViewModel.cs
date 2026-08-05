@@ -33,9 +33,12 @@ public partial class GameContentPageViewModel : PageViewModelBase
         EnsureLanguageSubscribed();
     }
 
+    /// <summary>True when the saves tab is active (drives backup/delete button visibility).</summary>
+    public bool IsSavesTab => Tab == "saves";
+
     public override Task OnNavigatedToAsync() { Refresh(); return Task.CompletedTask; }
 
-    partial void OnTabChanged(string value) => Refresh();
+    partial void OnTabChanged(string value) { OnPropertyChanged(nameof(IsSavesTab)); Refresh(); }
 
     [RelayCommand]
     private void Refresh()
@@ -84,6 +87,34 @@ public partial class GameContentPageViewModel : PageViewModelBase
             if (inst is null) return;
             var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
             browser.ToggleMod(file.Path);
+            Refresh();
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    [RelayCommand]
+    private void BackupWorld(GameSave save)
+    {
+        try
+        {
+            Instance? inst = _instances.LoadAll().FirstOrDefault();
+            if (inst is null) return;
+            var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
+            string zip = browser.BackupWorld(save.Path);
+            Status = $"home.installed,{zip}";
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    [RelayCommand]
+    private void DeleteWorld(GameSave save)
+    {
+        try
+        {
+            Instance? inst = _instances.LoadAll().FirstOrDefault();
+            if (inst is null) return;
+            var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
+            browser.DeleteWorld(save.Path);
             Refresh();
         }
         catch (Exception ex) { Status = $"common.error,{ex.Message}"; }

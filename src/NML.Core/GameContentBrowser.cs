@@ -116,6 +116,30 @@ public sealed class GameContentBrowser
         }
         catch { return 0; }
     }
+
+    /// <summary>Backup a world save folder into a timestamped .zip in a backups/ directory.</summary>
+    public string BackupWorld(string worldPath)
+    {
+        if (!Directory.Exists(worldPath))
+            throw new DirectoryNotFoundException($"World not found: {worldPath}");
+
+        string name = Path.GetFileName(worldPath);
+        string backupDir = Path.Combine(_mc.Root, "backups");
+        Directory.CreateDirectory(backupDir);
+        string stamp = DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmss");
+        string zipPath = Path.Combine(backupDir, $"{name}-{stamp}.zip");
+
+        System.IO.Compression.ZipFile.CreateFromDirectory(worldPath, zipPath,
+            System.IO.Compression.CompressionLevel.Optimal, includeBaseDirectory: false);
+        return zipPath;
+    }
+
+    /// <summary>Delete a world save folder (after the caller confirms).</summary>
+    public void DeleteWorld(string worldPath)
+    {
+        if (Directory.Exists(worldPath))
+            Directory.Delete(worldPath, recursive: true);
+    }
 }
 
 public sealed class GameSave

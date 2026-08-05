@@ -18,9 +18,22 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Background="#1f1f25" CornerRadius="4" Padding="12,8" Margin="0,2">
-                                <Grid ColumnDefinitions="*,120">
-                                    <TextBlock Grid.Column="0" Text="{Binding Name}" Foreground="White" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="1" Text="{Binding SizeBytes, StringFormat=\{0:N0\} B}" Foreground="#888" FontSize="11" VerticalAlignment="Center"/>
+                                <Grid ColumnDefinitions="*,Auto,Auto">
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="{Binding Name}" Foreground="White" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding SizeBytes, StringFormat=\{0:N0\} B}" Foreground="#888" FontSize="11"/>
+                                    </StackPanel>
+                                    <!-- World backup button (visible on saves tab) -->
+                                    <Button Grid.Column="1" Content="{loc:Loc 'content.backup'}" Classes="small"
+                                            Command="{Binding #Root.DataContext.BackupWorldCommand}"
+                                            CommandParameter="{Binding}"
+                                            IsVisible="{Binding #Root.DataContext.IsSavesTab}"
+                                            Margin="4,0"/>
+                                    <!-- World delete button (visible on saves tab) -->
+                                    <Button Grid.Column="2" Content="{loc:Loc 'content.delete'}" Classes="small danger"
+                                            Command="{Binding #Root.DataContext.DeleteWorldCommand}"
+                                            CommandParameter="{Binding}"
+                                            IsVisible="{Binding #Root.DataContext.IsSavesTab}"/>
                                 </Grid>
                             </Border>
                         </DataTemplate>
@@ -35,5 +48,6 @@
     <UserControl.Styles>
         <Style Selector="Button.tabbtn"><Setter Property="Padding" Value="12,5"/><Setter Property="FontSize" Value="12"/></Style>
         <Style Selector="Button.small"><Setter Property="Padding" Value="10,4"/><Setter Property="FontSize" Value="12"/></Style>
+        <Style Selector="Button.small.danger"><Setter Property="Background" Value="#b23b3b"/><Setter Property="Foreground" Value="White"/></Style>
     </UserControl.Styles>
 </UserControl>

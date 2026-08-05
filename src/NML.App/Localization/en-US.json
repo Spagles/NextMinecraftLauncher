@@ -139,6 +139,10 @@
   "content.toggle_mod": "Enable/Disable",
   "content.open_folder": "Open folder",
   "content.empty": "Nothing here yet",
+  "content.backup": "Backup",
+  "content.delete": "Delete",
+  "content.world_size": "{0} files",
+  "content.last_played": "Last modified: {0}",
 
   "settings.title": "Settings",
   "settings.language": "Language / 语言",
