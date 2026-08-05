@@ -64,6 +64,7 @@
   "download.column_type": "Type",
   "download.column_released": "Publiée",
   "download.column_action": "Action",
+  "download.results": "{0} versions trouvées",
   "download.empty": "Aucune version correspondante",
 
   "accounts.title": "Comptes",

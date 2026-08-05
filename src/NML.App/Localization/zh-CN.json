@@ -64,6 +64,7 @@
   "download.column_type": "类型",
   "download.column_released": "发布时间",
   "download.column_action": "操作",
+  "download.results": "找到 {0} 个版本",
   "download.empty": "未找到匹配的版本",
 
   "accounts.title": "账户管理",

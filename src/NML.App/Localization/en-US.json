@@ -64,6 +64,7 @@
   "download.column_type": "Type",
   "download.column_released": "Released",
   "download.column_action": "Action",
+  "download.results": "{0} versions found",
   "download.empty": "No matching versions",
 
   "accounts.title": "Accounts",

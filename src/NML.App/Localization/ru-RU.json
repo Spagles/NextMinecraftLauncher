@@ -64,6 +64,7 @@
   "download.column_type": "Тип",
   "download.column_released": "Дата",
   "download.column_action": "Действие",
+  "download.results": "Найдено {0} версий",
   "download.empty": "Нет подходящих версий",
 
   "accounts.title": "Аккаунты",

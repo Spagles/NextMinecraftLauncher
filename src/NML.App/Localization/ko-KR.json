@@ -64,6 +64,7 @@
   "download.column_type": "유형",
   "download.column_released": "출시일",
   "download.column_action": "작업",
+  "download.results": "{0}개 버전을 찾았습니다",
   "download.empty": "일치하는 버전이 없습니다",
 
   "accounts.title": "계정",

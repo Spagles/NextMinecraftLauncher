@@ -64,6 +64,7 @@
   "download.column_type": "種類",
   "download.column_released": "公開日",
   "download.column_action": "操作",
+  "download.results": "{0} バージョンが見つかりました",
   "download.empty": "一致するバージョンがありません",
 
   "accounts.title": "アカウント",
