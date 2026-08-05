@@ -117,6 +117,36 @@ public partial class GameContentPageViewModel : PageViewModelBase
     partial void OnLogContentChanged(string value) => OnPropertyChanged(nameof(FilteredLog));
 
     [RelayCommand]
+    private void EnableAllMods()
+    {
+        try
+        {
+            Instance? inst = _instances.LoadAll().FirstOrDefault();
+            if (inst is null) return;
+            var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
+            int count = browser.EnableAllMods();
+            Status = $"mods.enabled_all,{count}";
+            Refresh();
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    [RelayCommand]
+    private void DisableAllMods()
+    {
+        try
+        {
+            Instance? inst = _instances.LoadAll().FirstOrDefault();
+            if (inst is null) return;
+            var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
+            int count = browser.DisableAllMods();
+            Status = $"mods.disabled_all,{count}";
+            Refresh();
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    [RelayCommand]
     private void Refresh()
     {
         // Use the first instance's game dir (or fall back to default .minecraft).

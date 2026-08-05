@@ -9,6 +9,8 @@
             <Button Content="{loc:Loc 'content.screenshots'}"    Click="SelectTab" Tag="screenshots" Classes="tabbtn"/>
             <Button Content="{loc:Loc 'content.resource_packs'}" Click="SelectTab" Tag="resourcepacks" Classes="tabbtn"/>
             <Button Content="{loc:Loc 'content.mods'}"           Click="SelectTab" Tag="mods" Classes="tabbtn"/>
+            <Button Content="{loc:Loc 'content.enable_all'}"     Command="{Binding EnableAllModsCommand}" Classes="small" Margin="16,0,0,0"/>
+            <Button Content="{loc:Loc 'content.disable_all'}"    Command="{Binding DisableAllModsCommand}" Classes="small"/>
             <Button Content="{loc:Loc 'content.logs'}"           Click="SelectTab" Tag="logs" Classes="tabbtn"/>
             <Button Content="{loc:Loc 'content.configs'}"        Click="SelectTab" Tag="configs" Classes="tabbtn"/>
             <Button Content="{loc:Loc 'content.open_folder'}" Command="{Binding OpenFolderCommand}" Classes="small" Margin="16,0,0,0"/>

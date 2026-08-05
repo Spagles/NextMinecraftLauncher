@@ -76,6 +76,34 @@ public sealed class GameContentBrowser
         }
     }
 
+    /// <summary>Disable all mods (rename *.jar → *.jar.disabled). Returns the count affected.</summary>
+    public int DisableAllMods()
+    {
+        string dir = Path.Combine(_mc.Root, "mods");
+        if (!Directory.Exists(dir)) return 0;
+        int count = 0;
+        foreach (string jar in Directory.EnumerateFiles(dir, "*.jar"))
+        {
+            string disabled = jar + ".disabled";
+            if (!File.Exists(disabled)) { File.Move(jar, disabled); count++; }
+        }
+        return count;
+    }
+
+    /// <summary>Enable all disabled mods (rename *.jar.disabled → *.jar). Returns the count affected.</summary>
+    public int EnableAllMods()
+    {
+        string dir = Path.Combine(_mc.Root, "mods");
+        if (!Directory.Exists(dir)) return 0;
+        int count = 0;
+        foreach (string disabled in Directory.EnumerateFiles(dir, "*.jar.disabled"))
+        {
+            string enabled = disabled[..^".disabled".Length];
+            if (!File.Exists(enabled)) { File.Move(disabled, enabled); count++; }
+        }
+        return count;
+    }
+
     private static IReadOnlyList<T> ListEntries<T>(
         string dir, string[]? includeExtensions, Func<string, string, T> map)
     {
