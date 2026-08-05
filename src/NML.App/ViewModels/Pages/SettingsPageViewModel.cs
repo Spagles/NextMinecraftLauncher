@@ -86,6 +86,11 @@ public partial class SettingsPageViewModel : PageViewModelBase
 
     [ObservableProperty] private string _updateStatus = string.Empty;
     [ObservableProperty] private string _updateUrl = string.Empty;
+
+    /// <summary>True when an update URL is available (drives the release-link button).</summary>
+    public bool HasUpdateUrl => !string.IsNullOrEmpty(UpdateUrl);
+
+    partial void OnUpdateUrlChanged(string value) => OnPropertyChanged(nameof(HasUpdateUrl));
     [ObservableProperty] private bool _isCheckingUpdate;
     private readonly UpdateChecker? _updateChecker;
 

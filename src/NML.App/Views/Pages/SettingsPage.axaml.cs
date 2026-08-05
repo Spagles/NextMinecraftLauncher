@@ -21,4 +21,20 @@ public partial class SettingsPage : UserControl
         if (sender is Button b && b.Tag is string hex && DataContext is SettingsPageViewModel vm)
             vm.AccentColor = hex;
     }
+
+    /// <summary>Open the update release URL in the default browser.</summary>
+    private void OpenUpdateUrl_Click(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is SettingsPageViewModel vm && !string.IsNullOrEmpty(vm.UpdateUrl))
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(vm.UpdateUrl)
+                {
+                    UseShellExecute = true,
+                });
+            }
+            catch { /* non-fatal */ }
+        }
+    }
 }

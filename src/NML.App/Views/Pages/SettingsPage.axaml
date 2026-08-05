@@ -75,6 +75,9 @@
                             IsEnabled="{Binding !IsCheckingUpdate}" Classes="small"/>
                     <TextBlock Text="{Binding UpdateStatus}" Foreground="#4fc3f7" VerticalAlignment="Center" FontSize="13"/>
                 </StackPanel>
+                <!-- Clickable release link (visible only when an update URL is set) -->
+                <Button Content="🔗 Open release page" Click="OpenUpdateUrl_Click" Classes="small"
+                        IsVisible="{Binding HasUpdateUrl}" Margin="0,4,0,0"/>
             </StackPanel>
 
             <!-- AI -->
