@@ -14,6 +14,7 @@ using NML.Core.Java;
 using NML.Core.Launch;
 using NML.Core.Modloaders;
 using NML.Core.Modpacks;
+using NML.Core.Skins;
 
 namespace NML.App.Services;
 
@@ -98,6 +99,9 @@ public static class ServiceRegistration
 
         // --- Game content browser ---
         services.AddSingleton<GameContentBrowser>();
+
+        // --- Skin rendering ---
+        services.AddSingleton<SkinService>();
 
         // --- Mod catalogs + recommender ---
         services.AddSingleton<NML.Data.Modrinth.ModrinthCatalog>();

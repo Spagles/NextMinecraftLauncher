@@ -4,6 +4,19 @@
              x:Class="NML.App.Views.Pages.AccountsPage" x:Name="Root">
     <ScrollViewer Padding="24">
         <StackPanel Spacing="16" MaxWidth="640">
+            <!-- Active account skin preview -->
+            <Border Background="#1f1f25" CornerRadius="8" Padding="16" IsVisible="{Binding HasActiveAccount}">
+                <StackPanel Orientation="Horizontal" Spacing="16">
+                    <!-- 3D head render (classic launcher look) -->
+                    <Image Source="{Binding ActiveHeadRenderUrl}" Width="80" Height="80"/>
+                    <StackPanel VerticalAlignment="Center" Spacing="4">
+                        <TextBlock Text="{Binding ActiveAccount.Username}" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
+                        <Image Source="{Binding ActiveAvatarUrl}" Width="32" Height="32"/>
+                        <TextBlock Text="{Binding ActiveAccount.Uuid}" Foreground="#888" FontSize="10"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
             <!-- Add account -->
             <StackPanel Spacing="8">
                 <StackPanel Orientation="Horizontal" Spacing="8">

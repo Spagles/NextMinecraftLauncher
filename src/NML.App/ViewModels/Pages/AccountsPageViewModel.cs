@@ -5,13 +5,14 @@ using Microsoft.Extensions.Logging;
 using NML.App.Services;
 using NML.Core.Auth;
 using NML.Core.Auth.Microsoft;
+using NML.Core.Skins;
 
 namespace NML.App.ViewModels.Pages;
 
 /// <summary>
 /// Accounts page: list configured accounts, add an offline one (username → deterministic
 /// UUID) or sign in via the Microsoft device-code flow. The active account is the one used
-/// at launch time.
+/// at launch time. Shows the active account's skin (avatar + 3D head render via Crafatar).
 /// </summary>
 public partial class AccountsPageViewModel : PageViewModelBase
 {
@@ -21,6 +22,7 @@ public partial class AccountsPageViewModel : PageViewModelBase
     private readonly IOfflineAuthProvider _offline;
     private readonly MicrosoftAuthProvider _microsoft;
     private readonly AccountStore _accountStore;
+    private readonly SkinService _skinService;
     private readonly ILogger<AccountsPageViewModel> _logger;
 
     public ObservableCollection<Account> Accounts { get; } = new();
@@ -32,20 +34,41 @@ public partial class AccountsPageViewModel : PageViewModelBase
     [ObservableProperty] private string _deviceCodeMessage = string.Empty;
     [ObservableProperty] private bool _showDeviceCode;
 
+    /// <summary>2D avatar URL for the active account (binds an Image in the UI).</summary>
+    public string ActiveAvatarUrl => ActiveAccount is null
+        ? string.Empty : _skinService.AvatarUrl(ActiveAccount.Uuid, 128);
+
+    /// <summary>3D head render URL for the active account.</summary>
+    public string ActiveHeadRenderUrl => ActiveAccount is null
+        ? string.Empty : _skinService.HeadRenderUrl(ActiveAccount.Uuid, scale: 8);
+
+    /// <summary>True when an account is active (drives the skin-preview visibility).</summary>
+    public bool HasActiveAccount => ActiveAccount is not null;
+
     public AccountsPageViewModel(
         IOfflineAuthProvider offline,
         MicrosoftAuthProvider microsoft,
         AccountStore accountStore,
+        SkinService skinService,
         ILogger<AccountsPageViewModel> logger)
     {
         _offline = offline;
         _microsoft = microsoft;
         _accountStore = accountStore;
+        _skinService = skinService;
         _logger = logger;
         EnsureLanguageSubscribed();
 
         foreach (Account a in _accountStore.LoadAll()) Accounts.Add(a);
         ActiveAccount = Accounts.FirstOrDefault(a => a.Uuid == _accountStore.GetActiveUuid());
+    }
+
+    // Re-raise the avatar/render URLs whenever the active account changes.
+    partial void OnActiveAccountChanged(Account? value)
+    {
+        OnPropertyChanged(nameof(ActiveAvatarUrl));
+        OnPropertyChanged(nameof(ActiveHeadRenderUrl));
+        OnPropertyChanged(nameof(HasActiveAccount));
     }
 
     [RelayCommand]
