@@ -125,7 +125,11 @@ public partial class AccountsPageViewModel : PageViewModelBase
         {
             ActiveSkinPngPath = await _skinService.DownloadSkinPngAsync(ActiveAccount.Uuid);
         }
-        catch { ActiveSkinPngPath = null; }
+        catch
+        {
+            // Network failure or SkinService not configured for download — degrade gracefully.
+            ActiveSkinPngPath = null;
+        }
     }
 
     [RelayCommand]
