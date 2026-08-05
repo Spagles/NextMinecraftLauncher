@@ -39,6 +39,8 @@
   "home.auto_tune_hint": "根据系统 CPU 和内存自动推荐最优 GC 策略和 JVM 参数",
   "home.tuning_applied": "已应用推荐设置：内存 {0}MB",
   "home.window_size": "窗口大小",
+  "home.export_all": "导出全部",
+  "home.delete_all": "删除全部",
   "home.export_instance": "导出实例",
   "home.import_instance": "导入实例",
   "home.clone_instance": "克隆实例",

@@ -39,6 +39,8 @@
   "home.auto_tune_hint": "システムの CPU と RAM に基づき最適な GC と JVM 引数を推奨",
   "home.tuning_applied": "推奨設定を適用: {0}MB RAM",
   "home.window_size": "ウィンドウサイズ",
+  "home.export_all": "すべてエクスポート",
+  "home.delete_all": "すべて削除",
   "home.export_instance": "インスタンスをエクスポート",
   "home.import_instance": "インスタンスをインポート",
   "home.clone_instance": "インスタンスを複製",

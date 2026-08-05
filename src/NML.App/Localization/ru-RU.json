@@ -39,6 +39,8 @@
   "home.auto_tune_hint": "Автоматический подбор оптимального GC и JVM по CPU и RAM",
   "home.tuning_applied": "Применены рекомендации: {0}МБ ОЗУ",
   "home.window_size": "Размер окна",
+  "home.export_all": "Экспорт всех",
+  "home.delete_all": "Удалить все",
   "home.export_instance": "Экспорт экземпляра",
   "home.import_instance": "Импорт экземпляра",
   "home.clone_instance": "Клонировать экземпляр",

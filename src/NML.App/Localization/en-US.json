@@ -39,6 +39,8 @@
   "home.auto_tune_hint": "Automatically recommend the optimal GC strategy and JVM args based on system CPU and RAM",
   "home.tuning_applied": "Applied recommended settings: {0}MB RAM",
   "home.window_size": "Window size",
+  "home.export_all": "Export all",
+  "home.delete_all": "Delete all",
   "home.export_instance": "Export instance",
   "home.import_instance": "Import instance",
   "home.clone_instance": "Clone instance",

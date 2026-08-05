@@ -305,6 +305,45 @@ public partial class HomePageViewModel : PageViewModelBase
         catch (Exception ex) { Status = $"home.launch_failed,{ex.Message}"; _logger.LogError(ex, "Import failed."); }
     }
 
+    /// <summary>Export ALL instances to .zip bundles on the Desktop.</summary>
+    [RelayCommand]
+    private void ExportAllInstances()
+    {
+        if (_instanceTransfer is null || Instances.Count == 0) return;
+        try
+        {
+            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string exportDir = Path.Combine(desktop, "NML-Instances-Export");
+            Directory.CreateDirectory(exportDir);
+            int count = 0;
+            foreach (Instance inst in Instances)
+            {
+                string zipPath = Path.Combine(exportDir, $"{inst.Name}-export.zip");
+                _instanceTransfer.Export(inst, zipPath);
+                count++;
+            }
+            Status = $"home.exported,{exportDir} ({count})";
+        }
+        catch (Exception ex) { Status = $"home.launch_failed,{ex.Message}"; _logger.LogError(ex, "Batch export failed."); }
+    }
+
+    /// <summary>Delete ALL instances (with no confirmation in the MVP — use carefully).</summary>
+    [RelayCommand]
+    private void DeleteAllInstances()
+    {
+        try
+        {
+            foreach (Instance inst in Instances.ToList())
+            {
+                _instances.Remove(inst.Name);
+            }
+            Instances.Clear();
+            SelectedInstance = null;
+            Status = "home.deleted_all";
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
     /// <summary>Clone the selected instance (copy config + game dir to a new name).</summary>
     [RelayCommand]
     private void CloneInstance(Instance instance)

@@ -18,6 +18,11 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
+            <StackPanel Orientation="Horizontal" Spacing="6">
+                <Button Content="{loc:Loc 'home.export_all'}" Command="{Binding ExportAllInstancesCommand}" Classes="small"/>
+                <Button Content="{loc:Loc 'home.delete_all'}" Command="{Binding DeleteAllInstancesCommand}" Classes="small"/>
+            </StackPanel>
+
             <StackPanel Spacing="6">
                 <TextBlock Text="{loc:Loc 'home.offline_username'}" Foreground="#ccc" FontSize="13"/>
                 <TextBox Text="{Binding OfflineUsername}" MinWidth="240"/>
