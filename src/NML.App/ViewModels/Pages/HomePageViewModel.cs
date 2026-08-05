@@ -337,4 +337,45 @@ public partial class HomePageViewModel : PageViewModelBase
         }
         catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
     }
+
+    /// <summary>Generate a share code for the selected instance.</summary>
+    [ObservableProperty] private string _shareCode = string.Empty;
+
+    [RelayCommand]
+    private void ShareInstance(Instance instance)
+    {
+        if (instance is null) return;
+        try
+        {
+            ShareCode = InstanceShareService.Encode(instance);
+            Status = "home.share_generated";
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    /// <summary>Import an instance from a share code.</summary>
+    [RelayCommand]
+    private void ImportFromShareCode(string code)
+    {
+        if (string.IsNullOrWhiteSpace(code)) return;
+        try
+        {
+            Instance? inst = InstanceShareService.Decode(code);
+            if (inst is null) { Status = "home.share_invalid"; return; }
+
+            var existing = _instances.LoadAll();
+            string name = inst.Name;
+            int suffix = 1;
+            while (existing.Any(i => string.Equals(i.Name, name, StringComparison.OrdinalIgnoreCase)))
+                name = $"{inst.Name} ({suffix++})";
+            inst.Name = name;
+
+            _instances.Add(inst);
+            Instances.Add(inst);
+            SelectedInstance = inst;
+            ShareCode = string.Empty;
+            Status = $"home.installed,{inst.Name}";
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
 }

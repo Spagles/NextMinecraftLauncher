@@ -43,6 +43,8 @@
   "home.import_instance": "インスタンスをインポート",
   "home.clone_instance": "インスタンスを複製",
   "home.console": "ライブコンソール",
+  "home.share_generated": "共有コードを生成しました",
+  "home.share_invalid": "無効な共有コード",
   "home.exported": "{0} にエクスポートしました",
 
   "download.title": "ダウンロードセンター",

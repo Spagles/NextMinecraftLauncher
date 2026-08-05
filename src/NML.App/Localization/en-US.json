@@ -43,6 +43,8 @@
   "home.import_instance": "Import instance",
   "home.clone_instance": "Clone instance",
   "home.console": "Live console",
+  "home.share_generated": "Share code generated",
+  "home.share_invalid": "Invalid share code",
   "home.exported": "Exported to {0}",
 
   "download.title": "Download Center",

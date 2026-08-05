@@ -43,6 +43,8 @@
   "home.import_instance": "导入实例",
   "home.clone_instance": "克隆实例",
   "home.console": "实时控制台",
+  "home.share_generated": "已生成分享码",
+  "home.share_invalid": "分享码无效",
   "home.exported": "已导出到 {0}",
 
   "download.title": "下载中心",

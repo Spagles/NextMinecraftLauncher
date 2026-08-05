@@ -43,6 +43,8 @@
   "home.import_instance": "인스턴스 가져오기",
   "home.clone_instance": "인스턴스 복제",
   "home.console": "실시간 콘솔",
+  "home.share_generated": "공유 코드가 생성되었습니다",
+  "home.share_invalid": "잘못된 공유 코드",
   "home.exported": "{0}로 내보냈습니다",
 
   "download.title": "다운로드 센터",
