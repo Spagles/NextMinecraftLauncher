@@ -161,6 +161,12 @@ public sealed class GameContentBrowser
         }
         catch { /* non-fatal */ }
     }
+
+    /// <summary>Delete a resource pack file.</summary>
+    public void DeleteResourcePack(string path)
+    {
+        if (File.Exists(path)) File.Delete(path);
+    }
 }
 
 public sealed class GameSave

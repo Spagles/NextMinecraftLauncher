@@ -39,12 +39,16 @@ public partial class GameContentPageViewModel : PageViewModelBase
     /// <summary>True when the screenshots tab is active (drives open/delete button visibility).</summary>
     public bool IsScreenshotsTab => Tab == "screenshots";
 
+    /// <summary>True when the resource packs tab is active (drives delete button visibility).</summary>
+    public bool IsResourcePacksTab => Tab == "resourcepacks";
+
     public override Task OnNavigatedToAsync() { Refresh(); return Task.CompletedTask; }
 
     partial void OnTabChanged(string value)
     {
         OnPropertyChanged(nameof(IsSavesTab));
         OnPropertyChanged(nameof(IsScreenshotsTab));
+        OnPropertyChanged(nameof(IsResourcePacksTab));
         Refresh();
     }
 
@@ -151,6 +155,20 @@ public partial class GameContentPageViewModel : PageViewModelBase
             if (inst is null) return;
             var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
             browser.OpenScreenshot(file.Path);
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    [RelayCommand]
+    private void DeleteResourcePack(GameFile file)
+    {
+        try
+        {
+            Instance? inst = _instances.LoadAll().FirstOrDefault();
+            if (inst is null) return;
+            var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
+            browser.DeleteResourcePack(file.Path);
+            Refresh();
         }
         catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
     }

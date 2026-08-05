@@ -39,6 +39,10 @@
                                             Command="{Binding #Root.DataContext.DeleteScreenshotCommand}"
                                             CommandParameter="{Binding}"
                                             IsVisible="{Binding #Root.DataContext.IsScreenshotsTab}"/>
+                                    <Button Grid.Column="3" Content="{loc:Loc 'content.delete'}" Classes="small danger"
+                                            Command="{Binding #Root.DataContext.DeleteResourcePackCommand}"
+                                            CommandParameter="{Binding}"
+                                            IsVisible="{Binding #Root.DataContext.IsResourcePacksTab}"/>
                                 </Grid>
                             </Border>
                         </DataTemplate>
