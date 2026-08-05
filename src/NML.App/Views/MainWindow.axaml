@@ -1,0 +1,37 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:NML.App.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="NML.App.Views.MainWindow"
+        Title="{Binding Title}"
+        Width="900" Height="560"
+        WindowStartupLocation="CenterScreen">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Border Padding="32">
+        <StackPanel HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="16">
+            <TextBlock Text="Next Minecraft Launcher"
+                       FontSize="28" FontWeight="SemiBold"
+                       HorizontalAlignment="Center" />
+            <TextBlock Text="M0 skeleton — Avalonia UI 12 + MVVM + DI"
+                       FontSize="13" Opacity="0.6"
+                       HorizontalAlignment="Center" />
+
+            <Button Content="Ping"
+                    Command="{Binding PingCommand}"
+                    Padding="24,8"
+                    HorizontalAlignment="Center" />
+
+            <TextBlock Text="{Binding Status}"
+                       FontSize="14"
+                       HorizontalAlignment="Center" />
+        </StackPanel>
+    </Border>
+</Window>

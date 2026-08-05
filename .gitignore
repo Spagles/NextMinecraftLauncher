@@ -1,0 +1,49 @@
+## .NET build output
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Ll]og/
+[Ll]ogs/
+
+## NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+project.lock.json
+
+## Visual Studio / Rider / VS Code
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userprefs
+*.swp
+*~
+
+## Test results
+[Tt]est[Rr]esult*/
+[Tt]rash/
+coverage/
+*.coverage
+*.coveragexml
+
+## Build/test artifacts
+*.dll.config
+*.pdb
+TestResults.xml
+
+## OS files
+.DS_Store
+Thumbs.db
+
+## Local runtime data the launcher may generate during dev
+.minecraft/
+runtime/
+secrets.json
+appsettings.*.local.json
+*.local.json
+.zcode/
