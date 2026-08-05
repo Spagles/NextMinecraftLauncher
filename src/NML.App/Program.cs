@@ -52,6 +52,7 @@ internal static class Program
                 // ViewModels
                 services.AddSingleton<MainWindowViewModel>();
                 services.AddSingleton<AiSettingsViewModel>();
+                services.AddSingleton<LauncherViewModel>();
 
                 // Engine + AI services
                 services.AddLauncherServices(settingsDir);

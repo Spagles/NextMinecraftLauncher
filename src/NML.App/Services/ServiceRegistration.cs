@@ -86,6 +86,9 @@ public static class ServiceRegistration
         // --- Instance store ---
         services.AddSingleton<InstanceStore>(_ => new InstanceStore(settingsDir));
 
+        // --- Game content browser ---
+        services.AddSingleton<GameContentBrowser>();
+
         return services;
     }
 }

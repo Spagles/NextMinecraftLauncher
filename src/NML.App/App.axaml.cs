@@ -27,10 +27,9 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = _services.GetRequiredService<MainWindowViewModel>(),
-            };
+            object? vm = _services.GetService<LauncherViewModel>()
+                         ?? (object?)_services.GetService<MainWindowViewModel>();
+            desktop.MainWindow = new MainWindow { DataContext = vm };
         }
 
         _services.GetRequiredService<ILogger<App>>()

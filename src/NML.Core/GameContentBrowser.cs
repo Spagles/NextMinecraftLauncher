@@ -1,0 +1,135 @@
+namespace NML.Core;
+
+/// <summary>
+/// Read-only access to a Minecraft instance's user content: saves, screenshots,
+/// resource packs and (for modded instances) the mods folder. Used by the management UI.
+/// </summary>
+public sealed class GameContentBrowser
+{
+    private readonly MinecraftDirectory _mc;
+
+    public GameContentBrowser(MinecraftDirectory mc) => _mc = mc;
+
+    /// <summary>List saved worlds (folders under <c>saves/</c>) with size and last-played time.</summary>
+    public IReadOnlyList<GameSave> ListSaves()
+    {
+        string dir = Path.Combine(_mc.Root, "saves");
+        return ListEntries(dir, includeExtensions: null, map: (name, full) =>
+        {
+            var fi = new DirectoryInfo(full);
+            return new GameSave
+            {
+                Name = name,
+                Path = full,
+                SizeBytes = DirSize(full),
+                LastModified = fi.LastWriteTimeUtc,
+            };
+        });
+    }
+
+    /// <summary>List screenshots (PNG files under <c>screenshots/</c>).</summary>
+    public IReadOnlyList<GameFile> ListScreenshots()
+    {
+        string dir = Path.Combine(_mc.Root, "screenshots");
+        return ListEntries(dir, includeExtensions: new[] { ".png", ".jpg" }, map: (name, full) =>
+        {
+            var fi = new FileInfo(full);
+            return new GameFile { Name = name, Path = full, SizeBytes = fi.Length, LastModified = fi.LastWriteTimeUtc };
+        }).Cast<GameFile>().ToList();
+    }
+
+    /// <summary>List installed resource packs (zip files under <c>resourcepacks/</c>).</summary>
+    public IReadOnlyList<GameFile> ListResourcePacks()
+    {
+        string dir = Path.Combine(_mc.Root, "resourcepacks");
+        return ListEntries(dir, includeExtensions: new[] { ".zip" }, map: (name, full) =>
+        {
+            var fi = new FileInfo(full);
+            return new GameFile { Name = name, Path = full, SizeBytes = fi.Length, LastModified = fi.LastWriteTimeUtc };
+        }).Cast<GameFile>().ToList();
+    }
+
+    /// <summary>List installed mods (jar files under <c>mods/</c>).</summary>
+    public IReadOnlyList<GameFile> ListMods()
+    {
+        string dir = Path.Combine(_mc.Root, "mods");
+        return ListEntries(dir, includeExtensions: new[] { ".jar", ".disabled" }, map: (name, full) =>
+        {
+            var fi = new FileInfo(full);
+            return new GameFile { Name = name, Path = full, SizeBytes = fi.Length, LastModified = fi.LastWriteTimeUtc };
+        }).Cast<GameFile>().ToList();
+    }
+
+    /// <summary>Toggle a mod between enabled (.jar) and disabled (.jar.disabled).</summary>
+    public void ToggleMod(string modPath)
+    {
+        if (modPath.EndsWith(".disabled", StringComparison.OrdinalIgnoreCase))
+        {
+            string enabled = modPath[..^".disabled".Length];
+            if (File.Exists(enabled)) throw new IOException("An enabled mod with that name already exists.");
+            File.Move(modPath, enabled);
+        }
+        else
+        {
+            string disabled = modPath + ".disabled";
+            File.Move(modPath, disabled);
+        }
+    }
+
+    private static IReadOnlyList<T> ListEntries<T>(
+        string dir, string[]? includeExtensions, Func<string, string, T> map)
+    {
+        if (!Directory.Exists(dir)) return Array.Empty<T>();
+        var list = new List<T>();
+
+        IEnumerable<string> entries = Directory.EnumerateFileSystemEntries(dir);
+        foreach (string entry in entries)
+        {
+            string name = Path.GetFileName(entry);
+            string ext = Path.GetExtension(entry);
+
+            // When filtering by extension, skip folders and non-matching files.
+            if (includeExtensions is not null)
+            {
+                if (Directory.Exists(entry)) continue;
+                if (!includeExtensions.Any(e => ext.Equals(e, StringComparison.OrdinalIgnoreCase))) continue;
+            }
+            else
+            {
+                // For save-listing we only want directories.
+                if (!Directory.Exists(entry)) continue;
+                // Skip Minecraft's own metadata folders.
+                if (name.StartsWith(".", StringComparison.Ordinal)) continue;
+            }
+
+            list.Add(map(name, entry));
+        }
+        return list;
+    }
+
+    private static long DirSize(string dir)
+    {
+        try
+        {
+            return Directory.EnumerateFiles(dir, "*", SearchOption.AllDirectories)
+                            .Sum(f => new FileInfo(f).Length);
+        }
+        catch { return 0; }
+    }
+}
+
+public sealed class GameSave
+{
+    public string Name { get; init; } = string.Empty;
+    public string Path { get; init; } = string.Empty;
+    public long SizeBytes { get; init; }
+    public DateTimeOffset LastModified { get; init; }
+}
+
+public sealed class GameFile
+{
+    public string Name { get; init; } = string.Empty;
+    public string Path { get; init; } = string.Empty;
+    public long SizeBytes { get; init; }
+    public DateTimeOffset LastModified { get; init; }
+}
