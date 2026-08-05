@@ -37,6 +37,7 @@ public partial class HomePageViewModel : PageViewModelBase
     private readonly CrashAnalyzerFactory? _crashFactory;
     private readonly AuthlibInjectorSetup? _authlibInjectorSetup;
     private readonly AccountStore? _activeAccountStore;
+    private readonly InstanceTransferService? _instanceTransfer;
     private readonly ILogger<HomePageViewModel> _logger;
 
     public ObservableCollection<Instance> Instances { get; } = new();
@@ -60,7 +61,8 @@ public partial class HomePageViewModel : PageViewModelBase
         ILogger<HomePageViewModel> logger,
         CrashAnalyzerFactory? crashFactory = null,
         AuthlibInjectorSetup? authlibInjectorSetup = null,
-        AccountStore? activeAccountStore = null)
+        AccountStore? activeAccountStore = null,
+        InstanceTransferService? instanceTransfer = null)
     {
         _manifest = manifest;
         _vanillaInstaller = vanillaInstaller;
@@ -74,6 +76,7 @@ public partial class HomePageViewModel : PageViewModelBase
         _crashFactory = crashFactory;
         _authlibInjectorSetup = authlibInjectorSetup;
         _activeAccountStore = activeAccountStore;
+        _instanceTransfer = instanceTransfer;
         _logger = logger;
         EnsureLanguageSubscribed();
         Status = "home.status_ready";
@@ -174,5 +177,35 @@ public partial class HomePageViewModel : PageViewModelBase
             Status = $"diagnosis|{d.Confidence}|{d.RootCause}";
         }
         catch (Exception ex) { _logger.LogWarning(ex, "Crash diagnosis failed."); }
+    }
+
+    /// <summary>Export the selected instance to a .zip bundle (instance.json + mods + config).</summary>
+    [RelayCommand]
+    private void ExportInstance(Instance instance)
+    {
+        if (_instanceTransfer is null || instance is null) return;
+        try
+        {
+            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string zipPath = Path.Combine(desktop, $"{instance.Name}-export.zip");
+            _instanceTransfer.Export(instance, zipPath);
+            Status = $"home.exported,{zipPath}";
+        }
+        catch (Exception ex) { Status = $"home.launch_failed,{ex.Message}"; _logger.LogError(ex, "Export failed."); }
+    }
+
+    /// <summary>Import an instance from a .zip bundle.</summary>
+    [RelayCommand]
+    private void ImportInstance(string zipPath)
+    {
+        if (_instanceTransfer is null || string.IsNullOrEmpty(zipPath)) return;
+        try
+        {
+            Instance imported = _instanceTransfer.Import(zipPath);
+            Instances.Add(imported);
+            SelectedInstance = imported;
+            Status = $"home.installed,{imported.Name}";
+        }
+        catch (Exception ex) { Status = $"home.launch_failed,{ex.Message}"; _logger.LogError(ex, "Import failed."); }
     }
 }

@@ -32,6 +32,9 @@
   "home.fetch_failed": "Failed to load versions: {0}",
   "home.memory": "Memory",
   "home.window_size": "Window size",
+  "home.export_instance": "Export instance",
+  "home.import_instance": "Import instance",
+  "home.exported": "Exported to {0}",
 
   "download.title": "Download Center",
   "download.search_placeholder": "Search version (e.g. 1.20.1)…",
