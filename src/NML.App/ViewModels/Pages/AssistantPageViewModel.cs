@@ -1,0 +1,89 @@
+using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
+using NML.AICore;
+using NML.App.Services;
+
+namespace NML.App.ViewModels.Pages;
+
+/// <summary>
+/// AI assistant chat page. Streams responses token-by-token from the active provider.
+/// Shows a friendly "no provider configured" hint when AI isn't set up yet.
+/// </summary>
+public partial class AssistantPageViewModel : PageViewModelBase
+{
+    public override string TitleKey => "nav.assistant";
+    public override string Icon => "🤖";
+
+    private readonly ChatClientFactory _factory;
+    private readonly SettingsStore _settings;
+    private readonly ILogger<AssistantPageViewModel> _logger;
+
+    public ObservableCollection<ChatTurn> Conversation { get; } = new();
+
+    [ObservableProperty] private string _input = string.Empty;
+    [ObservableProperty] private bool _isBusy;
+    [ObservableProperty] private string _status = string.Empty;
+
+    public AssistantPageViewModel(
+        ChatClientFactory factory,
+        SettingsStore settings,
+        ILogger<AssistantPageViewModel> logger)
+    {
+        _factory = factory;
+        _settings = settings;
+        _logger = logger;
+    }
+
+    [RelayCommand]
+    private async Task SendAsync()
+    {
+        if (string.IsNullOrWhiteSpace(Input)) return;
+
+        LauncherSettings s = _settings.Load();
+        ChatProviderConfig? cfg = s.Providers.FirstOrDefault(p => p.Name == s.ActiveProviderName);
+        if (cfg is null) { Status = "assistant.no_provider"; return; }
+
+        string userText = Input.Trim();
+        Input = string.Empty;
+        var userTurn = new ChatTurn { Role = "assistant.user", Content = userText };
+        Conversation.Add(userTurn);
+
+        var aiTurn = new ChatTurn { Role = "assistant.ai", Content = string.Empty };
+        Conversation.Add(aiTurn);
+        IsBusy = true;
+        Status = "assistant.thinking";
+
+        try
+        {
+            IChatClient client = _factory.Create(cfg);
+            var messages = Conversation
+                .Where(t => !string.IsNullOrEmpty(t.Content))
+                .Select(t => new ChatMessage
+                {
+                    Role = t.Role == "assistant.user" ? ChatRole.User : ChatRole.Assistant,
+                    Content = t.Content,
+                }).ToList();
+
+            await foreach (string chunk in client.StreamAsync(messages))
+                aiTurn.Content += chunk;
+            Status = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            aiTurn.Content = $"common.error: {ex.Message}";
+            _logger.LogError(ex, "Chat failed.");
+            Status = $"common.error,{ex.Message}";
+        }
+        finally { IsBusy = false; }
+    }
+}
+
+/// <summary>One turn in the chat conversation (user or assistant).</summary>
+public sealed class ChatTurn
+{
+    /// <summary>Localization key for the speaker label (<c>assistant.user</c> or <c>assistant.ai</c>).</summary>
+    public string Role { get; init; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
+}

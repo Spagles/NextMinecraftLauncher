@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:NML.App.Localization"
+             x:Class="NML.App.Views.Pages.DownloadPage" x:Name="Root">
+    <DockPanel LastChildFill="True">
+        <!-- Search + filter bar -->
+        <StackPanel DockPanel.Dock="Top" Spacing="8" Margin="24,16,24,8">
+            <TextBox Text="{Binding SearchText}" Watermark="{loc:Loc 'download.search_placeholder'}" MinWidth="400"/>
+            <StackPanel Orientation="Horizontal" Spacing="6">
+                <RadioButton Content="{loc:Loc 'download.filter_release'}" GroupName="dlfilter"
+                             IsChecked="{Binding TypeFilter, Converter={x:Static StringConverters.IsNotNullOrEmpty}, Mode=OneWay}"/>
+            </StackPanel>
+            <Button Content="{loc:Loc 'common.refresh'}" Command="{Binding LoadCommand}" HorizontalAlignment="Left"/>
+        </StackPanel>
+
+        <!-- Version list -->
+        <ScrollViewer Padding="24,0,24,24">
+            <ItemsControl ItemsSource="{Binding FilteredVersions}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="#1f1f25" CornerRadius="4" Padding="14,10" Margin="0,2">
+                            <Grid ColumnDefinitions="*,120,120,Auto">
+                                <TextBlock Grid.Column="0" Text="{Binding Id}" Foreground="White" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="{Binding Type}" Foreground="#aaa" FontSize="12" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="{Binding ReleaseTime, StringFormat=\{0:yyyy-MM-dd\}}" Foreground="#888" FontSize="11" VerticalAlignment="Center"/>
+                                <Button Grid.Column="3" Content="{loc:Loc 'download.install'}" Classes="small"
+                                        Command="{Binding #Root.DataContext.InstallCommand}"
+                                        CommandParameter="{Binding}"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </DockPanel>
+
+    <UserControl.Styles>
+        <Style Selector="Button.small">
+            <Setter Property="Padding" Value="12,4"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Background" Value="#3a5fcd"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </UserControl.Styles>
+</UserControl>

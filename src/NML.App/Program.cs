@@ -3,6 +3,7 @@ using Avalonia;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NML.App.Localization;
 using NML.App.Services;
 using NML.App.ViewModels;
 
@@ -10,13 +11,20 @@ namespace NML.App;
 
 internal static class Program
 {
-    // Initialization code. Don't use any Avalonia, third-party APIs or any
-    // SynchronizationContext-reliant code before AppMain is called: things aren't
-    // initialized yet and stuff might break.
     [STAThread]
     public static void Main(string[] args)
     {
-        using IHost host = BuildHost(args);
+        // Initialize i18n before the UI builds so all {Loc} bindings resolve correctly.
+        // The active culture is read from a saved settings file if present.
+        string settingsDir = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "NextMinecraftLauncher");
+        string? savedCulture = File.Exists(Path.Combine(settingsDir, "language.txt"))
+            ? File.ReadAllText(Path.Combine(settingsDir, "language.txt")).Trim()
+            : null;
+        LocalizationBootstrapper.Initialize(savedCulture);
+
+        using IHost host = BuildHost(args, settingsDir);
         host.Start();
 
         try
@@ -30,18 +38,8 @@ internal static class Program
         }
     }
 
-    /// <summary>
-    /// Builds the generic host with DI, logging, configuration, and every launcher service
-    /// (engine + AI) registered via <see cref="ServiceRegistration"/>.
-    /// </summary>
-    private static IHost BuildHost(string[] args)
-    {
-        // Launcher settings live under %APPDATA%/NextMinecraftLauncher (per-user, survives updates).
-        string settingsDir = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "NextMinecraftLauncher");
-
-        return Host.CreateDefaultBuilder(args)
+    private static IHost BuildHost(string[] args, string settingsDir) =>
+        Host.CreateDefaultBuilder(args)
             .ConfigureLogging(logging =>
             {
                 logging.SetMinimumLevel(LogLevel.Information);
@@ -49,18 +47,14 @@ internal static class Program
             })
             .ConfigureServices(services =>
             {
-                // ViewModels
+                // Shell VM + page VMs (the page VMs are also registered by AddLauncherServices).
                 services.AddSingleton<MainWindowViewModel>();
-                services.AddSingleton<AiSettingsViewModel>();
-                services.AddSingleton<LauncherViewModel>();
 
                 // Engine + AI services
                 services.AddLauncherServices(settingsDir);
             })
             .Build();
-    }
 
-    // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp(IServiceProvider services)
         => AppBuilder.Configure<App>(() => new App(services))
             .UsePlatformDetect()

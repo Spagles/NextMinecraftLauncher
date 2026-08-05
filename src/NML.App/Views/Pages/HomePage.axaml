@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:NML.App.Localization"
+             x:Class="NML.App.Views.Pages.HomePage">
+    <ScrollViewer Padding="24">
+        <StackPanel Spacing="18" MaxWidth="640">
+            <TextBlock Text="{loc:Loc 'home.instances'}" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
+
+            <ListBox ItemsSource="{Binding Instances}" SelectedItem="{Binding SelectedInstance}"
+                     MinHeight="100" MaxHeight="240" Background="#1f1f25" Foreground="#e0e0e0">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="4,2">
+                            <TextBlock Text="{Binding Name}" Foreground="White"/>
+                            <TextBlock Text="{Binding VersionId}" FontSize="11" Foreground="#888"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <StackPanel Spacing="6">
+                <TextBlock Text="{loc:Loc 'home.offline_username'}" Foreground="#ccc" FontSize="13"/>
+                <TextBox Text="{Binding OfflineUsername}" MinWidth="240"/>
+            </StackPanel>
+
+            <Button Content="{loc:Loc 'home.launch'}" Command="{Binding LaunchCommand}"
+                    IsEnabled="{Binding !IsBusy}"
+                    FontSize="15" FontWeight="Bold" Background="#4caf50" Foreground="White"
+                    HorizontalAlignment="Stretch" Padding="0,14"/>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -2,119 +2,84 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:loc="using:NML.App.Localization"
         xmlns:vm="using:NML.App.ViewModels"
-        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="640"
+        xmlns:v="using:NML.App.Views"
+        mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="700"
         x:Class="NML.App.Views.MainWindow"
-        Title="{Binding Title}"
-        Width="1000" Height="640" MinWidth="800" MinHeight="520"
+        x:Name="Shell"
+        Title="Next Minecraft Launcher"
+        Width="1100" Height="700" MinWidth="900" MinHeight="560"
         WindowStartupLocation="CenterScreen">
 
-    <Design.DataContext>
-        <vm:MainWindowViewModel/>
-    </Design.DataContext>
+    <Window.DataTemplates>
+        <v:ViewLocator/>
+    </Window.DataTemplates>
 
-    <DockPanel>
-        <!-- Status bar -->
-        <Border DockPanel.Dock="Bottom" Background="#1f1f1f" Padding="12,6">
-            <TextBlock Text="{Binding Status}" Foreground="#e0e0e0" FontSize="12"/>
-        </Border>
-
-        <!-- Title / branding -->
-        <Border DockPanel.Dock="Top" Background="#0a0a0a" Padding="20,12">
-            <StackPanel Orientation="Horizontal" Spacing="12">
-                <TextBlock Text="🎮" FontSize="24" VerticalAlignment="Center"/>
-                <TextBlock Text="Next Minecraft Launcher" FontSize="20" FontWeight="SemiBold"
-                           Foreground="White" VerticalAlignment="Center"/>
-                <TextBlock Text="AI-powered" FontSize="11" Foreground="#4fc3f7"
-                           VerticalAlignment="Center" Margin="0,2,0,0"/>
-            </StackPanel>
-        </Border>
-
-        <!-- Main split: left nav, right content -->
-        <Grid ColumnDefinitions="220,*">
-            <!-- Sidebar -->
-            <Border Grid.Column="0" Background="#2a2a2a">
-                <StackPanel Spacing="4" Margin="8">
-                    <Button Content="▶  Launch"        Classes="nav" IsEnabled="{Binding !IsBusy}"/>
-                    <Button Content="⬇  Install Version" Classes="nav" Command="{Binding InstallSelectedVersionCommand}" IsEnabled="{Binding !IsBusy}"/>
-                    <Button Content="🔄 Refresh Versions" Classes="nav" Command="{Binding LoadVersionsCommand}"/>
-                    <Button Content="💾 Saves"          Classes="nav"/>
-                    <Button Content="📷 Screenshots"    Classes="nav"/>
-                    <Button Content="📦 Resource Packs" Classes="nav"/>
-                    <Button Content="🧩 Mods"           Classes="nav"/>
-                    <Button Content="🤖 AI Assistant"   Classes="nav"/>
-                    <Button Content="⚙  Settings"       Classes="nav"/>
-                </StackPanel>
-            </Border>
-
-            <!-- Content -->
-            <Grid Grid.Column="1" RowDefinitions="*,Auto" Background="#1e1e1e">
-                <!-- Top: instance/version selection -->
-                <ScrollViewer Grid.Row="0" Padding="20">
-                    <StackPanel Spacing="16">
-                        <!-- Instances -->
-                        <StackPanel Spacing="6">
-                            <TextBlock Text="Instances" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
-                            <ItemsControl ItemsSource="{Binding Instances}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <RadioButton Content="{Binding Name}"
-                                                     GroupName="inst"
-                                                     IsChecked="{Binding $self.IsChecked, Mode=OneWay}"
-                                                     Margin="0,2"
-                                                     Foreground="#e0e0e0"/>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                            <TextBlock Text="No instances yet — install a version below." FontSize="12"
-                                       Foreground="#888" IsVisible="{Binding !HasInstances}"/>
-                        </StackPanel>
-
-                        <!-- Versions to install -->
-                        <StackPanel Spacing="6">
-                            <TextBlock Text="Available versions (click to select, then Install)" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
-                            <ComboBox ItemsSource="{Binding AvailableVersions}" SelectedItem="{Binding SelectedVersionToInstall}" MinWidth="300"
-                                      PlaceholderText="Load versions first…"/>
-                            <TextBlock Text="{Binding SelectedVersionToInstall.Id}" FontSize="12" Foreground="#4fc3f7"/>
-                        </StackPanel>
-
-                        <!-- Offline login -->
-                        <StackPanel Spacing="6">
-                            <TextBlock Text="Offline player name" FontSize="14" Foreground="White"/>
-                            <TextBox Text="{Binding OfflineUsername}" MinWidth="250"/>
-                        </StackPanel>
-                    </StackPanel>
-                </ScrollViewer>
-
-                <!-- Progress + launch bar -->
-                <Border Grid.Row="1" Background="#252525" Padding="20,12">
-                    <StackPanel Spacing="8">
-                        <ProgressBar Value="{Binding InstallProgressPercent}" Maximum="100" Height="4"
-                                     IsVisible="{Binding IsBusy}"/>
-                        <Button Content="🚀  LAUNCH MINECRAFT"
-                                Command="{Binding LaunchCommand}"
-                                IsEnabled="{Binding !IsBusy}"
-                                FontSize="16" FontWeight="Bold"
-                                HorizontalAlignment="Stretch"
-                                Background="#4caf50" Foreground="White"
-                                Padding="0,12"/>
+    <Grid ColumnDefinitions="220,*">
+        <!-- Sidebar -->
+        <Border Grid.Column="0" Background="#1a1a1e">
+            <DockPanel>
+                <!-- Brand -->
+                <Border DockPanel.Dock="Top" Padding="20,18,20,14">
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="🎮" FontSize="22"/>
+                        <TextBlock Text="{loc:Loc 'app.title'}" FontSize="14" FontWeight="SemiBold" Foreground="White"/>
+                        <TextBlock Text="{loc:Loc 'app.subtitle'}" FontSize="10" Foreground="#4fc3f7"/>
                     </StackPanel>
                 </Border>
-            </Grid>
-        </Grid>
-    </DockPanel>
 
-    <!-- Style for nav buttons -->
+                <!-- Nav buttons -->
+                <ScrollViewer>
+                    <ItemsControl ItemsSource="{Binding Pages}" Padding="8,4">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Classes="nav"
+                                        Command="{Binding #Shell.DataContext.NavigateToCommand}"
+                                        CommandParameter="{Binding}"
+                                        Tag="{Binding TitleKey}">
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="{Binding Icon}" FontSize="15" Width="20"/>
+                                        <TextBlock Text="{Binding TitleKey}" Classes="navLabel"/>
+                                    </StackPanel>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+
+        <!-- Content area: the active page view is rendered here via ViewLocator -->
+        <DockPanel Grid.Column="1" Background="#25252b">
+            <!-- Page header -->
+            <Border DockPanel.Dock="Top" Background="#2d2d33" Padding="24,14">
+                <TextBlock Text="{Binding CurrentPage.TitleKey}" FontSize="18" FontWeight="SemiBold" Foreground="White"/>
+            </Border>
+
+            <!-- The page itself -->
+            <ContentControl Content="{Binding CurrentPage}" Margin="0"/>
+        </DockPanel>
+    </Grid>
+
     <Window.Styles>
         <Style Selector="Button.nav">
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="Margin" Value="0,1"/>
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#e0e0e0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#cccccc"/>
         </Style>
-        <Style Selector="Button.nav:pointerover">
-            <Setter Property="Background" Value="#3a3a3a"/>
+        <Style Selector="Button.nav:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#33333b"/>
         </Style>
+        <Style Selector="Button.nav TextBlock.navLabel">
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+        <!-- Note: full localization of sidebar labels requires a {Loc} binding in the
+             DataTemplate; for the MVP the label binds to the raw key and the header re-resolves
+             via {Loc}. A later pass can wire per-item localization. -->
     </Window.Styles>
 </Window>

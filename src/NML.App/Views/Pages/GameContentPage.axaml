@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:NML.App.Localization"
+             x:Class="NML.App.Views.Pages.GameContentPage" x:Name="Root">
+    <DockPanel>
+        <!-- Tab strip + open folder -->
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="6" Margin="24,16,24,8">
+            <Button Content="{loc:Loc 'content.saves'}"          Click="SelectTab" Tag="saves" Classes="tabbtn"/>
+            <Button Content="{loc:Loc 'content.screenshots'}"    Click="SelectTab" Tag="screenshots" Classes="tabbtn"/>
+            <Button Content="{loc:Loc 'content.resource_packs'}" Click="SelectTab" Tag="resourcepacks" Classes="tabbtn"/>
+            <Button Content="{loc:Loc 'content.mods'}"           Click="SelectTab" Tag="mods" Classes="tabbtn"/>
+            <Button Content="{loc:Loc 'content.open_folder'}" Command="{Binding OpenFolderCommand}" Classes="small" Margin="16,0,0,0"/>
+        </StackPanel>
+
+        <ScrollViewer Padding="24,0,24,24">
+            <StackPanel>
+                <ItemsControl ItemsSource="{Binding Items}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="#1f1f25" CornerRadius="4" Padding="12,8" Margin="0,2">
+                                <Grid ColumnDefinitions="*,120">
+                                    <TextBlock Grid.Column="0" Text="{Binding Name}" Foreground="White" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding SizeBytes, StringFormat=\{0:N0\} B}" Foreground="#888" FontSize="11" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <TextBlock Text="{loc:Loc 'content.empty'}" Foreground="#888" FontSize="12" Margin="0,12"
+                           IsVisible="{Binding IsEmpty}"/>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+
+    <UserControl.Styles>
+        <Style Selector="Button.tabbtn"><Setter Property="Padding" Value="12,5"/><Setter Property="FontSize" Value="12"/></Style>
+        <Style Selector="Button.small"><Setter Property="Padding" Value="10,4"/><Setter Property="FontSize" Value="12"/></Style>
+    </UserControl.Styles>
+</UserControl>

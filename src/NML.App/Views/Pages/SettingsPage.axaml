@@ -1,0 +1,82 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:NML.App.Localization"
+             x:Class="NML.App.Views.Pages.SettingsPage" x:Name="Root">
+    <ScrollViewer Padding="24">
+        <StackPanel Spacing="22" MaxWidth="720">
+
+            <!-- General -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="{loc:Loc 'settings.general'}" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
+                <StackPanel Spacing="6">
+                    <TextBlock Text="{loc:Loc 'settings.language'}" Foreground="#ccc"/>
+                    <ComboBox ItemsSource="{Binding AvailableLanguages}" SelectedItem="{Binding SelectedLanguage}" MinWidth="220"/>
+                </StackPanel>
+                <StackPanel Spacing="6">
+                    <TextBlock Text="{loc:Loc 'settings.minecraft_path'}" Foreground="#ccc"/>
+                    <TextBox Text="{Binding MinecraftPath}" MinWidth="500"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Java -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="{loc:Loc 'settings.java'}" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
+                <Button Content="{loc:Loc 'common.refresh'}" Command="{Binding DetectJavaCommand}" HorizontalAlignment="Left"/>
+                <ItemsControl ItemsSource="{Binding JavaRuntimes}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="#1f1f25" Padding="10,6" Margin="0,2" CornerRadius="4">
+                                <TextBlock Foreground="#ccc" FontSize="12">
+                                    <Run Text="{Binding MajorVersion}"/>
+                                    <Run Text=" · "/>
+                                    <Run Text="{Binding BinDirectory}"/>
+                                </TextBlock>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+
+            <!-- AI -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="{loc:Loc 'settings.ai'}" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
+                <Button Content="{loc:Loc 'settings.detect_local'}" Command="{Binding DetectLocalModelsCommand}" HorizontalAlignment="Left"/>
+                <ItemsControl ItemsSource="{Binding Providers}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="#1f1f25" Padding="10,8" Margin="0,2" CornerRadius="4">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="{Binding Name}" Foreground="White"/>
+                                        <TextBlock Text="{Binding Model}" Foreground="#888" FontSize="11"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Content="{loc:Loc 'settings.activate'}" Classes="small"
+                                            Command="{Binding #Root.DataContext.ActivateCommand}" CommandParameter="{Binding}"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- Add cloud provider -->
+                <Border Background="#2a2a30" Padding="12" CornerRadius="4" Margin="0,8,0,0">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="{loc:Loc 'settings.add_cloud_provider'}" Foreground="#4fc3f7" FontSize="13"/>
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBox Text="{Binding NewProviderName}" Watermark="{loc:Loc 'settings.provider_name'}" MinWidth="120"/>
+                            <TextBox Text="{Binding NewProviderModel}" Watermark="{loc:Loc 'settings.provider_model'}" MinWidth="140"/>
+                        </StackPanel>
+                        <TextBox Text="{Binding NewProviderUrl}" Watermark="{loc:Loc 'settings.provider_url'}" MinWidth="400"/>
+                        <TextBox Text="{Binding NewProviderKey}" Watermark="{loc:Loc 'settings.provider_key'}" MinWidth="400" PasswordChar="•"/>
+                        <Button Content="{loc:Loc 'settings.add'}" Command="{Binding AddCloudProviderCommand}" Background="#4caf50" Foreground="White" Padding="14,4" HorizontalAlignment="Left"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+
+    <UserControl.Styles>
+        <Style Selector="Button.small"><Setter Property="Padding" Value="10,4"/><Setter Property="FontSize" Value="12"/></Style>
+    </UserControl.Styles>
+</UserControl>

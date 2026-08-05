@@ -64,6 +64,7 @@ public static class ServiceRegistration
 
         // --- Settings & secrets ---
         services.AddSingleton(_ => new SettingsStore(settingsDir));
+        services.AddSingleton<AccountStore>(_ => new AccountStore(settingsDir));
         services.AddSingleton<ISecretStore>(sp =>
         {
             var settings = sp.GetRequiredService<SettingsStore>();
@@ -89,7 +90,46 @@ public static class ServiceRegistration
         // --- Game content browser ---
         services.AddSingleton<GameContentBrowser>();
 
+        // --- Mod catalogs + recommender ---
+        services.AddSingleton<NML.Data.Modrinth.ModrinthCatalog>();
+        services.AddSingleton<NML.Data.IModCatalog>(sp => sp.GetRequiredService<NML.Data.Modrinth.ModrinthCatalog>());
+        services.AddTransient<ModRecommenderFactory>();
+
+        // --- Page view models (one singleton each; reused across navigations) ---
+        services.AddSingleton<ViewModels.Pages.HomePageViewModel>();
+        services.AddSingleton<ViewModels.Pages.DownloadPageViewModel>();
+        services.AddSingleton<ViewModels.Pages.AccountsPageViewModel>();
+        services.AddSingleton<ViewModels.Pages.ModsPageViewModel>();
+        services.AddSingleton<ViewModels.Pages.AssistantPageViewModel>();
+        services.AddSingleton<ViewModels.Pages.GameContentPageViewModel>();
+        services.AddSingleton<ViewModels.Pages.SettingsPageViewModel>();
+
         return services;
+    }
+}
+
+/// <summary>
+/// Builds a <see cref="ModRecommender"/> from the currently-active AI provider, or null if
+/// none is configured. Resolves the active provider at call time so the UI can switch providers.
+/// </summary>
+public sealed class ModRecommenderFactory
+{
+    private readonly SettingsStore _settings;
+    private readonly ChatClientFactory _clients;
+
+    public ModRecommenderFactory(SettingsStore settings, ChatClientFactory clients)
+    {
+        _settings = settings;
+        _clients = clients;
+    }
+
+    public ModRecommender? TryCreate()
+    {
+        LauncherSettings s = _settings.Load();
+        if (string.IsNullOrEmpty(s.ActiveProviderName)) return null;
+        ChatProviderConfig? cfg = s.Providers.FirstOrDefault(p => p.Name == s.ActiveProviderName);
+        return cfg is null ? null : new ModRecommender(_clients.Create(cfg),
+            Microsoft.Extensions.Logging.Abstractions.NullLogger<ModRecommender>.Instance);
     }
 }
 

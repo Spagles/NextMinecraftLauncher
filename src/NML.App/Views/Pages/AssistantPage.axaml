@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:NML.App.Localization"
+             x:Class="NML.App.Views.Pages.AssistantPage">
+    <DockPanel LastChildFill="True">
+        <!-- Input bar -->
+        <Border DockPanel.Dock="Bottom" Background="#2d2d33" Padding="16,10">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBox Text="{Binding Input}" Watermark="{loc:Loc 'assistant.placeholder'}" MinWidth="500"
+                         IsEnabled="{Binding !IsBusy}"/>
+                <Button Content="{loc:Loc 'assistant.send'}" Command="{Binding SendCommand}"
+                        IsEnabled="{Binding !IsBusy}" Background="#4caf50" Foreground="White" Padding="18,6"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Conversation -->
+        <ScrollViewer Padding="24,16">
+            <ItemsControl ItemsSource="{Binding Conversation}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,6" Padding="14,10" CornerRadius="8" HorizontalAlignment="Stretch">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="{Binding Role}" Foreground="#4fc3f7" FontSize="11"/>
+                                <SelectableTextBlock Text="{Binding Content}" Foreground="#e0e0e0" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

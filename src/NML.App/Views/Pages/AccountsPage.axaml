@@ -1,0 +1,51 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:NML.App.Localization"
+             x:Class="NML.App.Views.Pages.AccountsPage" x:Name="Root">
+    <ScrollViewer Padding="24">
+        <StackPanel Spacing="16" MaxWidth="640">
+            <!-- Add account -->
+            <StackPanel Spacing="8">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBox Text="{Binding NewOfflineUsername}" Watermark="{loc:Loc 'accounts.username'}" MinWidth="180"/>
+                    <Button Content="{loc:Loc 'accounts.add_offline'}" Command="{Binding AddOfflineAccountCommand}"/>
+                </StackPanel>
+                <Button Content="{loc:Loc 'accounts.add_microsoft'}" Command="{Binding AddMicrosoftAccountCommand}"
+                        IsEnabled="{Binding !IsBusy}" Background="#2f5fcc" Foreground="White" Padding="14,6"/>
+            </StackPanel>
+
+            <!-- Device code hint -->
+            <Border Background="#2a2a30" Padding="12" CornerRadius="4" IsVisible="{Binding ShowDeviceCode}">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="{Binding DeviceCodeMessage}" Foreground="#4fc3f7" FontSize="13"/>
+                    <TextBlock Text="{loc:Loc 'accounts.ms_polling'}" Foreground="#888" FontSize="11"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Account list -->
+            <ItemsControl ItemsSource="{Binding Accounts}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="#1f1f25" CornerRadius="4" Padding="14,10" Margin="0,2">
+                            <Grid ColumnDefinitions="*,Auto,Auto">
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{Binding Username}" Foreground="White"/>
+                                    <TextBlock Text="{Binding Uuid}" FontSize="10" Foreground="#888"/>
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="{loc:Loc 'accounts.activate'}" Classes="small" Margin="6,0"
+                                        Command="{Binding #Root.DataContext.ActivateCommand}" CommandParameter="{Binding}"/>
+                                <Button Grid.Column="2" Content="{loc:Loc 'accounts.remove'}" Classes="small danger"
+                                        Command="{Binding #Root.DataContext.RemoveCommand}" CommandParameter="{Binding}"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
+
+    <UserControl.Styles>
+        <Style Selector="Button.small"><Setter Property="Padding" Value="10,4"/><Setter Property="FontSize" Value="12"/></Style>
+        <Style Selector="Button.small.danger"><Setter Property="Background" Value="#b23b3b"/><Setter Property="Foreground" Value="White"/></Style>
+    </UserControl.Styles>
+</UserControl>
