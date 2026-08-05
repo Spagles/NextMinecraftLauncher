@@ -92,6 +92,8 @@ public partial class SettingsPageViewModel : PageViewModelBase
             _ => Avalonia.Styling.ThemeVariant.Dark,
         };
         Avalonia.Application.Current!.RequestedThemeVariant = variant;
+        // Persist the theme choice so it survives restarts.
+        PersistSettings();
     }
 
     public SettingsPageViewModel(
@@ -117,6 +119,7 @@ public partial class SettingsPageViewModel : PageViewModelBase
         MinecraftPath = s.MinecraftRoot ?? string.Empty;
         BackgroundImagePath = s.BackgroundImagePath ?? string.Empty;
         AccentColor = s.AccentColor ?? "#4fc3f7";
+        Theme = s.Theme ?? "dark";
         foreach (ChatProviderConfig p in s.Providers) Providers.Add(p);
         SelectedLanguage = AvailableLanguages.FirstOrDefault(c =>
             c.Name.Equals(LocalizationService.Instance.CurrentCulture.Name, StringComparison.OrdinalIgnoreCase));
@@ -199,6 +202,7 @@ public partial class SettingsPageViewModel : PageViewModelBase
         s.MinecraftRoot = MinecraftPath;
         s.BackgroundImagePath = string.IsNullOrEmpty(BackgroundImagePath) ? null : BackgroundImagePath;
         s.AccentColor = string.IsNullOrEmpty(AccentColor) ? null : AccentColor;
+        s.Theme = Theme;
         _settings.Save(s);
     }
 

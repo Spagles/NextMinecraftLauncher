@@ -25,6 +25,9 @@ public sealed class LauncherSettings
     /// <summary>Custom accent color as hex (e.g. "#4fc3f7"). Null = default.</summary>
     public string? AccentColor { get; set; }
 
+    /// <summary>UI theme: "dark", "light", or "system". Null = dark.</summary>
+    public string? Theme { get; set; }
+
     /// <summary>Launcher settings directory (where this file, instances.json, secrets live).</summary>
     public string SettingsDir { get; set; } = string.Empty;
 }
