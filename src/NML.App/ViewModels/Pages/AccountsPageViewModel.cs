@@ -24,6 +24,8 @@ public partial class AccountsPageViewModel : PageViewModelBase
     private readonly MicrosoftAuthProvider _microsoft;
     private readonly AccountStore _accountStore;
     private readonly SkinService _skinService;
+    private readonly SkinUploadService _skinUpload;
+    private readonly ICommunitySkinSource _communitySource;
     private readonly ILogger<AccountsPageViewModel> _logger;
 
     public ObservableCollection<Account> Accounts { get; } = new();
@@ -63,6 +65,17 @@ public partial class AccountsPageViewModel : PageViewModelBase
     /// <summary>Path to the downloaded skin PNG for the active account (drives the 3D preview).</summary>
     [ObservableProperty] private string? _activeSkinPngPath;
 
+    // --- skin upload + community browsing ---
+    /// <summary>Community skins currently displayed in the browse panel.</summary>
+    public ObservableCollection<CommunitySkin> CommunitySkins { get; } = new();
+
+    [ObservableProperty] private string _communitySearchText = string.Empty;
+    [ObservableProperty] private SkinVariant _uploadVariant = SkinVariant.Classic;
+    [ObservableProperty] private string? _uploadPngPath;
+    [ObservableProperty] private bool _isUploadingSkin;
+    [ObservableProperty] private bool _isBrowsingSkins;
+    [ObservableProperty] private bool _hasCommunitySkins;
+
     public AccountsPageViewModel(
         IOfflineAuthProvider offline,
         MicrosoftAuthProvider microsoft,
@@ -70,7 +83,9 @@ public partial class AccountsPageViewModel : PageViewModelBase
         SkinService skinService,
         AuthlibInjectorServerStore serverStore,
         ILogger<AccountsPageViewModel> logger,
-        AuthlibInjectorProvider? authlibProvider = null)
+        AuthlibInjectorProvider? authlibProvider = null,
+        SkinUploadService? skinUpload = null,
+        ICommunitySkinSource? communitySource = null)
     {
         _offline = offline;
         _microsoft = microsoft;
@@ -78,6 +93,8 @@ public partial class AccountsPageViewModel : PageViewModelBase
         _skinService = skinService;
         _serverStore = serverStore;
         _authlibProvider = authlibProvider;
+        _skinUpload = skinUpload;
+        _communitySource = communitySource!; // DI always provides one; null only in design-time data
         _logger = logger;
         EnsureLanguageSubscribed();
 
@@ -245,4 +262,111 @@ public partial class AccountsPageViewModel : PageViewModelBase
     }
 
     private void RefreshHasServers() => HasAuthlibServers = AuthlibServers.Count > 0;
+
+    // --- skin upload + community commands ---
+
+    /// <summary>Upload the selected PNG as the active account's skin via the Mojang API.</summary>
+    [RelayCommand]
+    private async Task UploadSkinAsync()
+    {
+        if (_skinUpload is null) { Status = "common.error"; return; }
+        if (ActiveAccount is null || string.IsNullOrEmpty(ActiveAccount.AccessToken)
+            || ActiveAccount.AccountType == "legacy")
+        {
+            Status = "skins.no_ms_token";
+            return;
+        }
+        if (string.IsNullOrEmpty(UploadPngPath) || !File.Exists(UploadPngPath))
+        {
+            Status = "common.error";
+            return;
+        }
+
+        IsUploadingSkin = true;
+        Status = "skins.upload_button";
+        try
+        {
+            await _skinUpload.UploadAsync(ActiveAccount.AccessToken, UploadPngPath, UploadVariant);
+            // Re-download the skin so the preview shows the new look.
+            await DownloadSkinPngAsync();
+            Status = "skins.upload_success";
+        }
+        catch (Exception ex)
+        {
+            Status = $"skins.upload_failed,{ex.Message}";
+            _logger.LogError(ex, "Skin upload failed.");
+        }
+        finally { IsUploadingSkin = false; }
+    }
+
+    /// <summary>Reset the active account's skin to the default.</summary>
+    [RelayCommand]
+    private async Task ResetSkinAsync()
+    {
+        if (_skinUpload is null || ActiveAccount is null
+            || string.IsNullOrEmpty(ActiveAccount.AccessToken)) { Status = "skins.no_ms_token"; return; }
+        try
+        {
+            await _skinUpload.ResetAsync(ActiveAccount.AccessToken);
+            await DownloadSkinPngAsync();
+            Status = "skins.reset_success";
+        }
+        catch (Exception ex) { Status = $"skins.upload_failed,{ex.Message}"; }
+    }
+
+    /// <summary>Browse popular community skins from the active source.</summary>
+    [RelayCommand]
+    private async Task BrowseCommunityAsync()
+    {
+        IsBrowsingSkins = true;
+        CommunitySkins.Clear();
+        Status = "common.loading";
+        try
+        {
+            IReadOnlyList<CommunitySkin> skins = await _communitySource.BrowseAsync();
+            foreach (CommunitySkin s in skins) CommunitySkins.Add(s);
+            HasCommunitySkins = CommunitySkins.Count > 0;
+            Status = HasCommunitySkins ? $"{CommunitySkins.Count}" : "skins.community_empty";
+        }
+        catch (Exception ex)
+        {
+            Status = $"common.error,{ex.Message}";
+            _logger.LogError(ex, "Community browse failed.");
+        }
+        finally { IsBrowsingSkins = false; }
+    }
+
+    /// <summary>Search community skins by text.</summary>
+    [RelayCommand]
+    private async Task SearchCommunityAsync()
+    {
+        if (string.IsNullOrWhiteSpace(CommunitySearchText)) { await BrowseCommunityAsync(); return; }
+        IsBrowsingSkins = true;
+        CommunitySkins.Clear();
+        try
+        {
+            IReadOnlyList<CommunitySkin> skins = await _communitySource.SearchAsync(CommunitySearchText.Trim());
+            foreach (CommunitySkin s in skins) CommunitySkins.Add(s);
+            HasCommunitySkins = CommunitySkins.Count > 0;
+            Status = HasCommunitySkins ? $"{CommunitySkins.Count}" : "skins.community_empty";
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+        finally { IsBrowsingSkins = false; }
+    }
+
+    /// <summary>Download a community skin PNG and set it as the upload target (preview before upload).</summary>
+    [RelayCommand]
+    private async Task InstallCommunitySkinAsync(CommunitySkin skin)
+    {
+        if (skin is null) return;
+        try
+        {
+            // Download the skin PNG into the skins cache for preview.
+            string? cacheDir = Path.GetDirectoryName(ActiveSkinPngPath ?? string.Empty);
+            if (string.IsNullOrEmpty(cacheDir)) { Status = "common.error"; return; }
+            UploadVariant = skin.Model == "slim" ? SkinVariant.Slim : SkinVariant.Classic;
+            Status = "skins.community_install";
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
 }

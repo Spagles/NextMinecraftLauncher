@@ -84,6 +84,54 @@
                 </StackPanel>
             </Border>
 
+            <!-- Skin upload -->
+            <Border Background="#1f1f25" CornerRadius="4" Padding="14,12" IsVisible="{Binding HasActiveAccount}">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="{loc:Loc 'skins.upload_title'}" Foreground="#4fc3f7" FontSize="13" FontWeight="SemiBold"/>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <ComboBox SelectedIndex="0" MinWidth="140">
+                            <ComboBoxItem Content="{loc:Loc 'skins.model_classic'}"/>
+                            <ComboBoxItem Content="{loc:Loc 'skins.model_slim'}"/>
+                        </ComboBox>
+                        <TextBox Text="{Binding UploadPngPath}" Watermark="skin.png" MinWidth="180"/>
+                        <Button Content="{loc:Loc 'skins.upload_button'}" Command="{Binding UploadSkinCommand}"
+                                IsEnabled="{Binding !IsUploadingSkin}" Classes="small"/>
+                        <Button Content="{loc:Loc 'skins.reset'}" Command="{Binding ResetSkinCommand}" Classes="small"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Community skin library -->
+            <Border Background="#1f1f25" CornerRadius="4" Padding="14,12">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="{loc:Loc 'skins.community_title'}" Foreground="#4fc3f7" FontSize="13" FontWeight="SemiBold"/>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBox Text="{Binding CommunitySearchText}" Watermark="{loc:Loc 'skins.community_search_placeholder'}" MinWidth="220"/>
+                        <Button Content="{loc:Loc 'skins.community_search'}" Command="{Binding SearchCommunityCommand}" Classes="small"/>
+                        <Button Content="{loc:Loc 'skins.community_browse'}" Command="{Binding BrowseCommunityCommand}" Classes="small"/>
+                    </StackPanel>
+                    <ItemsControl ItemsSource="{Binding CommunitySkins}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#2a2a30" CornerRadius="4" Padding="8" Margin="0,2">
+                                    <Grid ColumnDefinitions="40,*,Auto">
+                                        <Image Grid.Column="0" Source="{Binding PreviewUrl}" Width="32" Height="32"/>
+                                        <StackPanel Grid.Column="1" Margin="8,0" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Name}" Foreground="White" FontSize="12"/>
+                                            <TextBlock Text="{Binding Model}" Foreground="#888" FontSize="10"/>
+                                        </StackPanel>
+                                        <Button Grid.Column="2" Content="{loc:Loc 'skins.community_install'}" Classes="small"
+                                                Command="{Binding #Root.DataContext.InstallCommunitySkinCommand}" CommandParameter="{Binding}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock Text="{loc:Loc 'skins.community_empty'}" Foreground="#888" FontSize="11"
+                               IsVisible="{Binding !HasCommunitySkins}"/>
+                </StackPanel>
+            </Border>
+
             <!-- Account list -->
             <ItemsControl ItemsSource="{Binding Accounts}">
                 <ItemsControl.ItemTemplate>

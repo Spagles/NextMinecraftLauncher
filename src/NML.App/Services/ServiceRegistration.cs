@@ -110,6 +110,9 @@ public static class ServiceRegistration
             var fetcher = sp.GetRequiredService<IHttpFetcher>();
             return new SkinService(fetcher, System.IO.Path.Combine(settings.SettingsDir, "skins"));
         });
+        services.AddSingleton<SkinUploadService>();
+        services.AddSingleton<ICommunitySkinSource>(sp =>
+            new MineSkinSource(sp.GetRequiredService<IHttpFetcher>()));
 
         // --- Mod catalogs + recommender ---
         services.AddSingleton<NML.Data.Modrinth.ModrinthCatalog>();
