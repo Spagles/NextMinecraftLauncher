@@ -52,8 +52,18 @@ public sealed class ForgeProcessorExecutor
                 continue;
             }
 
-            _logger.LogInformation("Running Forge processor {Index}/{Total} ({Jar})…",
-                i + 1, profile.Processors.Count, p.Jar);
+            // Classify the processor so we can apply type-specific conventions + sanity-check args.
+            ForgeProcessorKind kind = ForgeProcessorTypeRegistry.Classify(p);
+            int? minArgs = ForgeProcessorTypeRegistry.ExpectedMinArgs(kind);
+            if (minArgs is int expected && (p.Args is null || p.Args.Count < expected))
+            {
+                throw new InvalidOperationException(
+                    $"Forge processor '{p.Jar}' classified as {ForgeProcessorTypeRegistry.Describe(kind)} " +
+                    $"but has only {p.Args?.Count ?? 0} args (expected ≥ {expected}). Install cannot continue.");
+            }
+
+            _logger.LogInformation("Running Forge processor {Index}/{Total} ({Kind}: {Jar})…",
+                i + 1, profile.Processors.Count, ForgeProcessorTypeRegistry.Describe(kind), p.Jar);
 
             // Build the classpath: the processor's own jar + its declared classpath libs.
             string processorJarPath = ResolveLibRef(p.Jar, ctx);
