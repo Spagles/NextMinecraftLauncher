@@ -164,6 +164,8 @@
   "content.open_folder": "Open folder",
   "content.empty": "Nothing here yet",
   "content.backup": "Backup",
+  "content.import_world": "Import world",
+  "content.import_world_placeholder": "Paste .zip world path…",
   "content.export": "Export",
   "content.open": "Open",
   "content.delete": "Delete",

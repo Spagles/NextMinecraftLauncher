@@ -58,6 +58,15 @@
                 <TextBlock Text="{loc:Loc 'content.empty'}" Foreground="#888" FontSize="12" Margin="0,12"
                            IsVisible="{Binding IsEmpty}"/>
 
+                <!-- Import world row (visible on saves tab) -->
+                <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,8"
+                            IsVisible="{Binding IsSavesTab}">
+                    <TextBox Text="{Binding ImportWorldPath}" Watermark="{loc:Loc 'content.import_world_placeholder'}" MinWidth="300" FontSize="11"/>
+                    <Button Content="{loc:Loc 'content.import_world'}" Classes="small"
+                            Command="{Binding ImportWorldCommand}"
+                            CommandParameter="{Binding ImportWorldPath}"/>
+                </StackPanel>
+
                 <!-- Log viewer (visible on the logs tab) -->
                 <StackPanel IsVisible="{Binding IsLogsTab}" Spacing="8" Margin="0,12,0,0">
                     <StackPanel Orientation="Horizontal" Spacing="8">

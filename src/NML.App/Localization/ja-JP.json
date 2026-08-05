@@ -164,6 +164,8 @@
   "content.open_folder": "フォルダを開く",
   "content.empty": "データがありません",
   "content.backup": "バックアップ",
+  "content.import_world": "ワールドをインポート",
+  "content.import_world_placeholder": ".zip ワールドパスを貼り付け…",
   "content.export": "エクスポート",
   "content.open": "開く",
   "content.delete": "削除",

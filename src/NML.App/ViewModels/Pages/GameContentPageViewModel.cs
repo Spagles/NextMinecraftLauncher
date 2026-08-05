@@ -33,6 +33,7 @@ public partial class GameContentPageViewModel : PageViewModelBase
     [ObservableProperty] private bool _isCheckingModUpdates;
     [ObservableProperty] private int _updatesAvailable;
     [ObservableProperty] private bool _isEmpty = true;
+    [ObservableProperty] private string _importWorldPath = string.Empty;
 
     public GameContentPageViewModel(
         InstanceStore instances,

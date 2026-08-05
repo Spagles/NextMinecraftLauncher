@@ -164,6 +164,8 @@
   "content.open_folder": "폴더 열기",
   "content.empty": "데이터가 없습니다",
   "content.backup": "백업",
+  "content.import_world": "월드 가져오기",
+  "content.import_world_placeholder": ".zip 월드 경로 붙여넣기…",
   "content.export": "내보내기",
   "content.open": "열기",
   "content.delete": "삭제",

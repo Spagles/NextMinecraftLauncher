@@ -164,6 +164,8 @@
   "content.open_folder": "打开目录",
   "content.empty": "暂无内容",
   "content.backup": "备份",
+  "content.import_world": "导入存档",
+  "content.import_world_placeholder": "粘贴 .zip 存档路径…",
   "content.export": "导出",
   "content.open": "打开",
   "content.delete": "删除",
