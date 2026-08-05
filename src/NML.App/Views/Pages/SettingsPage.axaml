@@ -27,6 +27,25 @@
                         <Button Content="{loc:Loc 'settings.background_clear'}" Click="ClearBackground_Click" Classes="small"/>
                     </StackPanel>
                 </StackPanel>
+                <StackPanel Spacing="6">
+                    <TextBlock Text="{loc:Loc 'settings.accent_color'}" Foreground="#ccc"/>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <ItemsControl ItemsSource="{Binding AccentPresets}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="6"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Width="28" Height="28" CornerRadius="4" Padding="0"
+                                            Background="{Binding}" Click="PickAccent_Click" Tag="{Binding}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBox Text="{Binding AccentColor}" MinWidth="100" FontFamily="Cascadia Code,Consolas,monospace" FontSize="11"/>
+                    </StackPanel>
+                </StackPanel>
             </StackPanel>
 
             <!-- Java -->

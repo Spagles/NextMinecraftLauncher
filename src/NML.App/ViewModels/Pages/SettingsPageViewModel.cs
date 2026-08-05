@@ -46,6 +46,34 @@ public partial class SettingsPageViewModel : PageViewModelBase
     /// <summary>Custom background image path (PCL-style). Empty = default.</summary>
     [ObservableProperty] private string _backgroundImagePath = string.Empty;
 
+    /// <summary>Custom accent color hex (e.g. "#4fc3f7"). Empty = default blue.</summary>
+    [ObservableProperty] private string _accentColor = "#4fc3f7";
+
+    /// <summary>Preset accent colors for quick selection.</summary>
+    public IReadOnlyList<string> AccentPresets { get; } = new[]
+    {
+        "#4fc3f7", // blue
+        "#66bb6a", // green
+        "#ff7043", // orange
+        "#ab47bc", // purple
+        "#ef5350", // red
+        "#26c6da", // cyan
+        "#ffa726", // amber
+    };
+
+    partial void OnAccentColorChanged(string value)
+    {
+        // Apply globally via Avalonia's Application.Current.Resources.
+        try
+        {
+            if (string.IsNullOrEmpty(value)) return;
+            var color = Avalonia.Media.Color.Parse(value);
+            // Set the theme accent resource.
+            Avalonia.Application.Current!.Resources["SystemAccentColor"] = color;
+        }
+        catch { /* invalid hex — ignore */ }
+    }
+
     [ObservableProperty] private string _updateStatus = string.Empty;
     [ObservableProperty] private string _updateUrl = string.Empty;
     [ObservableProperty] private bool _isCheckingUpdate;
@@ -88,6 +116,7 @@ public partial class SettingsPageViewModel : PageViewModelBase
         LauncherSettings s = settings.Load();
         MinecraftPath = s.MinecraftRoot ?? string.Empty;
         BackgroundImagePath = s.BackgroundImagePath ?? string.Empty;
+        AccentColor = s.AccentColor ?? "#4fc3f7";
         foreach (ChatProviderConfig p in s.Providers) Providers.Add(p);
         SelectedLanguage = AvailableLanguages.FirstOrDefault(c =>
             c.Name.Equals(LocalizationService.Instance.CurrentCulture.Name, StringComparison.OrdinalIgnoreCase));
@@ -169,6 +198,7 @@ public partial class SettingsPageViewModel : PageViewModelBase
         s.ActiveProviderName = ActiveProvider?.Name;
         s.MinecraftRoot = MinecraftPath;
         s.BackgroundImagePath = string.IsNullOrEmpty(BackgroundImagePath) ? null : BackgroundImagePath;
+        s.AccentColor = string.IsNullOrEmpty(AccentColor) ? null : AccentColor;
         _settings.Save(s);
     }
 

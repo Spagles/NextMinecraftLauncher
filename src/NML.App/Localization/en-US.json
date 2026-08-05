@@ -185,6 +185,7 @@
   "settings.background_image": "Custom background image",
   "settings.background_browse": "Browse…",
   "settings.background_clear": "Clear",
+  "settings.accent_color": "Accent color",
   "settings.theme": "Theme",
   "settings.theme_dark": "Dark",
   "settings.theme_light": "Light",

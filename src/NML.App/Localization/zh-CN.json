@@ -185,6 +185,7 @@
   "settings.background_image": "自定义背景图片",
   "settings.background_browse": "浏览…",
   "settings.background_clear": "清除",
+  "settings.accent_color": "强调色",
   "settings.theme": "主题",
   "settings.theme_dark": "深色",
   "settings.theme_light": "浅色",

@@ -185,6 +185,7 @@
   "settings.background_image": "カスタム背景画像",
   "settings.background_browse": "参照…",
   "settings.background_clear": "クリア",
+  "settings.accent_color": "アクセントカラー",
   "settings.theme": "テーマ",
   "settings.theme_dark": "ダーク",
   "settings.theme_light": "ライト",

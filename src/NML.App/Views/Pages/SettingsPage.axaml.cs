@@ -12,8 +12,13 @@ public partial class SettingsPage : UserControl
     private void ClearBackground_Click(object? sender, RoutedEventArgs e)
     {
         if (DataContext is SettingsPageViewModel vm)
-        {
             vm.BackgroundImagePath = string.Empty;
-        }
+    }
+
+    /// <summary>Pick an accent color from a preset button (Tag = hex color).</summary>
+    private void PickAccent_Click(object? sender, RoutedEventArgs e)
+    {
+        if (sender is Button b && b.Tag is string hex && DataContext is SettingsPageViewModel vm)
+            vm.AccentColor = hex;
     }
 }

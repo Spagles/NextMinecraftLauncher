@@ -22,6 +22,9 @@ public sealed class LauncherSettings
     /// <summary>Custom background image path for the launcher window (PCL-style). Null = default dark background.</summary>
     public string? BackgroundImagePath { get; set; }
 
+    /// <summary>Custom accent color as hex (e.g. "#4fc3f7"). Null = default.</summary>
+    public string? AccentColor { get; set; }
+
     /// <summary>Launcher settings directory (where this file, instances.json, secrets live).</summary>
     public string SettingsDir { get; set; } = string.Empty;
 }

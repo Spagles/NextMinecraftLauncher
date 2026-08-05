@@ -185,6 +185,7 @@
   "settings.background_image": "사용자 정의 배경 이미지",
   "settings.background_browse": "찾아보기…",
   "settings.background_clear": "지우기",
+  "settings.accent_color": "강조 색상",
   "settings.theme": "테마",
   "settings.theme_dark": "다크",
   "settings.theme_light": "라이트",
