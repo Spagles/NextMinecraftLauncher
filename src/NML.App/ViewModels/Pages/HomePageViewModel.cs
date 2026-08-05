@@ -48,6 +48,17 @@ public partial class HomePageViewModel : PageViewModelBase
     [ObservableProperty] private bool _isBusy;
     [ObservableProperty] private int _installProgressPercent;
 
+    /// <summary>Live game console output (stdout+stderr), shown in the console panel.</summary>
+    [ObservableProperty] private string _consoleOutput = string.Empty;
+
+    private void OnGameOutput(string line)
+    {
+        // Append to console (cap at 5000 chars to avoid unbounded growth).
+        string next = ConsoleOutput + line + "\n";
+        if (next.Length > 5000) next = next[^5000..];
+        ConsoleOutput = next;
+    }
+
     /// <summary>System total RAM in MB (drives the slider max + recommended hint).</summary>
     public long SystemRamMb
     {
@@ -232,9 +243,13 @@ public partial class HomePageViewModel : PageViewModelBase
 
             string logFile = Path.Combine(mc.Root, "logs", $"launch-{DateTimeOffset.UtcNow:yyyyMMdd-HHmmss}.log");
             Process process = _processLauncher.Launch(opts, argv, logFile);
+            // Subscribe to live output for the console panel.
+            _processLauncher.GameOutputReceived += OnGameOutput;
+            ConsoleOutput = string.Empty;
             Status = $"home.launched,{inst.VersionId},{process.Id}";
 
             await process.WaitForExitAsync();
+            _processLauncher.GameOutputReceived -= OnGameOutput;
             Status = process.ExitCode != 0 ? $"home.crashed,{process.ExitCode}" : "home.clean_exit";
             if (process.ExitCode != 0) await DiagnoseCrashAsync(logFile);
         }

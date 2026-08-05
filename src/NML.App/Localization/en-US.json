@@ -42,6 +42,7 @@
   "home.export_instance": "Export instance",
   "home.import_instance": "Import instance",
   "home.clone_instance": "Clone instance",
+  "home.console": "Live console",
   "home.exported": "Exported to {0}",
 
   "download.title": "Download Center",

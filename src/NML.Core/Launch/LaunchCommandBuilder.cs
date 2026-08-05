@@ -225,6 +225,9 @@ public sealed class ProcessLauncher(ILogger<ProcessLauncher> logger)
 {
     private readonly ILogger<ProcessLauncher> _logger = logger;
 
+    /// <summary>Fires for each line of game output (stdout+stderr) — consumed by the console UI.</summary>
+    public event Action<string>? GameOutputReceived;
+
     /// <summary>
     /// Launch the game. Returns the started <see cref="Process"/>; stdout/stderr are
     /// captured to <paramref name="logSink"/> (a per-launch log file) for crash analysis.
@@ -249,11 +252,21 @@ public sealed class ProcessLauncher(ILogger<ProcessLauncher> logger)
         var process = new Process { StartInfo = psi, EnableRaisingEvents = true };
         process.OutputDataReceived += (_, e) =>
         {
-            if (e.Data is not null) { log.WriteLine(e.Data); _logger.LogDebug("[MC] {Line}", e.Data); }
+            if (e.Data is not null)
+            {
+                log.WriteLine(e.Data);
+                _logger.LogDebug("[MC] {Line}", e.Data);
+                GameOutputReceived?.Invoke(e.Data);
+            }
         };
         process.ErrorDataReceived += (_, e) =>
         {
-            if (e.Data is not null) { log.WriteLine(e.Data); _logger.LogWarning("[MC] {Line}", e.Data); }
+            if (e.Data is not null)
+            {
+                log.WriteLine(e.Data);
+                _logger.LogWarning("[MC] {Line}", e.Data);
+                GameOutputReceived?.Invoke(e.Data);
+            }
         };
 
         _logger.LogInformation("Launching {Exe} (version {Id})…", options.Java.ExecutablePath, options.Version.Id);

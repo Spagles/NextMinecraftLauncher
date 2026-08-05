@@ -57,6 +57,18 @@
                     IsEnabled="{Binding !IsBusy}"
                     FontSize="15" FontWeight="Bold" Background="#4caf50" Foreground="White"
                     HorizontalAlignment="Stretch" Padding="0,14"/>
+
+            <!-- Live game console -->
+            <StackPanel Spacing="4" IsVisible="{Binding IsBusy}">
+                <TextBlock Text="{loc:Loc 'home.console'}" Foreground="#4fc3f7" FontSize="13" FontWeight="SemiBold"/>
+                <Border Background="#1a1a1e" CornerRadius="4" Padding="8" MaxHeight="300">
+                    <ScrollViewer>
+                        <SelectableTextBlock Text="{Binding ConsoleOutput}" Foreground="#c0c0c0"
+                                             FontFamily="Cascadia Code,Consolas,monospace" FontSize="11"
+                                             TextWrapping="NoWrap"/>
+                    </ScrollViewer>
+                </Border>
+            </StackPanel>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

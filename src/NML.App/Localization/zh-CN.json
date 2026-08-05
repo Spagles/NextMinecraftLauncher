@@ -42,6 +42,7 @@
   "home.export_instance": "导出实例",
   "home.import_instance": "导入实例",
   "home.clone_instance": "克隆实例",
+  "home.console": "实时控制台",
   "home.exported": "已导出到 {0}",
 
   "download.title": "下载中心",

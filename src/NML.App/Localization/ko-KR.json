@@ -42,6 +42,7 @@
   "home.export_instance": "인스턴스 내보내기",
   "home.import_instance": "인스턴스 가져오기",
   "home.clone_instance": "인스턴스 복제",
+  "home.console": "실시간 콘솔",
   "home.exported": "{0}로 내보냈습니다",
 
   "download.title": "다운로드 센터",

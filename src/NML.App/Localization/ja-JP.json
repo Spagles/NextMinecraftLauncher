@@ -42,6 +42,7 @@
   "home.export_instance": "インスタンスをエクスポート",
   "home.import_instance": "インスタンスをインポート",
   "home.clone_instance": "インスタンスを複製",
+  "home.console": "ライブコンソール",
   "home.exported": "{0} にエクスポートしました",
 
   "download.title": "ダウンロードセンター",
