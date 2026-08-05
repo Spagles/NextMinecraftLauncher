@@ -175,11 +175,12 @@ public partial class HomePageViewModel : PageViewModelBase
 
     public override Task OnNavigatedToAsync()
     {
-        // Refresh the instance list in case another page added one.
-        if (Instances.Count != _instances.LoadAll().Count)
+        // Refresh the instance list in case another page added/removed one.
+        var all = _instances.LoadAll();
+        if (Instances.Count != all.Count)
         {
             Instances.Clear();
-            foreach (Instance inst in _instances.LoadAll()) Instances.Add(inst);
+            foreach (Instance inst in all) Instances.Add(inst);
         }
         return Task.CompletedTask;
     }
