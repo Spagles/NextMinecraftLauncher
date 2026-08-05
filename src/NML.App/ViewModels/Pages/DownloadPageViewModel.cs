@@ -38,6 +38,11 @@ public partial class DownloadPageViewModel : PageViewModelBase
     [ObservableProperty] private string _installingVersion = string.Empty;
     [ObservableProperty] private int _installProgress;
 
+    /// <summary>True when an install is in progress (drives progress bar visibility).</summary>
+    public bool IsInstalling => !string.IsNullOrEmpty(InstallingVersion);
+
+    partial void OnInstallingVersionChanged(string value) => OnPropertyChanged(nameof(IsInstalling));
+
     public DownloadPageViewModel(
         VersionManifestService manifest,
         VanillaInstaller vanillaInstaller,

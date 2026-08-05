@@ -6,6 +6,11 @@
         <!-- Search + filter bar -->
         <StackPanel DockPanel.Dock="Top" Spacing="8" Margin="24,16,24,8">
             <TextBox Text="{Binding SearchText}" Watermark="{loc:Loc 'download.search_placeholder'}" MinWidth="400"/>
+            <!-- Install progress bar (visible only when installing) -->
+            <StackPanel Spacing="4" IsVisible="{Binding IsInstalling}">
+                <TextBlock Text="{Binding InstallingVersion}" Foreground="#4fc3f7" FontSize="12"/>
+                <ProgressBar Value="{Binding InstallProgress}" Maximum="100" MinHeight="4"/>
+            </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="6">
                 <Button Content="{loc:Loc 'download.filter_all'}"      Click="SelectFilter" Tag="all" Classes="tabbtn"/>
                 <Button Content="{loc:Loc 'download.filter_release'}"  Click="SelectFilter" Tag="release" Classes="tabbtn"/>
