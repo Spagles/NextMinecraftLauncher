@@ -94,6 +94,8 @@
   "skins.community_install": "使用此皮肤",
   "skins.community_empty": "暂无皮肤，点浏览加载",
   "skins.no_ms_token": "需要微软账户的访问令牌才能上传皮肤",
+  "skins.flip": "左右翻转",
+  "skins.rotate_hint": "🖱️ 拖动旋转，点翻转镜像",
 
   "mods.title": "Mod 中心",
   "mods.search_placeholder": "搜索 Mod（如 Sodium 光影）…",

@@ -25,6 +25,11 @@ public sealed class SkinPreviewControl : Control
     public static readonly StyledProperty<string?> SkinPathProperty =
         AvaloniaProperty.Register<SkinPreviewControl, string?>(nameof(SkinPath));
 
+    /// <summary>When true, the model is mirrored horizontally (left/right flip). Mirrors HMCL's
+    /// flip toggle so the user can see the skin from the other side.</summary>
+    public static readonly StyledProperty<bool> FlippedProperty =
+        AvaloniaProperty.Register<SkinPreviewControl, bool>(nameof(Flipped));
+
     /// <summary>Absolute path to the 64×64 skin PNG to render. Null/missing = gray placeholder.</summary>
     public string? SkinPath
     {
@@ -32,10 +37,17 @@ public sealed class SkinPreviewControl : Control
         set => SetValue(SkinPathProperty, value);
     }
 
+    /// <summary>True to mirror the model horizontally. Toggling re-renders immediately.</summary>
+    public bool Flipped
+    {
+        get => GetValue(FlippedProperty);
+        set => SetValue(FlippedProperty, value);
+    }
+
     static SkinPreviewControl()
     {
-        // Re-render when the skin path changes.
-        AffectsRender<SkinPreviewControl>(SkinPathProperty);
+        // Re-render when the skin path or flip state changes.
+        AffectsRender<SkinPreviewControl>(SkinPathProperty, FlippedProperty);
     }
 
     public SkinPreviewControl()
@@ -97,7 +109,8 @@ public sealed class SkinPreviewControl : Control
         double cx = Bounds.Width / 2;
         double cy = Bounds.Height / 2;
 
-        double yaw = _yaw * Math.PI / 180.0;
+        // Flipping mirrors the yaw so the model is seen from the opposite side.
+        double yaw = (Flipped ? -_yaw : _yaw) * Math.PI / 180.0;
         double pitch = _pitch * Math.PI / 180.0;
 
         // Project each face's 4 corners, then back-to-front by average depth (painter's algorithm).

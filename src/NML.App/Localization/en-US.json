@@ -94,6 +94,8 @@
   "skins.community_install": "Use this skin",
   "skins.community_empty": "No skins yet — click Browse",
   "skins.no_ms_token": "A Microsoft account access token is required to upload skins",
+  "skins.flip": "Flip left/right",
+  "skins.rotate_hint": "🖱️ drag to rotate, click flip to mirror",
 
   "mods.title": "Mod Center",
   "mods.search_placeholder": "Search mods (e.g. Sodium shaders)…",

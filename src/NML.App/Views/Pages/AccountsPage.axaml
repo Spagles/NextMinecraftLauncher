@@ -8,15 +8,18 @@
             <!-- Active account skin preview -->
             <Border Background="#1f1f25" CornerRadius="8" Padding="16" IsVisible="{Binding HasActiveAccount}">
                 <StackPanel Orientation="Horizontal" Spacing="16">
-                    <!-- Draggable 3D skin cube preview (drag to rotate) -->
-                    <ctl:SkinPreviewControl SkinPath="{Binding ActiveSkinPngPath}" Width="90" Height="120"/>
+                    <!-- Draggable 3D skin cube preview (drag to rotate, flip button mirrors) -->
+                    <StackPanel Spacing="4">
+                        <ctl:SkinPreviewControl x:Name="SkinPreview" SkinPath="{Binding ActiveSkinPngPath}" Width="90" Height="120"/>
+                        <ToggleButton Content="{loc:Loc 'skins.flip'}" IsChecked="{Binding #SkinPreview.Flipped}" HorizontalAlignment="Center" FontSize="11"/>
+                    </StackPanel>
                     <!-- 3D head render (static fallback) -->
                     <Image Source="{Binding ActiveHeadRenderUrl}" Width="64" Height="64" VerticalAlignment="Center"/>
                     <StackPanel VerticalAlignment="Center" Spacing="4">
                         <TextBlock Text="{Binding ActiveAccount.Username}" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
                         <Image Source="{Binding ActiveAvatarUrl}" Width="32" Height="32"/>
                         <TextBlock Text="{Binding ActiveAccount.Uuid}" Foreground="#888" FontSize="10"/>
-                        <TextBlock Text="🖱️ drag the model to rotate" Foreground="#666" FontSize="10" FontStyle="Italic"/>
+                        <TextBlock Text="{loc:Loc 'skins.rotate_hint'}" Foreground="#666" FontSize="10" FontStyle="Italic"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
