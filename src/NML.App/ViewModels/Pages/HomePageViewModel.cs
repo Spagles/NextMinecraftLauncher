@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using NML.App.Services;
 using NML.Core;
 using NML.Core.Auth;
+using NML.Core.Auth.AuthlibInjector;
 using NML.Core.Download;
 using NML.Core.Instances;
 using NML.Core.Java;
@@ -34,6 +35,8 @@ public partial class HomePageViewModel : PageViewModelBase
     private readonly IOfflineAuthProvider _offline;
     private readonly SettingsStore _settings;
     private readonly CrashAnalyzerFactory? _crashFactory;
+    private readonly AuthlibInjectorSetup? _authlibInjectorSetup;
+    private readonly AccountStore? _activeAccountStore;
     private readonly ILogger<HomePageViewModel> _logger;
 
     public ObservableCollection<Instance> Instances { get; } = new();
@@ -55,7 +58,9 @@ public partial class HomePageViewModel : PageViewModelBase
         IOfflineAuthProvider offline,
         SettingsStore settings,
         ILogger<HomePageViewModel> logger,
-        CrashAnalyzerFactory? crashFactory = null)
+        CrashAnalyzerFactory? crashFactory = null,
+        AuthlibInjectorSetup? authlibInjectorSetup = null,
+        AccountStore? activeAccountStore = null)
     {
         _manifest = manifest;
         _vanillaInstaller = vanillaInstaller;
@@ -67,6 +72,8 @@ public partial class HomePageViewModel : PageViewModelBase
         _offline = offline;
         _settings = settings;
         _crashFactory = crashFactory;
+        _authlibInjectorSetup = authlibInjectorSetup;
+        _activeAccountStore = activeAccountStore;
         _logger = logger;
         EnsureLanguageSubscribed();
         Status = "home.status_ready";
@@ -106,13 +113,36 @@ public partial class HomePageViewModel : PageViewModelBase
                              ?? runtimes.FirstOrDefault();
             if (java is null) { Status = $"home.no_java,{requiredMajor}"; return; }
 
+            // Default to an offline account; if the active account is an authlib-injector
+            // (external Yggdrasil) one, use it instead and prepare the java agent.
             Account account = _offline.Create(OfflineUsername);
+            AuthlibInjectorServer? authlibServer = null;
+            string? authlibJarPath = null;
+
+            // Pull the active account from the AccountStore and, if it's external-login,
+            // reconstruct the server + ensure the agent jar is cached before launching.
+            Account? activeExternal = _activeAccountStore?.LoadAll()
+                .FirstOrDefault(a => a.Uuid == _activeAccountStore?.GetActiveUuid()
+                                     && a.AccountType == "authlib-injector");
+            if (activeExternal is not null && _authlibInjectorSetup is not null
+                && !string.IsNullOrEmpty(activeExternal.Xuid))
+            {
+                account = activeExternal;
+                authlibServer = new AuthlibInjectorServer
+                {
+                    Name = activeExternal.Username,
+                    ApiUrl = activeExternal.Xuid, // server URL is stashed here on login
+                };
+                authlibJarPath = await _authlibInjectorSetup.EnsureAgentJarAsync();
+            }
 
             var opts = new LaunchOptions
             {
                 Version = version, Mc = mc, Account = account, Java = java,
                 MinMemoryMb = inst.MinMemoryMb, MaxMemoryMb = inst.MaxMemoryMb,
                 WindowWidth = inst.WindowWidth, WindowHeight = inst.WindowHeight,
+                AuthlibInjectorServer = authlibServer,
+                AuthlibInjectorJarPath = authlibJarPath,
             };
             List<string> argv = _launcher.Build(opts);
 

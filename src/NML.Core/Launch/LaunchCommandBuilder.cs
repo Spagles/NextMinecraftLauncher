@@ -36,6 +36,21 @@ public sealed class LaunchOptions
     /// <summary>Launch-time feature flags (demo, custom resolution, quick-play).</summary>
     public IReadOnlyDictionary<string, bool> Features { get; init; }
         = new Dictionary<string, bool>();
+
+    /// <summary>
+    /// Optional external Yggdrasil (authlib-injector) server. When set, the launch command
+    /// prepends <c>-javaagent:authlib-injector.jar=&lt;server URL&gt;</c> so the game's authlib
+    /// talks to the community server (LittleSkin etc.) instead of Mojang. This is HMCL's
+    /// signature "外置登录" feature. The account must have <c>AccountType == "authlib-injector"</c>.
+    /// </summary>
+    public Auth.AuthlibInjector.AuthlibInjectorServer? AuthlibInjectorServer { get; init; }
+
+    /// <summary>
+    /// Absolute path to a locally-cached <c>authlib-injector.jar</c>. Required when
+    /// <see cref="AuthlibInjectorServer"/> is set. The UI resolves this via
+    /// <see cref="AuthlibInjectorSetup.EnsureAgentJarAsync"/> before launching.
+    /// </summary>
+    public string? AuthlibInjectorJarPath { get; init; }
 }
 
 /// <summary>
@@ -64,6 +79,19 @@ public sealed class LaunchCommandBuilder
         string classpath = BuildClasspath(options);
 
         var argv = new List<string>();
+
+        // 0) authlib-injector agent (MUST precede all other JVM args so it patches authlib
+        //    before Minecraft loads it). Only when an external Yggdrasil server is configured.
+        if (options.AuthlibInjectorServer is not null && !string.IsNullOrEmpty(options.AuthlibInjectorJarPath))
+        {
+            if (!File.Exists(options.AuthlibInjectorJarPath))
+                throw new FileNotFoundException(
+                    "authlib-injector.jar not found at the configured path. Ensure it is downloaded before launching.",
+                    options.AuthlibInjectorJarPath);
+
+            argv.Add(AuthlibInjectorSetup.BuildAgentArgument(
+                options.AuthlibInjectorJarPath, options.AuthlibInjectorServer));
+        }
 
         // 1) JVM arguments: memory, platform-specific ones from version.json, then classpath.
         argv.Add($"-Xms{options.MinMemoryMb}M");

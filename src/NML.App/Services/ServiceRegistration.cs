@@ -61,6 +61,14 @@ public static class ServiceRegistration
         // --- Launch ---
         services.AddSingleton<LaunchCommandBuilder>();
         services.AddSingleton<ProcessLauncher>();
+        services.AddSingleton<AuthlibInjectorSetup>(sp =>
+        {
+            var settings = sp.GetRequiredService<SettingsStore>();
+            return new AuthlibInjectorSetup(
+                sp.GetRequiredService<IHttpFetcher>(),
+                Path.Combine(settings.SettingsDir, "authlib-injector"),
+                Microsoft.Extensions.Logging.Abstractions.NullLogger<AuthlibInjectorSetup>.Instance);
+        });
 
         // --- Settings & secrets ---
         services.AddSingleton(_ => new SettingsStore(settingsDir));
