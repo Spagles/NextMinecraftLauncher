@@ -1,19 +1,18 @@
-using NML.AICore;
+using NML.AICore.Providers;
 
 namespace NML.AICore.Tests;
 
 /// <summary>
-/// Smoke test proving the AICore project resolves. Real AI-feature tests
-/// (crash analysis, mod recommendation, natural-language config) arrive in M2.
+/// Smoke test proving the AICore test harness runs and core types resolve.
+/// Real feature tests live alongside.
 /// </summary>
 public class AiCoreSmokeTests
 {
     [Fact]
-    public void AiCore_assembly_is_loadable()
+    public void Provider_config_and_fake_client_are_accessible()
     {
-        var type = typeof(AssemblyMarker);
-
-        type.Should().NotBeNull();
-        type.Namespace.Should().Be("NML.AICore");
+        var fake = new FakeChatClient("hello");
+        fake.Provider.Model.Should().Be("fake-model");
+        fake.CallCount.Should().Be(0);
     }
 }
