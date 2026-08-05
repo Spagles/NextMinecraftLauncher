@@ -30,6 +30,7 @@ public partial class GameContentPageViewModel : PageViewModelBase
     {
         _instances = instances;
         _logger = logger;
+        EnsureLanguageSubscribed();
     }
 
     public override Task OnNavigatedToAsync() { Refresh(); return Task.CompletedTask; }

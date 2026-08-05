@@ -40,7 +40,7 @@
                                         Tag="{Binding TitleKey}">
                                     <StackPanel Orientation="Horizontal" Spacing="10">
                                         <TextBlock Text="{Binding Icon}" FontSize="15" Width="20"/>
-                                        <TextBlock Text="{Binding TitleKey}" Classes="navLabel"/>
+                                        <TextBlock Text="{Binding LocalizedTitle}" Classes="navLabel"/>
                                     </StackPanel>
                                 </Button>
                             </DataTemplate>
@@ -54,7 +54,7 @@
         <DockPanel Grid.Column="1" Background="#25252b">
             <!-- Page header -->
             <Border DockPanel.Dock="Top" Background="#2d2d33" Padding="24,14">
-                <TextBlock Text="{Binding CurrentPage.TitleKey}" FontSize="18" FontWeight="SemiBold" Foreground="White"/>
+                <TextBlock Text="{Binding CurrentPage.LocalizedTitle}" FontSize="18" FontWeight="SemiBold" Foreground="White"/>
             </Border>
 
             <!-- The page itself -->

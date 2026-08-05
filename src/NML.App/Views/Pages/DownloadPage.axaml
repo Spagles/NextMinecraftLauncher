@@ -7,8 +7,10 @@
         <StackPanel DockPanel.Dock="Top" Spacing="8" Margin="24,16,24,8">
             <TextBox Text="{Binding SearchText}" Watermark="{loc:Loc 'download.search_placeholder'}" MinWidth="400"/>
             <StackPanel Orientation="Horizontal" Spacing="6">
-                <RadioButton Content="{loc:Loc 'download.filter_release'}" GroupName="dlfilter"
-                             IsChecked="{Binding TypeFilter, Converter={x:Static StringConverters.IsNotNullOrEmpty}, Mode=OneWay}"/>
+                <Button Content="{loc:Loc 'download.filter_all'}"      Click="SelectFilter" Tag="all" Classes="tabbtn"/>
+                <Button Content="{loc:Loc 'download.filter_release'}"  Click="SelectFilter" Tag="release" Classes="tabbtn"/>
+                <Button Content="{loc:Loc 'download.filter_snapshot'}" Click="SelectFilter" Tag="snapshot" Classes="tabbtn"/>
+                <Button Content="{loc:Loc 'download.filter_old'}"      Click="SelectFilter" Tag="old_beta" Classes="tabbtn"/>
             </StackPanel>
             <Button Content="{loc:Loc 'common.refresh'}" Command="{Binding LoadCommand}" HorizontalAlignment="Left"/>
         </StackPanel>
@@ -35,6 +37,7 @@
     </DockPanel>
 
     <UserControl.Styles>
+        <Style Selector="Button.tabbtn"><Setter Property="Padding" Value="12,5"/><Setter Property="FontSize" Value="12"/></Style>
         <Style Selector="Button.small">
             <Setter Property="Padding" Value="12,4"/>
             <Setter Property="FontSize" Value="12"/>

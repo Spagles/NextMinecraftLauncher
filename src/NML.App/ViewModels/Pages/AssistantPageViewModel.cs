@@ -34,6 +34,7 @@ public partial class AssistantPageViewModel : PageViewModelBase
         _factory = factory;
         _settings = settings;
         _logger = logger;
+        EnsureLanguageSubscribed();
     }
 
     [RelayCommand]

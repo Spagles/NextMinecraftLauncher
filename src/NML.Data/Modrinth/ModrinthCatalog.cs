@@ -25,6 +25,41 @@ public sealed class ModrinthCatalog : IModCatalog
 
     public ModCatalogKind Kind => ModCatalogKind.Modrinth;
 
+    /// <summary>Search modpacks (project_type:modpack) instead of mods. For the modpack browser.</summary>
+    public async Task<IReadOnlyList<ModSearchResult>> SearchModpacksAsync(
+        string query, int limit = 20, CancellationToken ct = default)
+    {
+        var facets = new List<string> { "project_type:modpack" };
+
+        var qs = HttpUtility.ParseQueryString(string.Empty);
+        qs["query"] = query;
+        qs["limit"] = limit.ToString();
+        qs["facets"] = "[" + string.Join(",", facets.Select(f => $"[\"{f}\"]")) + "]";
+
+        string url = $"{BaseUrl}/search?{qs}";
+        string json = await _http.GetStringAsync(url, ct);
+        using var doc = JsonDocument.Parse(json);
+        var hits = doc.RootElement.GetProperty("hits");
+
+        var results = new List<ModSearchResult>();
+        foreach (var h in hits.EnumerateArray())
+        {
+            results.Add(new ModSearchResult
+            {
+                ProjectId = GetString(h, "project_id"),
+                Slug = GetString(h, "slug"),
+                Title = GetString(h, "title"),
+                Description = GetString(h, "description"),
+                Author = GetString(h, "author"),
+                Downloads = GetLong(h, "downloads"),
+                Categories = GetList(h, "categories"),
+                IconUrl = GetString(h, "icon_url"),
+                Source = ModCatalogKind.Modrinth,
+            });
+        }
+        return results;
+    }
+
     public async Task<IReadOnlyList<ModSearchResult>> SearchAsync(
         string query, string? gameVersion = null, ModLoader? loader = null,
         int limit = 20, CancellationToken ct = default)

@@ -42,6 +42,7 @@ public partial class AccountsPageViewModel : PageViewModelBase
         _microsoft = microsoft;
         _accountStore = accountStore;
         _logger = logger;
+        EnsureLanguageSubscribed();
 
         foreach (Account a in _accountStore.LoadAll()) Accounts.Add(a);
         ActiveAccount = Accounts.FirstOrDefault(a => a.Uuid == _accountStore.GetActiveUuid());

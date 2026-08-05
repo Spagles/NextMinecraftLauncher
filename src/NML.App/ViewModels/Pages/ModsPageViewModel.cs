@@ -33,6 +33,7 @@ public partial class ModsPageViewModel : PageViewModelBase
         _catalog = catalog;
         _recommenderFactory = recommenderFactory;
         _logger = logger;
+        EnsureLanguageSubscribed();
     }
 
     [RelayCommand]

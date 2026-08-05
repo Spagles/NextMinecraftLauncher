@@ -50,6 +50,7 @@ public partial class DownloadPageViewModel : PageViewModelBase
         _versions = versions;
         _instances = instances;
         _logger = logger;
+        EnsureLanguageSubscribed();
     }
 
     public override async Task OnNavigatedToAsync()
@@ -87,7 +88,15 @@ public partial class DownloadPageViewModel : PageViewModelBase
         IEnumerable<VersionManifestEntry> src = _all;
 
         if (TypeFilter != "all")
-            src = src.Where(v => v.Type == TypeFilter || (TypeFilter == "release" && v.Type == "release"));
+        {
+            // "all" shows everything; otherwise filter by exact Mojang type.
+            // (Releases = "release", Snapshots = "snapshot", Old = "old_beta" + "old_alpha".)
+            src = TypeFilter switch
+            {
+                "old_beta" => src.Where(v => v.Type == "old_beta" || v.Type == "old_alpha"),
+                _ => src.Where(v => v.Type == TypeFilter),
+            };
+        }
 
         if (!string.IsNullOrWhiteSpace(SearchText))
         {

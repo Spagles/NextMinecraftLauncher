@@ -68,6 +68,7 @@ public partial class HomePageViewModel : PageViewModelBase
         _settings = settings;
         _crashFactory = crashFactory;
         _logger = logger;
+        EnsureLanguageSubscribed();
         Status = "home.status_ready";
 
         foreach (Instance inst in _instances.LoadAll()) Instances.Add(inst);

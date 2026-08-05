@@ -51,6 +51,7 @@ public partial class SettingsPageViewModel : PageViewModelBase
         _factory = factory;
         _javaDetector = javaDetector;
         _logger = logger;
+        EnsureLanguageSubscribed();
 
         // Populate the language picker from the registered cultures.
         foreach (CultureInfo c in LocalizationService.Instance.AvailableCultures) AvailableLanguages.Add(c);
