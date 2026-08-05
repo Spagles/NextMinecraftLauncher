@@ -23,7 +23,7 @@ public partial class App : Application
         AvaloniaXamlLoader.Load(this);
     }
 
-    public override async void OnFrameworkInitializationCompleted()
+    public override void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -31,16 +31,21 @@ public partial class App : Application
             var splash = new SplashScreenWindow();
             splash.Show();
 
-            // Build the main window while the splash is visible.
-            desktop.MainWindow = new MainWindow
+            // Play the splash sequence. When done, build + show the main window.
+            // MainWindow construction (DI + ViewLocator + page VM resolution) is deferred
+            // until after the splash animation so it doesn't block the fade.
+            splash.PlayAsync().ContinueWith(_ =>
             {
-                DataContext = _services.GetService<MainWindowViewModel>(),
-            };
-
-            // Play the splash fade sequence, then show the main window.
-            await splash.PlayAsync();
-
-            desktop.MainWindow.Show();
+                Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                {
+                    desktop.MainWindow = new MainWindow
+                    {
+                        DataContext = _services.GetService<MainWindowViewModel>(),
+                    };
+                    desktop.MainWindow.Show();
+                    splash.Close();
+                });
+            });
         }
 
         _services.GetRequiredService<ILogger<App>>()
