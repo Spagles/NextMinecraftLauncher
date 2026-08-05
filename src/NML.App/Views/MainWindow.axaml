@@ -15,8 +15,14 @@
         ExtendClientAreaChromeHints="NoChrome"
         ExtendClientAreaTitleBarHeightHint="-1">
 
+    <!-- Outer grid: background image layer + main content -->
+    <Grid>
+    <!-- Background image layer (PCL-style, behind everything) -->
+    <Image Source="{Binding BackgroundImagePath}" Stretch="UniformToFill"
+           IsVisible="{Binding HasBackground}" Opacity="0.35"/>
+
     <!-- Custom title bar (PCL-style) -->
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,*" Background="{x:Null}">
         <Border x:Name="TitleBar" Grid.Row="0" Background="#0a0a0e" Height="40"
                 PointerPressed="TitleBar_PointerPressed">
             <Grid ColumnDefinitions="*,Auto">
@@ -84,6 +90,7 @@
         </DockPanel>
         </Grid> <!-- end sidebar+content grid -->
     </Grid> <!-- end title bar + content grid -->
+    </Grid> <!-- end outer grid (background + content) -->
 
     <Window.Styles>
         <Style Selector="Button.nav">

@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using NML.App.Services;
 using NML.App.ViewModels.Pages;
 
 namespace NML.App.ViewModels;
@@ -21,6 +22,15 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private PageViewModelBase? _currentPage;
 
+    /// <summary>Custom background image path (PCL-style). Bound to an Image layer behind the content.</summary>
+    [ObservableProperty]
+    private string? _backgroundImagePath;
+
+    /// <summary>True when a background image is set (drives the Image layer visibility).</summary>
+    public bool HasBackground => !string.IsNullOrEmpty(BackgroundImagePath);
+
+    partial void OnBackgroundImagePathChanged(string? value) => OnPropertyChanged(nameof(HasBackground));
+
     /// <summary>Localized window title (resolves via {Loc}).</summary>
     public string Title => "Next Minecraft Launcher";
 
@@ -32,6 +42,7 @@ public partial class MainWindowViewModel : ObservableObject
         Pages.AssistantPageViewModel assistant,
         Pages.GameContentPageViewModel content,
         Pages.SettingsPageViewModel settings,
+        Services.SettingsStore settingsStore,
         ILogger<MainWindowViewModel> logger)
     {
         _logger = logger;
@@ -42,6 +53,8 @@ public partial class MainWindowViewModel : ObservableObject
         Pages.Add(assistant);
         Pages.Add(content);
         Pages.Add(settings);
+        // Load the saved background image path.
+        BackgroundImagePath = settingsStore.Load().BackgroundImagePath;
         NavigateTo(home);
     }
 
