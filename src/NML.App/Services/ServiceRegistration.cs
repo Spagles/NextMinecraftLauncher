@@ -51,6 +51,8 @@ public static class ServiceRegistration
         // --- Modloaders ---
         services.AddSingleton<FabricInstaller>();
         services.AddSingleton<QuiltInstaller>();
+        services.AddSingleton<ForgeInstaller>();
+        services.AddSingleton<NeoForgeInstaller>();
 
         // --- Auth ---
         services.AddSingleton<IOfflineAuthProvider, OfflineAuthProvider>();
