@@ -39,6 +39,24 @@ public partial class SettingsPageViewModel : PageViewModelBase
     [ObservableProperty] private ChatProviderConfig? _activeProvider;
     [ObservableProperty] private string _status = string.Empty;
 
+    /// <summary>Active UI theme: "dark", "light", or "system".</summary>
+    [ObservableProperty] private string _theme = "dark";
+
+    /// <summary>Available theme choices for the dropdown.</summary>
+    public IReadOnlyList<string> ThemeChoices { get; } = new[] { "dark", "light", "system" };
+
+    partial void OnThemeChanged(string value)
+    {
+        // Apply the theme globally via Avalonia's RequestedThemeVariant.
+        var variant = value switch
+        {
+            "light" => Avalonia.Styling.ThemeVariant.Light,
+            "system" => Avalonia.Styling.ThemeVariant.Default,
+            _ => Avalonia.Styling.ThemeVariant.Dark,
+        };
+        Avalonia.Application.Current!.RequestedThemeVariant = variant;
+    }
+
     public SettingsPageViewModel(
         SettingsStore settings,
         LocalModelProbe probe,

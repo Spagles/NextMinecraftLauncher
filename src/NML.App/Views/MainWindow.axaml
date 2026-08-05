@@ -10,15 +10,33 @@
         x:Name="Shell"
         Title="Next Minecraft Launcher"
         Width="1100" Height="700" MinWidth="900" MinHeight="560"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1">
 
-    <Window.DataTemplates>
-        <v:ViewLocator/>
-    </Window.DataTemplates>
+    <!-- Custom title bar (PCL-style) -->
+    <Grid RowDefinitions="Auto,*">
+        <Border x:Name="TitleBar" Grid.Row="0" Background="#0a0a0e" Height="40"
+                PointerPressed="TitleBar_PointerPressed">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" Margin="14,0" VerticalAlignment="Center">
+                    <TextBlock Text="🎮" FontSize="16" VerticalAlignment="Center"/>
+                    <TextBlock Text="{loc:Loc 'app.title'}" FontSize="13" FontWeight="SemiBold"
+                               Foreground="White" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2" Margin="0,0,4,0" VerticalAlignment="Center">
+                    <Button Click="Minimize_Click" Content="—" Width="36" Height="28" Classes="titleBtn"/>
+                    <Button Click="Maximize_Click" Content="▢" Width="36" Height="28" Classes="titleBtn"/>
+                    <Button Click="Close_Click" Content="✕" Width="36" Height="28" Classes="titleBtnClose"/>
+                </StackPanel>
+            </Grid>
+        </Border>
 
-    <Grid ColumnDefinitions="220,*">
-        <!-- Sidebar -->
-        <Border Grid.Column="0" Background="#1a1a1e">
+        <Grid Grid.Row="1" ColumnDefinitions="220,*">
+
+            <!-- Sidebar -->
+            <Border Grid.Column="0" Background="#1a1a1e">
             <DockPanel>
                 <!-- Brand -->
                 <Border DockPanel.Dock="Top" Padding="20,18,20,14">
@@ -57,10 +75,15 @@
                 <TextBlock Text="{Binding CurrentPage.LocalizedTitle}" FontSize="18" FontWeight="SemiBold" Foreground="White"/>
             </Border>
 
-            <!-- The page itself -->
-            <ContentControl Content="{Binding CurrentPage}" Margin="0"/>
+            <!-- The page itself (with slide transition between pages) -->
+            <TransitioningContentControl Content="{Binding CurrentPage}" Margin="0">
+                <TransitioningContentControl.PageTransition>
+                    <PageSlide Duration="0:0:0.2" Orientation="Horizontal" SlideOutEasing="CubicEaseIn" SlideInEasing="CubicEaseOut"/>
+                </TransitioningContentControl.PageTransition>
+            </TransitioningContentControl>
         </DockPanel>
-    </Grid>
+        </Grid> <!-- end sidebar+content grid -->
+    </Grid> <!-- end title bar + content grid -->
 
     <Window.Styles>
         <Style Selector="Button.nav">
@@ -78,8 +101,35 @@
         <Style Selector="Button.nav TextBlock.navLabel">
             <Setter Property="FontSize" Value="13"/>
         </Style>
+        <!-- Custom title-bar button styles (PCL-style window controls) -->
+        <Style Selector="Button.titleBtn">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#cccccc"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="Button.titleBtn:pointerover">
+            <Setter Property="Background" Value="#33333b"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.titleBtnClose">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#cccccc"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="Button.titleBtnClose:pointerover">
+            <Setter Property="Background" Value="#e81123"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
         <!-- Note: full localization of sidebar labels requires a {Loc} binding in the
              DataTemplate; for the MVP the label binds to the raw key and the header re-resolves
              via {Loc}. A later pass can wire per-item localization. -->
     </Window.Styles>
+
+    <Window.DataTemplates>
+        <v:ViewLocator/>
+    </Window.DataTemplates>
 </Window>

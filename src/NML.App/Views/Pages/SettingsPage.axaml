@@ -13,6 +13,10 @@
                     <ComboBox ItemsSource="{Binding AvailableLanguages}" SelectedItem="{Binding SelectedLanguage}" MinWidth="220"/>
                 </StackPanel>
                 <StackPanel Spacing="6">
+                    <TextBlock Text="{loc:Loc 'settings.theme'}" Foreground="#ccc"/>
+                    <ComboBox ItemsSource="{Binding ThemeChoices}" SelectedItem="{Binding Theme}" MinWidth="180"/>
+                </StackPanel>
+                <StackPanel Spacing="6">
                     <TextBlock Text="{loc:Loc 'settings.minecraft_path'}" Foreground="#ccc"/>
                     <TextBox Text="{Binding MinecraftPath}" MinWidth="500"/>
                 </StackPanel>
