@@ -1,14 +1,58 @@
+using NML.Core.Download;
+
 namespace NML.Core.Skins;
 
 /// <summary>
 /// Builds URLs for rendering a Minecraft player's skin. Uses Crafatar (the standard community
 /// skin-rendering service) for avatars, 3D head renders, and full-body renders. Falls back to
 /// the default skin (Steve/Alex) for offline accounts whose UUID has no real skin attached.
+/// Also downloads the raw skin PNG (for the launcher's own 3D cube preview).
 /// </summary>
 public sealed class SkinService
 {
-    /// <summary>Crafatar base URL. A reliable, widely-used free skin rendering service.</summary>
+    private readonly IHttpFetcher? _http;
+    private readonly string? _cacheDir;
+
+    /// <summary>Crafatar base URL. A reliable, widely-used free skin-rendering service.</summary>
     public const string CrafatarBase = "https://crafatar.com";
+
+    /// <summary>Construct a URL-only service (no caching). Use the other ctor to enable downloads.</summary>
+    public SkinService() { }
+
+    /// <summary>Construct a service that can download raw skin PNGs into <paramref name="cacheDir"/>.</summary>
+    public SkinService(IHttpFetcher http, string cacheDir)
+    {
+        _http = http;
+        _cacheDir = cacheDir;
+    }
+
+    /// <summary>
+    /// Download the raw 64×64 skin PNG for <paramref name="uuid"/> into the cache and return its
+    /// absolute path. Used by the launcher's own 3D cube preview (we render the skin ourselves
+    /// rather than relying on Crafatar's static renders). Falls back to the Steve default on
+    /// failure (offline UUIDs, network errors).
+    /// </summary>
+    public async Task<string> DownloadSkinPngAsync(string uuid, CancellationToken ct = default)
+    {
+        if (_http is null || _cacheDir is null)
+            throw new InvalidOperationException("SkinService was constructed without a cache; cannot download.");
+
+        Directory.CreateDirectory(_cacheDir);
+        string path = Path.Combine(_cacheDir, Normalize(uuid) + ".png");
+        if (File.Exists(path)) return path; // idempotent
+
+        try
+        {
+            byte[] png = await _http.GetByteArrayAsync(SkinTextureUrl(uuid), ct);
+            await File.WriteAllBytesAsync(path, png, ct);
+            return path;
+        }
+        catch
+        {
+            // Caller will detect the missing file and fall back to a default-skin path.
+            return string.Empty;
+        }
+    }
 
     /// <summary>
     /// Build a 2D avatar (the player's face) URL.

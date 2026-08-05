@@ -104,7 +104,12 @@ public static class ServiceRegistration
         services.AddSingleton<GameContentBrowser>();
 
         // --- Skin rendering ---
-        services.AddSingleton<SkinService>();
+        services.AddSingleton<SkinService>(sp =>
+        {
+            var settings = sp.GetRequiredService<SettingsStore>();
+            var fetcher = sp.GetRequiredService<IHttpFetcher>();
+            return new SkinService(fetcher, System.IO.Path.Combine(settings.SettingsDir, "skins"));
+        });
 
         // --- Mod catalogs + recommender ---
         services.AddSingleton<NML.Data.Modrinth.ModrinthCatalog>();

@@ -1,18 +1,22 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:NML.App.Localization"
+             xmlns:ctl="using:NML.App.Views.Controls"
              x:Class="NML.App.Views.Pages.AccountsPage" x:Name="Root">
     <ScrollViewer Padding="24">
         <StackPanel Spacing="16" MaxWidth="640">
             <!-- Active account skin preview -->
             <Border Background="#1f1f25" CornerRadius="8" Padding="16" IsVisible="{Binding HasActiveAccount}">
                 <StackPanel Orientation="Horizontal" Spacing="16">
-                    <!-- 3D head render (classic launcher look) -->
-                    <Image Source="{Binding ActiveHeadRenderUrl}" Width="80" Height="80"/>
+                    <!-- Draggable 3D skin cube preview (drag to rotate) -->
+                    <ctl:SkinPreviewControl SkinPath="{Binding ActiveSkinPngPath}" Width="90" Height="120"/>
+                    <!-- 3D head render (static fallback) -->
+                    <Image Source="{Binding ActiveHeadRenderUrl}" Width="64" Height="64" VerticalAlignment="Center"/>
                     <StackPanel VerticalAlignment="Center" Spacing="4">
                         <TextBlock Text="{Binding ActiveAccount.Username}" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
                         <Image Source="{Binding ActiveAvatarUrl}" Width="32" Height="32"/>
                         <TextBlock Text="{Binding ActiveAccount.Uuid}" Foreground="#888" FontSize="10"/>
+                        <TextBlock Text="🖱️ drag the model to rotate" Foreground="#666" FontSize="10" FontStyle="Italic"/>
                     </StackPanel>
                 </StackPanel>
             </Border>

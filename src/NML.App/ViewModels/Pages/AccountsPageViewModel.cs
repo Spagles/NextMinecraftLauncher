@@ -60,6 +60,9 @@ public partial class AccountsPageViewModel : PageViewModelBase
     [ObservableProperty] private string _authlibPassword = string.Empty;
     [ObservableProperty] private bool _hasAuthlibServers;
 
+    /// <summary>Path to the downloaded skin PNG for the active account (drives the 3D preview).</summary>
+    [ObservableProperty] private string? _activeSkinPngPath;
+
     public AccountsPageViewModel(
         IOfflineAuthProvider offline,
         MicrosoftAuthProvider microsoft,
@@ -93,6 +96,18 @@ public partial class AccountsPageViewModel : PageViewModelBase
         OnPropertyChanged(nameof(ActiveAvatarUrl));
         OnPropertyChanged(nameof(ActiveHeadRenderUrl));
         OnPropertyChanged(nameof(HasActiveAccount));
+        _ = DownloadSkinPngAsync(); // fire-and-forget; updates ActiveSkinPngPath when done
+    }
+
+    /// <summary>Download the raw skin PNG for the active account so the 3D preview can render it.</summary>
+    private async Task DownloadSkinPngAsync()
+    {
+        if (ActiveAccount is null) { ActiveSkinPngPath = null; return; }
+        try
+        {
+            ActiveSkinPngPath = await _skinService.DownloadSkinPngAsync(ActiveAccount.Uuid);
+        }
+        catch { ActiveSkinPngPath = null; }
     }
 
     [RelayCommand]
