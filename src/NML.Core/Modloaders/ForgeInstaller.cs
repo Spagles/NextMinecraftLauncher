@@ -81,6 +81,7 @@ public sealed class ForgeInstaller
         MinecraftDirectory mc,
         DownloadCancel? cancel = null,
         ProgressReporter? progress = null,
+        string? javaExecutableForProcessors = null,
         CancellationToken ct = default)
     {
         _logger.LogInformation("Installing Forge {Loader} for {Game}…", loaderVersion, gameVersion);
@@ -167,6 +168,47 @@ public sealed class ForgeInstaller
             _logger.LogInformation("Downloading {Count} Forge libraries…", toFetch.Count);
             await _downloader.DownloadBatchAsync(toFetch, mc.LibrariesDir, maxConcurrency: 8,
                 cancel, progress, ct);
+        }
+
+        // If the install profile declares processors (modern Forge), run them. This is what
+        // performs deobfuscation, binary patching and jar signing to turn the vanilla client
+        // jar into a runnable Forge jar. Requires a Java executable to invoke the tools.
+        if (root.TryGetProperty("processors", out var procsEl) &&
+            procsEl.ValueKind == JsonValueKind.Array &&
+            procsEl.GetArrayLength() > 0)
+        {
+            if (string.IsNullOrEmpty(javaExecutableForProcessors))
+            {
+                _logger.LogWarning(
+                    "Forge profile has {Count} processors but no javaExecutable was provided; " +
+                    "skipping processor execution (the install may be incomplete on old MC versions).",
+                    procsEl.GetArrayLength());
+            }
+            else
+            {
+                _logger.LogInformation("Forge profile declares {Count} processors; executing…",
+                    procsEl.GetArrayLength());
+
+                // Re-parse the install_profile.json into the strongly-typed model.
+                var profile = JsonSerializer.Deserialize<Forge.ForgeInstallProfile>(installJson, JsonOptions.Default)
+                              ?? new Forge.ForgeInstallProfile();
+
+                string clientJar = mc.VersionJar(gameVersion);
+                var procCtx = new Forge.ForgeProcessorContext
+                {
+                    RootDir = mc.Root,
+                    LibraryDir = mc.LibrariesDir,
+                    MinecraftJar = clientJar,
+                    ProcessorDir = Path.Combine(mc.Root, "data"),
+                    InstallerJar = installerUrl, // informational; processors reference libs by coord
+                    Side = "client",
+                };
+
+                var executor = new Forge.ForgeProcessorExecutor(
+                    javaExecutableForProcessors!,
+                    Microsoft.Extensions.Logging.Abstractions.NullLogger<Forge.ForgeProcessorExecutor>.Instance);
+                await executor.ExecuteAsync(profile, procCtx, side: "client", ct);
+            }
         }
 
         _logger.LogInformation("Forge installed as profile {Id}.", profileId);
