@@ -229,11 +229,16 @@ public partial class HomePageViewModel : PageViewModelBase
                 authlibJarPath = await _authlibInjectorSetup.EnsureAgentJarAsync();
             }
 
+            var assemblyVersion = System.Reflection.Assembly.GetExecutingAssembly()
+                .GetName().Version?.ToString(3) ?? "0.1.0";
+
             var opts = new LaunchOptions
             {
                 Version = version, Mc = mc, Account = account, Java = java,
                 MinMemoryMb = inst.MinMemoryMb, MaxMemoryMb = inst.MaxMemoryMb,
                 WindowWidth = inst.WindowWidth, WindowHeight = inst.WindowHeight,
+                LauncherName = "NextMinecraftLauncher",
+                LauncherVersion = assemblyVersion,
                 ExtraJvmArgs = string.IsNullOrWhiteSpace(inst.CustomJvmArgs)
                     ? Array.Empty<string>()
                     : inst.CustomJvmArgs.Split(' ', StringSplitOptions.RemoveEmptyEntries),
