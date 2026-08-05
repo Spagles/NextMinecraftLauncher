@@ -354,9 +354,16 @@ public partial class GameContentPageViewModel : PageViewModelBase
                 InstalledMods.Add(mod);
             }
 
-            Status = UpdatesAvailable > 0
+            // Check for conflicts (duplicate ids, mixed loaders).
+            var conflicts = ModConflictDetector.Detect(installed);
+            int conflictCount = conflicts.Count;
+
+            string updateStatus = UpdatesAvailable > 0
                 ? $"mods.updates_found,{UpdatesAvailable}"
                 : "mods.up_to_date";
+            Status = conflictCount > 0
+                ? $"mods.conflicts_found,{conflictCount}"
+                : updateStatus;
         }
         catch (Exception ex)
         {

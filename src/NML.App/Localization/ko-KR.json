@@ -155,6 +155,7 @@
   "content.check_updates": "Mod 업데이트 확인",
   "content.log_search": "로그 검색…",
   "mods.updates_found": "{0}개의 Mod에 업데이트가 있습니다",
+  "mods.conflicts_found": "{0}개의 Mod 충돌 감지",
   "mods.up_to_date": "모든 Mod가 최신입니다",
   "content.name": "이름",
   "content.size": "크기",
