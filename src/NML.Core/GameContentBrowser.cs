@@ -140,6 +140,27 @@ public sealed class GameContentBrowser
         if (Directory.Exists(worldPath))
             Directory.Delete(worldPath, recursive: true);
     }
+
+    /// <summary>Delete a screenshot file.</summary>
+    public void DeleteScreenshot(string screenshotPath)
+    {
+        if (File.Exists(screenshotPath))
+            File.Delete(screenshotPath);
+    }
+
+    /// <summary>Open a screenshot in the OS default image viewer.</summary>
+    public void OpenScreenshot(string screenshotPath)
+    {
+        if (!File.Exists(screenshotPath)) return;
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(screenshotPath)
+            {
+                UseShellExecute = true,
+            });
+        }
+        catch { /* non-fatal */ }
+    }
 }
 
 public sealed class GameSave

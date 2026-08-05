@@ -36,9 +36,17 @@ public partial class GameContentPageViewModel : PageViewModelBase
     /// <summary>True when the saves tab is active (drives backup/delete button visibility).</summary>
     public bool IsSavesTab => Tab == "saves";
 
+    /// <summary>True when the screenshots tab is active (drives open/delete button visibility).</summary>
+    public bool IsScreenshotsTab => Tab == "screenshots";
+
     public override Task OnNavigatedToAsync() { Refresh(); return Task.CompletedTask; }
 
-    partial void OnTabChanged(string value) { OnPropertyChanged(nameof(IsSavesTab)); Refresh(); }
+    partial void OnTabChanged(string value)
+    {
+        OnPropertyChanged(nameof(IsSavesTab));
+        OnPropertyChanged(nameof(IsScreenshotsTab));
+        Refresh();
+    }
 
     [RelayCommand]
     private void Refresh()
@@ -116,6 +124,33 @@ public partial class GameContentPageViewModel : PageViewModelBase
             var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
             browser.DeleteWorld(save.Path);
             Refresh();
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    [RelayCommand]
+    private void DeleteScreenshot(GameFile file)
+    {
+        try
+        {
+            Instance? inst = _instances.LoadAll().FirstOrDefault();
+            if (inst is null) return;
+            var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
+            browser.DeleteScreenshot(file.Path);
+            Refresh();
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    [RelayCommand]
+    private void OpenScreenshot(GameFile file)
+    {
+        try
+        {
+            Instance? inst = _instances.LoadAll().FirstOrDefault();
+            if (inst is null) return;
+            var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
+            browser.OpenScreenshot(file.Path);
         }
         catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
     }

@@ -18,22 +18,27 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Background="#1f1f25" CornerRadius="4" Padding="12,8" Margin="0,2">
-                                <Grid ColumnDefinitions="*,Auto,Auto">
+                                <Grid ColumnDefinitions="*,Auto,Auto,Auto">
                                     <StackPanel Grid.Column="0">
                                         <TextBlock Text="{Binding Name}" Foreground="White" VerticalAlignment="Center"/>
                                         <TextBlock Text="{Binding SizeBytes, StringFormat=\{0:N0\} B}" Foreground="#888" FontSize="11"/>
                                     </StackPanel>
-                                    <!-- World backup button (visible on saves tab) -->
                                     <Button Grid.Column="1" Content="{loc:Loc 'content.backup'}" Classes="small"
                                             Command="{Binding #Root.DataContext.BackupWorldCommand}"
                                             CommandParameter="{Binding}"
-                                            IsVisible="{Binding #Root.DataContext.IsSavesTab}"
-                                            Margin="4,0"/>
-                                    <!-- World delete button (visible on saves tab) -->
-                                    <Button Grid.Column="2" Content="{loc:Loc 'content.delete'}" Classes="small danger"
+                                            IsVisible="{Binding #Root.DataContext.IsSavesTab}" Margin="4,0"/>
+                                    <Button Grid.Column="2" Content="{loc:Loc 'content.open'}" Classes="small"
+                                            Command="{Binding #Root.DataContext.OpenScreenshotCommand}"
+                                            CommandParameter="{Binding}"
+                                            IsVisible="{Binding #Root.DataContext.IsScreenshotsTab}" Margin="4,0"/>
+                                    <Button Grid.Column="3" Content="{loc:Loc 'content.delete'}" Classes="small danger"
                                             Command="{Binding #Root.DataContext.DeleteWorldCommand}"
                                             CommandParameter="{Binding}"
                                             IsVisible="{Binding #Root.DataContext.IsSavesTab}"/>
+                                    <Button Grid.Column="3" Content="{loc:Loc 'content.delete'}" Classes="small danger"
+                                            Command="{Binding #Root.DataContext.DeleteScreenshotCommand}"
+                                            CommandParameter="{Binding}"
+                                            IsVisible="{Binding #Root.DataContext.IsScreenshotsTab}"/>
                                 </Grid>
                             </Border>
                         </DataTemplate>
