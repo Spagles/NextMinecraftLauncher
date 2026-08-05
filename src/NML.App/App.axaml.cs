@@ -23,14 +23,24 @@ public partial class App : Application
         AvaloniaXamlLoader.Load(this);
     }
 
-    public override void OnFrameworkInitializationCompleted()
+    public override async void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            // Show splash screen first (PCL-style boot animation).
+            var splash = new SplashScreenWindow();
+            splash.Show();
+
+            // Build the main window while the splash is visible.
             desktop.MainWindow = new MainWindow
             {
                 DataContext = _services.GetService<MainWindowViewModel>(),
             };
+
+            // Play the splash fade sequence, then show the main window.
+            await splash.PlayAsync();
+
+            desktop.MainWindow.Show();
         }
 
         _services.GetRequiredService<ILogger<App>>()
