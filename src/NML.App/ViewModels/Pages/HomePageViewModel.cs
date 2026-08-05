@@ -327,6 +327,18 @@ public partial class HomePageViewModel : PageViewModelBase
         catch (Exception ex) { Status = $"home.launch_failed,{ex.Message}"; _logger.LogError(ex, "Batch export failed."); }
     }
 
+    /// <summary>Remove a single instance from the list + store.</summary>
+    [RelayCommand]
+    private void RemoveInstance(Instance instance)
+    {
+        if (instance is null) return;
+        Instances.Remove(instance);
+        _instances.Remove(instance.Name);
+        if (SelectedInstance?.Name == instance.Name)
+            SelectedInstance = Instances.FirstOrDefault();
+        Status = $"accounts.remove,{instance.Name}";
+    }
+
     /// <summary>Delete ALL instances (with no confirmation in the MVP — use carefully).</summary>
     [RelayCommand]
     private void DeleteAllInstances()

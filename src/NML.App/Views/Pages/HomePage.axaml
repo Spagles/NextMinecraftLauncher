@@ -22,6 +22,7 @@
             <StackPanel Orientation="Horizontal" Spacing="4">
                 <Button Content="📋 Clone" Command="{Binding CloneInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"/>
                 <Button Content="📦 Export" Command="{Binding ExportInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"/>
+                <Button Content="🗑 Remove" Command="{Binding RemoveInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small danger"/>
                 <Button Content="{loc:Loc 'home.export_all'}" Command="{Binding ExportAllInstancesCommand}" Classes="small"/>
                 <Button Content="{loc:Loc 'home.delete_all'}" Command="{Binding DeleteAllInstancesCommand}" Classes="small"/>
             </StackPanel>
