@@ -42,6 +42,12 @@ public partial class GameContentPageViewModel : PageViewModelBase
     /// <summary>True when the resource packs tab is active (drives delete button visibility).</summary>
     public bool IsResourcePacksTab => Tab == "resourcepacks";
 
+    /// <summary>True when the logs tab is active (shows the log viewer).</summary>
+    public bool IsLogsTab => Tab == "logs";
+
+    [ObservableProperty] private string _logContent = string.Empty;
+    [ObservableProperty] private string _logSearchText = string.Empty;
+
     public override Task OnNavigatedToAsync() { Refresh(); return Task.CompletedTask; }
 
     partial void OnTabChanged(string value)
@@ -49,8 +55,40 @@ public partial class GameContentPageViewModel : PageViewModelBase
         OnPropertyChanged(nameof(IsSavesTab));
         OnPropertyChanged(nameof(IsScreenshotsTab));
         OnPropertyChanged(nameof(IsResourcePacksTab));
+        OnPropertyChanged(nameof(IsLogsTab));
+        if (value == "logs") _ = LoadLogAsync();
         Refresh();
     }
+
+    [RelayCommand]
+    private async Task LoadLogAsync()
+    {
+        try
+        {
+            Instance? inst = _instances.LoadAll().FirstOrDefault();
+            if (inst is null) { LogContent = "content.empty"; return; }
+            var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
+            LogContent = await Task.Run(() => browser.ReadLatestLog());
+            if (string.IsNullOrEmpty(LogContent)) LogContent = "content.empty";
+        }
+        catch (Exception ex) { LogContent = $"common.error: {ex.Message}"; }
+    }
+
+    /// <summary>Filtered log lines matching the search text (null/empty = all).</summary>
+    public string FilteredLog
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(LogSearchText) || string.IsNullOrEmpty(LogContent))
+                return LogContent;
+            var lines = LogContent.Split('\n');
+            var filtered = lines.Where(l => l.Contains(LogSearchText, StringComparison.OrdinalIgnoreCase));
+            return string.Join('\n', filtered);
+        }
+    }
+
+    partial void OnLogSearchTextChanged(string value) => OnPropertyChanged(nameof(FilteredLog));
+    partial void OnLogContentChanged(string value) => OnPropertyChanged(nameof(FilteredLog));
 
     [RelayCommand]
     private void Refresh()

@@ -132,6 +132,8 @@
   "content.screenshots": "Screenshots",
   "content.resource_packs": "Resource Packs",
   "content.mods": "Mods",
+  "content.logs": "Launch logs",
+  "content.log_search": "Search log…",
   "content.name": "Name",
   "content.size": "Size",
   "content.modified": "Last modified",

@@ -167,6 +167,29 @@ public sealed class GameContentBrowser
     {
         if (File.Exists(path)) File.Delete(path);
     }
+
+    /// <summary>Read the most recent launch log file (if any) and return its content.</summary>
+    public string ReadLatestLog(int maxChars = 50000)
+    {
+        string logsDir = Path.Combine(_mc.Root, "logs");
+        if (!Directory.Exists(logsDir)) return string.Empty;
+
+        var latest = Directory.GetFiles(logsDir, "launch-*.log")
+            .Select(f => new FileInfo(f))
+            .OrderByDescending(f => f.LastWriteTimeUtc)
+            .FirstOrDefault();
+        if (latest is null) return string.Empty;
+
+        try
+        {
+            string content = File.ReadAllText(latest.FullName);
+            // Return the tail if the log is very large (shows the crash/end, not the start).
+            if (content.Length > maxChars)
+                content = "…[earlier lines truncated]…\n" + content[^maxChars..];
+            return content;
+        }
+        catch { return string.Empty; }
+    }
 }
 
 public sealed class GameSave

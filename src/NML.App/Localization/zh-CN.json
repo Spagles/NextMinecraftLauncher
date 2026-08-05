@@ -132,6 +132,8 @@
   "content.screenshots": "截图",
   "content.resource_packs": "资源包",
   "content.mods": "Mod 列表",
+  "content.logs": "启动日志",
+  "content.log_search": "搜索日志…",
   "content.name": "名称",
   "content.size": "大小",
   "content.modified": "最后修改",

@@ -9,12 +9,14 @@
             <Button Content="{loc:Loc 'content.screenshots'}"    Click="SelectTab" Tag="screenshots" Classes="tabbtn"/>
             <Button Content="{loc:Loc 'content.resource_packs'}" Click="SelectTab" Tag="resourcepacks" Classes="tabbtn"/>
             <Button Content="{loc:Loc 'content.mods'}"           Click="SelectTab" Tag="mods" Classes="tabbtn"/>
+            <Button Content="{loc:Loc 'content.logs'}"           Click="SelectTab" Tag="logs" Classes="tabbtn"/>
             <Button Content="{loc:Loc 'content.open_folder'}" Command="{Binding OpenFolderCommand}" Classes="small" Margin="16,0,0,0"/>
         </StackPanel>
 
         <ScrollViewer Padding="24,0,24,24">
             <StackPanel>
-                <ItemsControl ItemsSource="{Binding Items}">
+                <!-- File/content list (hidden on logs tab) -->
+                <ItemsControl ItemsSource="{Binding Items}" IsVisible="{Binding !IsLogsTab}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Background="#1f1f25" CornerRadius="4" Padding="12,8" Margin="0,2">
@@ -50,6 +52,21 @@
                 </ItemsControl>
                 <TextBlock Text="{loc:Loc 'content.empty'}" Foreground="#888" FontSize="12" Margin="0,12"
                            IsVisible="{Binding IsEmpty}"/>
+
+                <!-- Log viewer (visible on the logs tab) -->
+                <StackPanel IsVisible="{Binding IsLogsTab}" Spacing="8" Margin="0,12,0,0">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBox Text="{Binding LogSearchText}" Watermark="{loc:Loc 'content.log_search'}" MinWidth="300"/>
+                        <Button Content="{loc:Loc 'common.refresh'}" Command="{Binding LoadLogCommand}" Classes="small"/>
+                    </StackPanel>
+                    <Border Background="#1a1a1e" CornerRadius="4" Padding="8" MaxHeight="500">
+                        <ScrollViewer>
+                            <SelectableTextBlock Text="{Binding FilteredLog}" Foreground="#c0c0c0"
+                                                 FontFamily="Cascadia Code,Consolas,monospace" FontSize="11"
+                                                 TextWrapping="NoWrap"/>
+                        </ScrollViewer>
+                    </Border>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </DockPanel>
