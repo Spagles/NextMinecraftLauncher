@@ -132,6 +132,10 @@ public partial class SettingsPageViewModel : PageViewModelBase
         if (value is not null)
         {
             LocalizationService.Instance.CurrentCulture = value;
+            // Persist the culture to language.txt so Program.cs reads it on next startup.
+            string langPath = Path.Combine(_settings.SettingsDir, "language.txt");
+            File.WriteAllText(langPath, value.Name);
+            // Also save the full settings.
             var s = _settings.Load();
             s.Providers = Providers.ToList();
             s.ActiveProviderName = ActiveProvider?.Name;
