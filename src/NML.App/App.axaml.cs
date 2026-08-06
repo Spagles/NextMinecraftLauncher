@@ -27,36 +27,47 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            // Show splash screen first (PCL-style boot animation).
-            var splash = new SplashScreenWindow();
-            splash.Show();
+            // Build the main window immediately (synchronously) so the app has a window
+            // and won't shut down. The splash shows on top as an overlay if it works.
+            ShowMainWindow(desktop);
 
-            // Play the splash sequence. When done (or on error), build + show the main window.
-            // MainWindow construction (DI + ViewLocator + page VM resolution) is deferred
-            // until after the splash animation so it doesn't block the fade.
-            // Use NotOnFaulted explicitly + a catch-all to ensure the main window ALWAYS shows,
-            // even if the animation throws (e.g. in headless/no-GPU environments).
-            splash.PlayAsync().ContinueWith(t =>
+            // Optionally show a splash on top (non-blocking, non-fatal if it fails).
+            _ = Task.Run(async () =>
             {
-                Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                try
                 {
-                    try
+                    await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(async () =>
                     {
-                        desktop.MainWindow = new MainWindow
-                        {
-                            DataContext = _services.GetService<MainWindowViewModel>(),
-                        };
-                        desktop.MainWindow.Show();
-                    }
-                    catch { /* if main window fails, nothing more we can do */ }
-                    splash.Close();
-                });
-            }, TaskScheduler.Default);
+                        var splash = new SplashScreenWindow();
+                        splash.Show(desktop.MainWindow!);
+                        await Task.Delay(2000);
+                        splash.Close();
+                    });
+                }
+                catch { /* splash is cosmetic; ignore all errors */ }
+            });
         }
 
         _services.GetRequiredService<ILogger<App>>()
             .LogInformation("NextMinecraftLauncher started.");
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private void ShowMainWindow(IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        try
+        {
+            desktop.MainWindow = new MainWindow
+            {
+                DataContext = _services.GetService<MainWindowViewModel>(),
+            };
+            desktop.MainWindow.Show();
+        }
+        catch (Exception ex)
+        {
+            _services.GetRequiredService<ILogger<App>>()
+                .LogError(ex, "Failed to create main window.");
+        }
     }
 }
