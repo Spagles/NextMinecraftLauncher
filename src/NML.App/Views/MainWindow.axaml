@@ -17,6 +17,16 @@
         ExtendClientAreaTitleBarHeightHint="-1"
         Background="Transparent">
 
+    <Window.Resources>
+        <!-- Enables the "selected nav item" visual: returns "nav active" when the current
+             item equals the shell's CurrentPage, otherwise "nav". Bound to Button.Classes. -->
+        <v:NavActiveClassConverter x:Key="NavActiveConverter"/>
+        <!-- HMCL-style nav rail colors (semi-transparent accent for the active item). -->
+        <SolidColorBrush x:Key="NavHoverBrush" Color="#1AFFFFFF"/>
+        <SolidColorBrush x:Key="NavActiveBrush" Color="#334FC3F7"/>
+        <SolidColorBrush x:Key="NavActiveHoverBrush" Color="#4D4FC3F7"/>
+    </Window.Resources>
+
     <!-- Outer grid: background image layer + main content -->
     <Grid>
     <!-- Background image layer (PCL-style, behind everything) -->
@@ -41,76 +51,84 @@
             </Grid>
         </Border>
 
-        <Grid Grid.Row="1" ColumnDefinitions="220,*">
+        <!-- HMCL-style layout: narrow icon-only nav rail + wide content area -->
+        <Grid Grid.Row="1" ColumnDefinitions="56,*">
 
-            <!-- Sidebar -->
+            <!-- Icon-only sidebar (nav rail) -->
             <Border Grid.Column="0" Background="{DynamicResource SurfaceAltBrush}">
-            <DockPanel>
-                <!-- Brand -->
-                <Border DockPanel.Dock="Top" Padding="20,18,20,14">
-                    <StackPanel Spacing="2">
-                        <TextBlock Text="🎮" FontSize="22"/>
-                        <TextBlock Text="{loc:Loc 'app.title'}" FontSize="14" FontWeight="SemiBold" Foreground="White"/>
-                        <TextBlock Text="{loc:Loc 'app.subtitle'}" FontSize="10" Foreground="{DynamicResource AccentBrush}"/>
-                    </StackPanel>
-                </Border>
-
-                <!-- Nav buttons -->
-                <ScrollViewer>
-                    <ItemsControl ItemsSource="{Binding Pages}" Padding="8,4">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding Pages}" Padding="0,10">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Button Classes="nav"
+                                <!-- Icon button: no text label, just the emoji; tooltip carries the title.
+                                     `nav` is a static class for the base style; `active` is toggled by the
+                                     NavActiveConverter (CurrentPage equality) for the selected highlight. -->
+                                <Button Classes="nav" CornerRadius="8"
+                                        Width="40" Height="40"
+                                        Padding="0" Margin="0,3"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                        BorderThickness="0"
+                                        Foreground="{DynamicResource TextPrimaryBrush}"
                                         Command="{Binding #Shell.DataContext.NavigateToCommand}"
                                         CommandParameter="{Binding}"
                                         Tag="{Binding TitleKey}"
-                                        BorderBrush="{DynamicResource AccentBrush}" BorderThickness="3,0,0,0"
-                                        IsHitTestVisible="True">
-                                    <StackPanel Orientation="Horizontal" Spacing="10">
-                                        <TextBlock Text="{Binding Icon}" FontSize="15" Width="20"/>
-                                        <TextBlock Text="{Binding LocalizedTitle}" Classes="navLabel"/>
-                                    </StackPanel>
+                                        ToolTip.Tip="{Binding LocalizedTitle}">
+                                    <Classes.active>
+                                        <MultiBinding Converter="{StaticResource NavActiveConverter}">
+                                            <Binding Path="DataContext.CurrentPage" ElementName="Shell"/>
+                                            <Binding/>
+                                        </MultiBinding>
+                                    </Classes.active>
+                                    <TextBlock Text="{Binding Icon}" FontSize="18"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Button>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
-            </DockPanel>
-        </Border>
-
-        <!-- Content area: the active page view is rendered here via ViewLocator -->
-        <DockPanel Grid.Column="1" Background="{DynamicResource PanelAltBrush}">
-            <!-- Page header -->
-            <Border DockPanel.Dock="Top" Background="{DynamicResource PanelAltBrush}" Padding="24,14">
-                <TextBlock Text="{Binding CurrentPage.LocalizedTitle}" FontSize="18" FontWeight="SemiBold" Foreground="White"/>
             </Border>
 
-            <!-- The page itself (with slide transition between pages) -->
-            <TransitioningContentControl Content="{Binding CurrentPage}" Margin="0">
-                <TransitioningContentControl.PageTransition>
-                    <PageSlide Duration="0:0:0.2" Orientation="Horizontal" SlideOutEasing="CubicEaseIn" SlideInEasing="CubicEaseOut"/>
-                </TransitioningContentControl.PageTransition>
-            </TransitioningContentControl>
-        </DockPanel>
+            <!-- Content area: the active page view is rendered here via ViewLocator -->
+            <DockPanel Grid.Column="1" Background="{DynamicResource PanelAltBrush}">
+                <!-- Page header (HMCL shows the current section title at the top of the content) -->
+                <Border DockPanel.Dock="Top" Background="{DynamicResource PanelAltBrush}" Padding="24,14">
+                    <TextBlock Text="{Binding CurrentPage.LocalizedTitle}" FontSize="18" FontWeight="SemiBold" Foreground="White"/>
+                </Border>
+
+                <!-- The page itself (with slide transition between pages) -->
+                <TransitioningContentControl Content="{Binding CurrentPage}" Margin="0">
+                    <TransitioningContentControl.PageTransition>
+                        <PageSlide Duration="0:0:0.2" Orientation="Horizontal" SlideOutEasing="CubicEaseIn" SlideInEasing="CubicEaseOut"/>
+                    </TransitioningContentControl.PageTransition>
+                </TransitioningContentControl>
+            </DockPanel>
         </Grid> <!-- end sidebar+content grid -->
     </Grid> <!-- end title bar + content grid -->
     </Grid> <!-- end outer grid (background + content) -->
 
     <Window.Styles>
+        <!-- HMCL-style icon nav button base -->
         <Style Selector="Button.nav">
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="Padding" Value="14,10"/>
-            <Setter Property="Margin" Value="0,1"/>
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
         </Style>
+        <Style Selector="Button.nav /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="CornerRadius" Value="8"/>
+        </Style>
+        <!-- Subtle hover -->
         <Style Selector="Button.nav:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource NavHoverBrush}"/>
         </Style>
-        <Style Selector="Button.nav TextBlock.navLabel">
-            <Setter Property="FontSize" Value="13"/>
+        <!-- Selected item: semi-transparent accent fill + white icon -->
+        <Style Selector="Button.nav.active">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.nav.active /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource NavActiveBrush}"/>
+        </Style>
+        <Style Selector="Button.nav.active:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource NavActiveHoverBrush}"/>
         </Style>
         <!-- Custom title-bar button styles (PCL-style window controls) -->
         <Style Selector="Button.titleBtn">
@@ -135,9 +153,6 @@
             <Setter Property="Background" Value="#e81123"/>
             <Setter Property="Foreground" Value="White"/>
         </Style>
-        <!-- Note: full localization of sidebar labels requires a {Loc} binding in the
-             DataTemplate; for the MVP the label binds to the raw key and the header re-resolves
-             via {Loc}. A later pass can wire per-item localization. -->
     </Window.Styles>
 
     <Window.DataTemplates>
