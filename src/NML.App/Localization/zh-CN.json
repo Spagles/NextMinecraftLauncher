@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "AI 驱动",
-
   "nav.home": "主页",
   "nav.download": "下载中心",
   "nav.accounts": "账户管理",
   "nav.mods": "Mod 中心",
   "nav.assistant": "AI 助手",
   "nav.game_content": "游戏内容",
+  "nav.multiplayer": "多人联机",
   "nav.settings": "设置",
-
   "home.title": "启动游戏",
   "home.instances": "我的实例",
   "home.no_instances": "还没有实例 — 去下载中心安装一个版本",
@@ -49,7 +48,6 @@
   "home.share_generated": "已生成分享码",
   "home.share_invalid": "分享码无效",
   "home.exported": "已导出到 {0}",
-
   "download.title": "下载中心",
   "download.search_placeholder": "搜索版本（如 1.20.1）…",
   "download.filter_release": "正式版",
@@ -67,7 +65,6 @@
   "download.column_action": "操作",
   "download.results": "找到 {0} 个版本",
   "download.empty": "未找到匹配的版本",
-
   "accounts.title": "账户管理",
   "accounts.add_offline": "添加离线账户",
   "accounts.add_microsoft": "登录微软账户",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "登录超时，请重试",
   "accounts.ms_success": "登录成功：{0}",
   "accounts.ms_failed": "登录失败：{0}",
-
   "accounts.authlib_servers": "外置登录服务器",
   "accounts.authlib_add_server": "添加服务器",
   "accounts.authlib_edit_server": "编辑",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "还没有服务器，添加一个（如 https://littleskin.cn/api/yggdrasil）",
   "accounts.authlib_login": "用户名/邮箱",
   "accounts.authlib_password": "密码",
-
   "skins.upload_title": "上传皮肤",
   "skins.upload_button": "上传 PNG",
   "skins.upload_success": "皮肤已上传到账户",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "需要微软账户的访问令牌才能上传皮肤",
   "skins.flip": "左右翻转",
   "skins.rotate_hint": "🖱️ 拖动旋转，点翻转镜像",
-
   "mods.title": "Mod 中心",
   "mods.search_placeholder": "搜索 Mod（如 Sodium 光影）…",
   "mods.search": "搜索",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 AI 推荐",
   "mods.recommend_prompt_placeholder": "用自然语言描述你想要的 Mod（如：我要流畅的光影）",
   "mods.recommend_button": "AI 推荐",
-
   "assistant.title": "AI 助手",
   "assistant.placeholder": "输入消息或问题…",
   "assistant.send": "发送",
@@ -149,7 +142,6 @@
   "assistant.thinking": "AI 正在思考…",
   "assistant.user": "你",
   "assistant.ai": "AI",
-
   "content.title": "游戏内容",
   "content.saves": "存档",
   "content.screenshots": "截图",
@@ -182,7 +174,6 @@
   "content.delete": "删除",
   "content.world_size": "{0} 项文件",
   "content.last_played": "最后修改：{0}",
-
   "settings.title": "设置",
   "settings.language": "语言 / Language",
   "settings.general": "通用",
@@ -218,7 +209,27 @@
   "settings.check_update": "检查更新",
   "update.up_to_date": "已是最新版本",
   "update.available": "发现新版本 {0}，点击查看",
-
+  "server.title": "联机服务器",
+  "server.subtitle": "收藏喜欢的服务器，随时查看在线状态。",
+  "server.name": "服务器名称",
+  "server.address": "地址（域名 或 域名:端口）",
+  "server.address_hint": "例如 play.example.net 或 192.168.1.5:25565",
+  "server.add": "添加",
+  "server.empty": "暂无收藏服务器 — 在上方添加一个。",
+  "server.ping_all": "全部 Ping",
+  "server.pinging_all": "正在 Ping 所有服务器…",
+  "server.ping_all_done": "所有服务器 Ping 完成。",
+  "server.ping": "重新 Ping",
+  "server.connect": "▶ 连接",
+  "server.remove": "移除",
+  "server.move_up": "上移",
+  "server.move_down": "下移",
+  "server.pinging": "Ping 中…",
+  "server.online": "在线",
+  "server.offline": "离线",
+  "server.ping_failed": "Ping 失败",
+  "server.connect_queued": "将在下次启动时连接",
+  "server.no_instance": "连接前请先创建实例",
   "common.cancel": "取消",
   "common.confirm": "确认",
   "common.close": "关闭",

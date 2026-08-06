@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "Hỗ trợ AI",
-
   "nav.home": "Trang chủ",
   "nav.download": "Tải xuống",
   "nav.accounts": "Tài khoản",
   "nav.mods": "Mod",
   "nav.assistant": "Trợ lý AI",
   "nav.game_content": "Dữ liệu game",
+  "nav.multiplayer": "Nhiều người chơi",
   "nav.settings": "Cài đặt",
-
   "home.title": "Khởi chạy",
   "home.instances": "Phiên bản của tôi",
   "home.no_instances": "Chưa có phiên bản — cài đặt một phiên bản trong Tải xuống",
@@ -49,7 +48,6 @@
   "home.export_all": "Xuất tất cả",
   "home.delete_all": "Xóa tất cả",
   "home.deleted_all": "Đã xóa tất cả phiên bản",
-
   "download.title": "Trung tâm tải xuống",
   "download.search_placeholder": "Tìm phiên bản (vd. 1.20.1)…",
   "download.filter_release": "Phát hành",
@@ -67,7 +65,6 @@
   "download.column_released": "Ngày",
   "download.column_action": "Hành động",
   "download.empty": "Không có phiên bản phù hợp",
-
   "accounts.title": "Tài khoản",
   "accounts.add_offline": "Thêm tài khoản ngoại tuyến",
   "accounts.add_microsoft": "Đăng nhập bằng Microsoft",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "Hết thời gian đăng nhập, vui lòng thử lại",
   "accounts.ms_success": "Đã đăng nhập: {0}",
   "accounts.ms_failed": "Đăng nhập thất bại: {0}",
-
   "accounts.authlib_servers": "Máy chủ đăng nhập bên ngoài",
   "accounts.authlib_add_server": "Thêm máy chủ",
   "accounts.authlib_edit_server": "Sửa",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "Chưa có máy chủ — thêm một máy chủ (vd. https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "Tên người dùng / email",
   "accounts.authlib_password": "Mật khẩu",
-
   "skins.upload_title": "Tải lên skin",
   "skins.upload_button": "Tải lên PNG",
   "skins.upload_success": "Đã tải skin lên tài khoản",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "Cần mã truy cập Microsoft để tải skin lên",
   "skins.flip": "Lật trái/phải",
   "skins.rotate_hint": "🖱️ kéo để xoay, nhấn để lật",
-
   "mods.title": "Trung tâm Mod",
   "mods.search_placeholder": "Tìm mod (vd. Sodium)…",
   "mods.search": "Tìm kiếm",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 Đề xuất AI",
   "mods.recommend_prompt_placeholder": "Mô tả mod bạn muốn (vd. shader mượt mà)",
   "mods.recommend_button": "Đề xuất AI",
-
   "assistant.title": "Trợ lý AI",
   "assistant.placeholder": "Nhập tin nhắn hoặc câu hỏi…",
   "assistant.send": "Gửi",
@@ -149,7 +142,6 @@
   "assistant.thinking": "AI đang suy nghĩ…",
   "assistant.user": "Bạn",
   "assistant.ai": "AI",
-
   "content.title": "Dữ liệu game",
   "content.saves": "Lưu game",
   "content.screenshots": "Ảnh chụp",
@@ -182,7 +174,6 @@
   "content.delete": "Xóa",
   "content.world_size": "{0} tệp",
   "content.last_played": "Đã sửa: {0}",
-
   "settings.title": "Cài đặt",
   "settings.language": "Ngôn ngữ / Language",
   "settings.general": "Chung",
@@ -218,7 +209,27 @@
   "settings.check_update": "Kiểm tra cập nhật",
   "update.up_to_date": "Bạn đang dùng phiên bản mới nhất",
   "update.available": "Có phiên bản mới {0} — nhấn để xem",
-
+  "server.title": "Máy chủ nhiều người chơi",
+  "server.subtitle": "Lưu máy chủ yêu thích và xem ai đang trực tuyến ngay một glance.",
+  "server.name": "Tên máy chủ",
+  "server.address": "Địa chỉ (host hoặc host:cổng)",
+  "server.address_hint": "vd. play.example.net hoặc 192.168.1.5:25565",
+  "server.add": "Thêm",
+  "server.empty": "Chưa có máy chủ — thêm ở trên.",
+  "server.ping_all": "Ping tất cả",
+  "server.pinging_all": "Đang ping tất cả máy chủ…",
+  "server.ping_all_done": "Đã ping xong máy chủ.",
+  "server.ping": "Ping lại",
+  "server.connect": "▶ Kết nối",
+  "server.remove": "Xóa",
+  "server.move_up": "Lên",
+  "server.move_down": "Xuống",
+  "server.pinging": "Đang ping…",
+  "server.online": "Trực tuyến",
+  "server.offline": "Ngoại tuyến",
+  "server.ping_failed": "Ping thất bại",
+  "server.connect_queued": "Sẽ kết nối ở lần mở tiếp theo",
+  "server.no_instance": "Tạo một instance trước khi kết nối",
   "common.cancel": "Hủy",
   "common.confirm": "OK",
   "common.close": "Đóng",

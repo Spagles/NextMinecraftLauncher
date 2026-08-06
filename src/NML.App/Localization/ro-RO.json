@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "Cu suport AI",
-
   "nav.home": "Acasă",
   "nav.download": "Descărcări",
   "nav.accounts": "Conturi",
   "nav.mods": "Moduri",
   "nav.assistant": "Asistent AI",
   "nav.game_content": "Date joc",
+  "nav.multiplayer": "Multiplayer",
   "nav.settings": "Setări",
-
   "home.title": "Pornire",
   "home.instances": "Instanțele mele",
   "home.no_instances": "Nicio instanță — instalează una în Descărcări",
@@ -49,7 +48,6 @@
   "home.export_all": "Exportă tot",
   "home.delete_all": "Șterge tot",
   "home.deleted_all": "Toate instanțele au fost șterse",
-
   "download.title": "Centru de descărcare",
   "download.search_placeholder": "Caută versiune (ex. 1.20.1)…",
   "download.filter_release": "Versiuni",
@@ -67,7 +65,6 @@
   "download.column_released": "Dată",
   "download.column_action": "Acțiune",
   "download.empty": "Nicio versiune corespunzătoare",
-
   "accounts.title": "Conturi",
   "accounts.add_offline": "Adaugă cont offline",
   "accounts.add_microsoft": "Conectare cu Microsoft",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "Timp de conectare expirat, încearcă din nou",
   "accounts.ms_success": "Conectat: {0}",
   "accounts.ms_failed": "Conectare eșuată: {0}",
-
   "accounts.authlib_servers": "Servere de autentificare externe",
   "accounts.authlib_add_server": "Adaugă server",
   "accounts.authlib_edit_server": "Editează",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "Niciun server — adaugă unul (ex. https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "Nume utilizator / email",
   "accounts.authlib_password": "Parolă",
-
   "skins.upload_title": "Încarcă skin",
   "skins.upload_button": "Încarcă PNG",
   "skins.upload_success": "Skin încărcat în cont",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "Un token de acces Microsoft este necesar pentru a încărca skin-uri",
   "skins.flip": "Oglindire stânga/dreapta",
   "skins.rotate_hint": "🖱️ trage pentru a roti, apasă pentru a oglindi",
-
   "mods.title": "Centru de moduri",
   "mods.search_placeholder": "Caută moduri (ex. Sodium)…",
   "mods.search": "Caută",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 Recomandare AI",
   "mods.recommend_prompt_placeholder": "Descrie modul dorit (ex. shadere fluide)",
   "mods.recommend_button": "Recomandare AI",
-
   "assistant.title": "Asistent AI",
   "assistant.placeholder": "Scrie un mesaj sau o întrebare…",
   "assistant.send": "Trimite",
@@ -149,7 +142,6 @@
   "assistant.thinking": "AI se gândește…",
   "assistant.user": "Tu",
   "assistant.ai": "AI",
-
   "content.title": "Date joc",
   "content.saves": "Salvări",
   "content.screenshots": "Capturi de ecran",
@@ -182,7 +174,6 @@
   "content.delete": "Șterge",
   "content.world_size": "{0} fișiere",
   "content.last_played": "Modificat: {0}",
-
   "settings.title": "Setări",
   "settings.language": "Limbă / Language",
   "settings.general": "General",
@@ -218,7 +209,27 @@
   "settings.check_update": "Verifică actualizări",
   "update.up_to_date": "Ești la zi",
   "update.available": "Versiune nouă {0} disponibilă — apasă pentru a vedea",
-
+  "server.title": "Servere multiplayer",
+  "server.subtitle": "Salvează serverele tale preferate și vezi cine e online dintr-o privire.",
+  "server.name": "Nume server",
+  "server.address": "Adresă (gazdă sau gazdă:port)",
+  "server.address_hint": "ex. play.example.net sau 192.168.1.5:25565",
+  "server.add": "Adaugă",
+  "server.empty": "Niciun server salvat — adaugă mai sus.",
+  "server.ping_all": "Ping toate",
+  "server.pinging_all": "Se trimit ping către toate serverele…",
+  "server.ping_all_done": "Ping servere finalizat.",
+  "server.ping": "Ping din nou",
+  "server.connect": "▶ Conectare",
+  "server.remove": "Șterge",
+  "server.move_up": "Sus",
+  "server.move_down": "Jos",
+  "server.pinging": "Ping…",
+  "server.online": "Online",
+  "server.offline": "Offline",
+  "server.ping_failed": "Ping eșuat",
+  "server.connect_queued": "Se va conecta la următoarea pornire",
+  "server.no_instance": "Creează o instanță înainte de a te conecta",
   "common.cancel": "Anulează",
   "common.confirm": "OK",
   "common.close": "Închide",

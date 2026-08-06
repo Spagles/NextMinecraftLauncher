@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "Con IA",
-
   "nav.home": "Inicio",
   "nav.download": "Descargas",
   "nav.accounts": "Cuentas",
   "nav.mods": "Mods",
   "nav.assistant": "Asistente IA",
   "nav.game_content": "Datos del juego",
+  "nav.multiplayer": "Multijugador",
   "nav.settings": "Ajustes",
-
   "home.title": "Iniciar",
   "home.instances": "Mis instancias",
   "home.no_instances": "No hay instancias — instala una en Descargas",
@@ -49,7 +48,6 @@
   "home.export_all": "Exportar todo",
   "home.delete_all": "Eliminar todo",
   "home.deleted_all": "Todas las instancias eliminadas",
-
   "download.title": "Centro de descargas",
   "download.search_placeholder": "Buscar versión (ej. 1.20.1)…",
   "download.filter_release": "Versiones",
@@ -67,7 +65,6 @@
   "download.column_released": "Fecha",
   "download.column_action": "Acción",
   "download.empty": "No hay versiones que coincidan",
-
   "accounts.title": "Cuentas",
   "accounts.add_offline": "Añadir cuenta sin conexión",
   "accounts.add_microsoft": "Iniciar sesión con Microsoft",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "Tiempo de inicio de sesión agotado, reintenta",
   "accounts.ms_success": "Sesión iniciada: {0}",
   "accounts.ms_failed": "Error de inicio de sesión: {0}",
-
   "accounts.authlib_servers": "Servidores de inicio de sesión externos",
   "accounts.authlib_add_server": "Añadir servidor",
   "accounts.authlib_edit_server": "Editar",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "No hay servidores — añade uno (ej. https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "Usuario / correo",
   "accounts.authlib_password": "Contraseña",
-
   "skins.upload_title": "Subir skin",
   "skins.upload_button": "Subir PNG",
   "skins.upload_success": "Skin subido a la cuenta",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "Se necesita un token de acceso de Microsoft para subir skins",
   "skins.flip": "Espejar izquierda/derecha",
   "skins.rotate_hint": "🖱️ arrastra para rotar, clic para espejar",
-
   "mods.title": "Centro de Mods",
   "mods.search_placeholder": "Buscar mods (ej. Sodium)…",
   "mods.search": "Buscar",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 Recomendar IA",
   "mods.recommend_prompt_placeholder": "Describe el mod que quieres (ej. shaders suaves)",
   "mods.recommend_button": "Recomendar IA",
-
   "assistant.title": "Asistente IA",
   "assistant.placeholder": "Escribe un mensaje o pregunta…",
   "assistant.send": "Enviar",
@@ -149,7 +142,6 @@
   "assistant.thinking": "La IA está pensando…",
   "assistant.user": "Tú",
   "assistant.ai": "IA",
-
   "content.title": "Datos del juego",
   "content.saves": "Guardados",
   "content.screenshots": "Capturas",
@@ -182,7 +174,6 @@
   "content.delete": "Eliminar",
   "content.world_size": "{0} archivos",
   "content.last_played": "Modificado: {0}",
-
   "settings.title": "Ajustes",
   "settings.language": "Idioma / Language",
   "settings.general": "General",
@@ -218,7 +209,27 @@
   "settings.check_update": "Buscar actualizaciones",
   "update.up_to_date": "Estás actualizado",
   "update.available": "Nueva versión {0} disponible — clic para ver",
-
+  "server.title": "Servidores multijugador",
+  "server.subtitle": "Guarda tus servidores favoritos y ve quién está en línea de un vistazo.",
+  "server.name": "Nombre del servidor",
+  "server.address": "Dirección (host o host:puerto)",
+  "server.address_hint": "ej. play.example.net o 192.168.1.5:25565",
+  "server.add": "Añadir",
+  "server.empty": "Sin servidores guardados — añade uno arriba.",
+  "server.ping_all": "Probar todos",
+  "server.pinging_all": "Probando todos los servidores…",
+  "server.ping_all_done": "Prueba de servidores completada.",
+  "server.ping": "Probar",
+  "server.connect": "▶ Conectar",
+  "server.remove": "Quitar",
+  "server.move_up": "Subir",
+  "server.move_down": "Bajar",
+  "server.pinging": "Probando…",
+  "server.online": "En línea",
+  "server.offline": "Sin conexión",
+  "server.ping_failed": "Prueba fallida",
+  "server.connect_queued": "Conectará en el próximo inicio",
+  "server.no_instance": "Crea una instancia antes de conectar",
   "common.cancel": "Cancelar",
   "common.confirm": "OK",
   "common.close": "Cerrar",

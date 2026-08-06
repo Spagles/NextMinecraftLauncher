@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "एआई संचालित",
-
   "nav.home": "होम",
   "nav.download": "डाउनलोड",
   "nav.accounts": "खाते",
   "nav.mods": "मॉड्स",
   "nav.assistant": "एआई सहायक",
   "nav.game_content": "गेम डेटा",
+  "nav.multiplayer": "मल्टीप्लेयर",
   "nav.settings": "सेटिंग्स",
-
   "home.title": "लॉन्च करें",
   "home.instances": "मेरे इंस्टेंस",
   "home.no_instances": "कोई इंस्टेंस नहीं — डाउनलोड में एक स्थापित करें",
@@ -49,7 +48,6 @@
   "home.export_all": "सभी निर्यात करें",
   "home.delete_all": "सभी हटाएं",
   "home.deleted_all": "सभी इंस्टेंस हटाए गए",
-
   "download.title": "डाउनलोड केंद्र",
   "download.search_placeholder": "संस्करण खोजें (जैसे 1.20.1)…",
   "download.filter_release": "रिलीज़",
@@ -67,7 +65,6 @@
   "download.column_released": "तारीख",
   "download.column_action": "कार्रवाई",
   "download.empty": "कोई मेल खाने वाला संस्करण नहीं",
-
   "accounts.title": "खाते",
   "accounts.add_offline": "ऑफलाइन खाता जोड़ें",
   "accounts.add_microsoft": "Microsoft से साइन इन करें",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "साइन-इन समय समाप्त, पुनः प्रयास करें",
   "accounts.ms_success": "साइन-इन: {0}",
   "accounts.ms_failed": "साइन-इन विफल: {0}",
-
   "accounts.authlib_servers": "बाहरी लॉगिन सर्वर",
   "accounts.authlib_add_server": "सर्वर जोड़ें",
   "accounts.authlib_edit_server": "संपादित करें",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "कोई सर्वर नहीं — एक जोड़ें (जैसे https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "उपयोगकर्ता नाम / ईमेल",
   "accounts.authlib_password": "पासवर्ड",
-
   "skins.upload_title": "स्किन अपलोड करें",
   "skins.upload_button": "PNG अपलोड करें",
   "skins.upload_success": "स्किन खाते में अपलोड की गई",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "स्किन अपलोड करने के लिए Microsoft एक्सेस टोकन आवश्यक है",
   "skins.flip": "बाएं/दाएं पलटें",
   "skins.rotate_hint": "🖱️ घुमाने के लिए खींचें, पलटने के लिए क्लिक करें",
-
   "mods.title": "मॉड केंद्र",
   "mods.search_placeholder": "मॉड खोजें (जैसे Sodium)…",
   "mods.search": "खोजें",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 एआई अनुशंसा",
   "mods.recommend_prompt_placeholder": "वांछित मॉड का वर्णन करें (जैसे चिकनी शेडर)",
   "mods.recommend_button": "एआई अनुशंसा",
-
   "assistant.title": "एआई सहायक",
   "assistant.placeholder": "संदेश या प्रश्न टाइप करें…",
   "assistant.send": "भेजें",
@@ -149,7 +142,6 @@
   "assistant.thinking": "एआई सोच रहा है…",
   "assistant.user": "आप",
   "assistant.ai": "एआई",
-
   "content.title": "गेम डेटा",
   "content.saves": "सेव",
   "content.screenshots": "स्क्रीनशॉट",
@@ -182,7 +174,6 @@
   "content.delete": "हटाएं",
   "content.world_size": "{0} फ़ाइलें",
   "content.last_played": "संशोधित: {0}",
-
   "settings.title": "सेटिंग्स",
   "settings.language": "भाषा / Language",
   "settings.general": "सामान्य",
@@ -218,7 +209,27 @@
   "settings.check_update": "अपडेट जांचें",
   "update.up_to_date": "आप अप-टू-डेट हैं",
   "update.available": "नया संस्करण {0} उपलब्ध — देखने के लिए क्लिक करें",
-
+  "server.title": "मल्टीप्लेयर सर्वर",
+  "server.subtitle": "अपने पसंदीदा सर्वर सहेजें और एक नज़र में देखें कौन ऑनलाइन है।",
+  "server.name": "सर्वर नाम",
+  "server.address": "पता (होस्ट या होस्ट:पोर्ट)",
+  "server.address_hint": "जैसे play.example.net या 192.168.1.5:25565",
+  "server.add": "जोड़ें",
+  "server.empty": "कोई सहेजा गया सर्वर नहीं — ऊपर जोड़ें।",
+  "server.ping_all": "सभी पिंग करें",
+  "server.pinging_all": "सभी सर्वर पिंग हो रहे हैं…",
+  "server.ping_all_done": "सर्वर पिंग पूर्ण।",
+  "server.ping": "पुनः पिंग",
+  "server.connect": "▶ कनेक्ट",
+  "server.remove": "हटाएँ",
+  "server.move_up": "ऊपर",
+  "server.move_down": "नीचे",
+  "server.pinging": "पिंग जारी…",
+  "server.online": "ऑनलाइन",
+  "server.offline": "ऑफ़लाइन",
+  "server.ping_failed": "पिंग विफल",
+  "server.connect_queued": "अगले लॉन्च पर कनेक्ट होगा",
+  "server.no_instance": "कनेक्ट से पहले एक इंस्टेंस बनाएँ",
   "common.cancel": "रद्द करें",
   "common.confirm": "ठीक है",
   "common.close": "बंद करें",

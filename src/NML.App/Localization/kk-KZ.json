@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "Belə nail",
-
   "nav.home": "Ana Səhifə",
   "nav.download": "Endirmələr",
   "nav.accounts": "Hesablar",
   "nav.mods": "Modlar",
   "nav.assistant": "AI Köməkçi",
   "nav.game_content": "Oyun Məlumatları",
+  "nav.multiplayer": "Көп ойыншылы",
   "nav.settings": "Ayarlar",
-
   "home.title": "Başlat",
   "home.instances": "Nümunələrim",
   "home.no_instances": "Nümunə yoxdur — Endirmələrdə birini quraşdırın",
@@ -49,7 +48,6 @@
   "home.export_all": "Hamısını ixrac et",
   "home.delete_all": "Hamısını sil",
   "home.deleted_all": "Bütün nümunələr silindi",
-
   "download.title": "Endirmə Mərkəzi",
   "download.search_placeholder": "Versiya axtar (məs. 1.20.1)…",
   "download.filter_release": "Buraxılışlar",
@@ -67,7 +65,6 @@
   "download.column_released": "Tarix",
   "download.column_action": "Əməliyyat",
   "download.empty": "Uyğun versiya yoxdur",
-
   "accounts.title": "Hesablar",
   "accounts.add_offline": "Oflayn hesab əlavə et",
   "accounts.add_microsoft": "Microsoft ilə daxil ol",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "Daxil olma vaxtı bitdi, yenidən cəhd edin",
   "accounts.ms_success": "Daxil olundu: {0}",
   "accounts.ms_failed": "Daxil olma uğursuz oldu: {0}",
-
   "accounts.authlib_servers": "Xarici daxil olma serverləri",
   "accounts.authlib_add_server": "Server əlavə et",
   "accounts.authlib_edit_server": "Redaktə et",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "Server yoxdur — birini əlavə edin",
   "accounts.authlib_login": "İstifadəçi adı / e-poçt",
   "accounts.authlib_password": "Şifrə",
-
   "skins.upload_title": "Skin yüklə",
   "skins.upload_button": "PNG yüklə",
   "skins.upload_success": "Skin hesaba yükləndi",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "Skin yükləmək üçün Microsoft giriş tokeni tələb olunur",
   "skins.flip": "Sol/sağa tərs çevir",
   "skins.rotate_hint": "🖱️ fırlatmaq üçün sürükləyin, çevirmək üçün klikləyin",
-
   "mods.title": "Mod Mərkəzi",
   "mods.search_placeholder": "Mod axtar (məs. Sodium)…",
   "mods.search": "Axtar",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 AI tövsiyəsi",
   "mods.recommend_prompt_placeholder": "İstədiyiniz modu təsvir edin",
   "mods.recommend_button": "AI tövsiyəsi",
-
   "assistant.title": "AI Köməkçi",
   "assistant.placeholder": "Mesaj və ya sual yazın…",
   "assistant.send": "Göndər",
@@ -149,7 +142,6 @@
   "assistant.thinking": "AI düşünür…",
   "assistant.user": "Sən",
   "assistant.ai": "AI",
-
   "content.title": "Oyun Məlumatları",
   "content.saves": "Yaddaşlar",
   "content.screenshots": "Ekran görüntüləri",
@@ -182,7 +174,6 @@
   "content.delete": "Sil",
   "content.world_size": "{0} fayl",
   "content.last_played": "Dəyişdirildi: {0}",
-
   "settings.title": "Ayarlar",
   "settings.language": "Dil / Language",
   "settings.general": "Ümumi",
@@ -218,7 +209,27 @@
   "settings.check_update": "Yeniləmələri yoxla",
   "update.up_to_date": "Siz aktualsınız",
   "update.available": "Yeni versiya {0} mövcuddur — görmək üçün klikləyin",
-
+  "server.title": "Көп ойыншылы серверлер",
+  "server.subtitle": "Таңдаулы серверлеріңізді сақтап, кім онлайн екенін бірден көріңіз.",
+  "server.name": "Сервер атауы",
+  "server.address": "Мекенжай (хост немесе хост:порт)",
+  "server.address_hint": "мыс. play.example.net немесе 192.168.1.5:25565",
+  "server.add": "Қосу",
+  "server.empty": "Сақталған сервер жоқ — жоғарыда қосыңыз.",
+  "server.ping_all": "Барлығын пинг",
+  "server.pinging_all": "Барлық серверлер пингілуде…",
+  "server.ping_all_done": "Сервер пингі аяқталды.",
+  "server.ping": "Қайта пинг",
+  "server.connect": "▶ Қосылу",
+  "server.remove": "Жою",
+  "server.move_up": "Жоғары",
+  "server.move_down": "Төмен",
+  "server.pinging": "Пингілуде…",
+  "server.online": "Желіде",
+  "server.offline": "Желіден тыс",
+  "server.ping_failed": "Пинг сәтсіз",
+  "server.connect_queued": "Келесі қосуда қосылады",
+  "server.no_instance": "Қосылу алдында дана жасаңыз",
   "common.cancel": "Ləğv et",
   "common.confirm": "Tamam",
   "common.close": "Bağla",

@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "AI-gesteund",
-
   "nav.home": "Tuis",
   "nav.download": "Aflaaie",
   "nav.accounts": "Rekeninge",
   "nav.mods": "Mods",
   "nav.assistant": "AI-assistent",
   "nav.game_content": "Speldata",
+  "nav.multiplayer": "Veelspeler",
   "nav.settings": "Instellings",
-
   "home.title": "Begin",
   "home.instances": "My gevalle",
   "home.no_instances": "Geen gevalle — installeer een in Aflaaie",
@@ -49,7 +48,6 @@
   "home.export_all": "Voer alles uit",
   "home.delete_all": "Vee almal uit",
   "home.deleted_all": "Alle gevalle uitgevee",
-
   "download.title": "Aflaai sentrum",
   "download.search_placeholder": "Soek weergawe (bv. 1.20.1)…",
   "download.filter_release": "Vrystellings",
@@ -67,7 +65,6 @@
   "download.column_released": "Datum",
   "download.column_action": "Aksie",
   "download.empty": "Geen passing weergawes",
-
   "accounts.title": "Rekeninge",
   "accounts.add_offline": "Voeg offline rekening by",
   "accounts.add_microsoft": "Teken in met Microsoft",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "Aanmeldingstyd verstreke, probeer weer",
   "accounts.ms_success": "Aangemeld: {0}",
   "accounts.ms_failed": "Aanmelding het misluk: {0}",
-
   "accounts.authlib_servers": "Eksterne aanmeldbedieners",
   "accounts.authlib_add_server": "Voeg bediener by",
   "accounts.authlib_edit_server": "Redigeer",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "Geen bedieners — voeg een by",
   "accounts.authlib_login": "Gebruikersnaam / e-pos",
   "accounts.authlib_password": "Wagwoord",
-
   "skins.upload_title": "Laai skin op",
   "skins.upload_button": "Laai PNG op",
   "skins.upload_success": "Skin opgelaai na rekening",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "Microsoft toegangstoken word vereis om skins op te laai",
   "skins.flip": "Spieël links/regs",
   "skins.rotate_hint": "🖱️ sleep om te draai, klik om te spieël",
-
   "mods.title": "Mod sentrum",
   "mods.search_placeholder": "Soek mods (bv. Sodium)…",
   "mods.search": "Soek",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 AI aanbeveling",
   "mods.recommend_prompt_placeholder": "Beskryf die mod wat jy wil hê",
   "mods.recommend_button": "AI aanbeveling",
-
   "assistant.title": "AI-assistent",
   "assistant.placeholder": "Tik 'n boodskap of vraag…",
   "assistant.send": "Stuur",
@@ -149,7 +142,6 @@
   "assistant.thinking": "AI dink…",
   "assistant.user": "Jy",
   "assistant.ai": "AI",
-
   "content.title": "Speldata",
   "content.saves": "Stoor",
   "content.screenshots": "Skermskote",
@@ -182,7 +174,6 @@
   "content.delete": "Vee uit",
   "content.world_size": "{0} lêers",
   "content.last_played": "Gewysig: {0}",
-
   "settings.title": "Instellings",
   "settings.language": "Taal / Language",
   "settings.general": "Algemeen",
@@ -218,7 +209,27 @@
   "settings.check_update": "Kontroleer opdaterings",
   "update.up_to_date": "Jy is op datum",
   "update.available": "Nuwe weergawe {0} beskikbaar — klik om te sien",
-
+  "server.title": "Veelspel-bedieners",
+  "server.subtitle": "Stoor jou gunsteling bedieners en sien wie aanlyn is met een oogopslag.",
+  "server.name": "Bedienernaam",
+  "server.address": "Adres (gasheer of gasheer:poort)",
+  "server.address_hint": "bv. play.example.net of 192.168.1.5:25565",
+  "server.add": "Voeg by",
+  "server.empty": "Geen gestoorde bedieners — voeg een bo by.",
+  "server.ping_all": "Ping almal",
+  "server.pinging_all": "Ping alle bedieners…",
+  "server.ping_all_done": "Bediener-ping voltooi.",
+  "server.ping": "Ping weer",
+  "server.connect": "▶ Koppel",
+  "server.remove": "Verwyder",
+  "server.move_up": "Op",
+  "server.move_down": "Af",
+  "server.pinging": "Ping…",
+  "server.online": "Aanlyn",
+  "server.offline": "Vanlyn",
+  "server.ping_failed": "Ping het misluk",
+  "server.connect_queued": "Sal koppel met volgende lansering",
+  "server.no_instance": "Skep 'n instansie voor koppeling",
   "common.cancel": "Kanselleer",
   "common.confirm": "OK",
   "common.close": "Maak toe",

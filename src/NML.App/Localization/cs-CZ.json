@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "S podporou AI",
-
   "nav.home": "Domů",
   "nav.download": "Stahování",
   "nav.accounts": "Účty",
   "nav.mods": "Módy",
   "nav.assistant": "AI asistent",
   "nav.game_content": "Data hry",
+  "nav.multiplayer": "Multiplayer",
   "nav.settings": "Nastavení",
-
   "home.title": "Spustit",
   "home.instances": "Moje instance",
   "home.no_instances": "Žádné instance — nainstalujte jednu ve Stahování",
@@ -49,7 +48,6 @@
   "home.export_all": "Exportovat vše",
   "home.delete_all": "Smazat vše",
   "home.deleted_all": "Všechny instance smazány",
-
   "download.title": "Centrum stahování",
   "download.search_placeholder": "Hledat verzi (např. 1.20.1)…",
   "download.filter_release": "Vydání",
@@ -67,7 +65,6 @@
   "download.column_released": "Datum",
   "download.column_action": "Akce",
   "download.empty": "Žádné odpovídající verze",
-
   "accounts.title": "Účty",
   "accounts.add_offline": "Přidat offline účet",
   "accounts.add_microsoft": "Přihlásit se přes Microsoft",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "Čas přihlášení vypršel, zkuste to znovu",
   "accounts.ms_success": "Přihlášeno: {0}",
   "accounts.ms_failed": "Přihlášení selhalo: {0}",
-
   "accounts.authlib_servers": "Externí přihlašovací servery",
   "accounts.authlib_add_server": "Přidat server",
   "accounts.authlib_edit_server": "Upravit",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "Žádné servery — přidejte jeden (např. https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "Uživatelské jméno / e-mail",
   "accounts.authlib_password": "Heslo",
-
   "skins.upload_title": "Nahrát skin",
   "skins.upload_button": "Nahrát PNG",
   "skins.upload_success": "Skin nahrán na účet",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "Pro nahrání skinů je vyžadován přístupový token Microsoft",
   "skins.flip": "Překlopit vlevo/vpravo",
   "skins.rotate_hint": "🖱️ táhněte pro otočení, klikněte pro překlopení",
-
   "mods.title": "Centrum módů",
   "mods.search_placeholder": "Hledat módy (např. Sodium)…",
   "mods.search": "Hledat",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 AI doporučení",
   "mods.recommend_prompt_placeholder": "Popište mod, který chcete (např. plynulé shadery)",
   "mods.recommend_button": "AI doporučení",
-
   "assistant.title": "AI asistent",
   "assistant.placeholder": "Napište zprávu nebo otázku…",
   "assistant.send": "Odeslat",
@@ -149,7 +142,6 @@
   "assistant.thinking": "AI přemýšlí…",
   "assistant.user": "Vy",
   "assistant.ai": "AI",
-
   "content.title": "Data hry",
   "content.saves": "Uložení",
   "content.screenshots": "Snímky obrazovky",
@@ -182,7 +174,6 @@
   "content.delete": "Smazat",
   "content.world_size": "{0} souborů",
   "content.last_played": "Změněno: {0}",
-
   "settings.title": "Nastavení",
   "settings.language": "Jazyk / Language",
   "settings.general": "Obecné",
@@ -218,7 +209,27 @@
   "settings.check_update": "Zkontrolovat aktualizace",
   "update.up_to_date": "Jste aktuální",
   "update.available": "Nová verze {0} dostupná — klikněte pro zobrazení",
-
+  "server.title": "Multiplayerové servery",
+  "server.subtitle": "Uložte si oblíbené servery a podívejte se, kdo je online, jedním pohledem.",
+  "server.name": "Název serveru",
+  "server.address": "Adresa (hostitel nebo hostitel:port)",
+  "server.address_hint": "např. play.example.net nebo 192.168.1.5:25565",
+  "server.add": "Přidat",
+  "server.empty": "Žádné uložené servery — přidejte výše.",
+  "server.ping_all": "Otestovat všechny",
+  "server.pinging_all": "Testování všech serverů…",
+  "server.ping_all_done": "Test serverů dokončen.",
+  "server.ping": "Otestovat",
+  "server.connect": "▶ Připojit",
+  "server.remove": "Odebrat",
+  "server.move_up": "Nahoru",
+  "server.move_down": "Dolů",
+  "server.pinging": "Testování…",
+  "server.online": "Online",
+  "server.offline": "Offline",
+  "server.ping_failed": "Test selhal",
+  "server.connect_queued": "Připojí se při příštím spuštění",
+  "server.no_instance": "Před připojením vytvořte instanci",
   "common.cancel": "Zrušit",
   "common.confirm": "OK",
   "common.close": "Zavřít",

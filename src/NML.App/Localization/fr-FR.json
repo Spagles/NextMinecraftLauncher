@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "Propulsé par l'IA",
-
   "nav.home": "Accueil",
   "nav.download": "Téléchargements",
   "nav.accounts": "Comptes",
   "nav.mods": "Mods",
   "nav.assistant": "Assistant IA",
   "nav.game_content": "Données de jeu",
+  "nav.multiplayer": "Multijoueur",
   "nav.settings": "Paramètres",
-
   "home.title": "Lancer",
   "home.instances": "Mes instances",
   "home.no_instances": "Aucune instance — installez-en une dans Téléchargements",
@@ -49,7 +48,6 @@
   "home.export_all": "Tout exporter",
   "home.delete_all": "Tout supprimer",
   "home.deleted_all": "Toutes les instances supprimées",
-
   "download.title": "Centre de téléchargement",
   "download.search_placeholder": "Rechercher une version (ex. 1.20.1)…",
   "download.filter_release": "Versions",
@@ -67,7 +65,6 @@
   "download.column_action": "Action",
   "download.results": "{0} versions trouvées",
   "download.empty": "Aucune version correspondante",
-
   "accounts.title": "Comptes",
   "accounts.add_offline": "Ajouter un compte hors ligne",
   "accounts.add_microsoft": "Se connecter avec Microsoft",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "Délai de connexion expiré, veuillez réessayer",
   "accounts.ms_success": "Connecté : {0}",
   "accounts.ms_failed": "Échec de la connexion : {0}",
-
   "accounts.authlib_servers": "Serveurs de connexion externes",
   "accounts.authlib_add_server": "Ajouter un serveur",
   "accounts.authlib_edit_server": "Modifier",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "Aucun serveur — ajoutez-en un (ex. https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "Nom d'utilisateur / e-mail",
   "accounts.authlib_password": "Mot de passe",
-
   "skins.upload_title": "Télécharger un skin",
   "skins.upload_button": "Télécharger PNG",
   "skins.upload_success": "Skin téléchargé sur le compte",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "Un jeton d'accès Microsoft est requis pour télécharger des skins",
   "skins.flip": "Miroir gauche/droite",
   "skins.rotate_hint": "🖱️ glissez pour pivoter, cliquez pour miroir",
-
   "mods.title": "Centre de Mods",
   "mods.search_placeholder": "Rechercher des mods (ex. Sodium)…",
   "mods.search": "Rechercher",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 Recommandation IA",
   "mods.recommend_prompt_placeholder": "Décrivez le mod souhaité (ex. shaders fluides)",
   "mods.recommend_button": "Recommandation IA",
-
   "assistant.title": "Assistant IA",
   "assistant.placeholder": "Tapez un message ou une question…",
   "assistant.send": "Envoyer",
@@ -149,7 +142,6 @@
   "assistant.thinking": "L'IA réfléchit…",
   "assistant.user": "Vous",
   "assistant.ai": "IA",
-
   "content.title": "Données de jeu",
   "content.saves": "Sauvegardes",
   "content.screenshots": "Captures d'écran",
@@ -182,7 +174,6 @@
   "content.delete": "Supprimer",
   "content.world_size": "{0} fichiers",
   "content.last_played": "Modifié : {0}",
-
   "settings.title": "Paramètres",
   "settings.language": "Langue / Language",
   "settings.general": "Général",
@@ -218,7 +209,27 @@
   "settings.check_update": "Vérifier les mises à jour",
   "update.up_to_date": "Vous êtes à jour",
   "update.available": "Nouvelle version {0} disponible — cliquez pour voir",
-
+  "server.title": "Serveurs multijoueur",
+  "server.subtitle": "Enregistrez vos serveurs préférés et voyez qui est en ligne d'un coup d'œil.",
+  "server.name": "Nom du serveur",
+  "server.address": "Adresse (hôte ou hôte:port)",
+  "server.address_hint": "ex. play.example.net ou 192.168.1.5:25565",
+  "server.add": "Ajouter",
+  "server.empty": "Aucun serveur enregistré — ajoutez-en un ci-dessus.",
+  "server.ping_all": "Tout tester",
+  "server.pinging_all": "Test de tous les serveurs…",
+  "server.ping_all_done": "Test des serveurs terminé.",
+  "server.ping": "Re-tester",
+  "server.connect": "▶ Rejoindre",
+  "server.remove": "Supprimer",
+  "server.move_up": "Monter",
+  "server.move_down": "Descendre",
+  "server.pinging": "Test…",
+  "server.online": "En ligne",
+  "server.offline": "Hors ligne",
+  "server.ping_failed": "Échec du test",
+  "server.connect_queued": "Connexion au prochain lancement",
+  "server.no_instance": "Créez une instance avant de rejoindre",
   "common.cancel": "Annuler",
   "common.confirm": "OK",
   "common.close": "Fermer",

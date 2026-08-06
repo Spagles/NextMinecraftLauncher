@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "AI 搭載",
-
   "nav.home": "ホーム",
   "nav.download": "ダウンロード",
   "nav.accounts": "アカウント",
   "nav.mods": "Mod",
   "nav.assistant": "AI アシスタント",
   "nav.game_content": "ゲームデータ",
+  "nav.multiplayer": "マルチプレイ",
   "nav.settings": "設定",
-
   "home.title": "起動",
   "home.instances": "インスタンス",
   "home.no_instances": "インスタンスがありません — ダウンロードでインストール",
@@ -49,7 +48,6 @@
   "home.share_generated": "共有コードを生成しました",
   "home.share_invalid": "無効な共有コード",
   "home.exported": "{0} にエクスポートしました",
-
   "download.title": "ダウンロードセンター",
   "download.search_placeholder": "バージョンを検索 (例: 1.20.1)…",
   "download.filter_release": "リリース",
@@ -67,7 +65,6 @@
   "download.column_action": "操作",
   "download.results": "{0} バージョンが見つかりました",
   "download.empty": "一致するバージョンがありません",
-
   "accounts.title": "アカウント",
   "accounts.add_offline": "オフラインアカウントを追加",
   "accounts.add_microsoft": "Microsoft でサインイン",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "ログインがタイムアウトしました、再試行してください",
   "accounts.ms_success": "サインイン成功: {0}",
   "accounts.ms_failed": "ログイン失敗: {0}",
-
   "accounts.authlib_servers": "外部ログインサーバー",
   "accounts.authlib_add_server": "サーバーを追加",
   "accounts.authlib_edit_server": "編集",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "サーバーがありません — 追加 (例: https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "ユーザー名 / メール",
   "accounts.authlib_password": "パスワード",
-
   "skins.upload_title": "スキンをアップロード",
   "skins.upload_button": "PNG をアップロード",
   "skins.upload_success": "スキンをアカウントにアップロードしました",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "スキンをアップロードには Microsoft アカウントのアクセストークンが必要です",
   "skins.flip": "左右反転",
   "skins.rotate_hint": "🖱️ ドラッグで回転、反転ボタンでミラー",
-
   "mods.title": "Mod センター",
   "mods.search_placeholder": "Mod を検索 (例: Sodium シェーダー)…",
   "mods.search": "検索",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 AI 推奨",
   "mods.recommend_prompt_placeholder": "欲しい Mod を説明 (例: 滑らかなシェーダー)",
   "mods.recommend_button": "AI 推奨",
-
   "assistant.title": "AI アシスタント",
   "assistant.placeholder": "メッセージまたは質問を入力…",
   "assistant.send": "送信",
@@ -149,7 +142,6 @@
   "assistant.thinking": "AI が考え中…",
   "assistant.user": "あなた",
   "assistant.ai": "AI",
-
   "content.title": "ゲームデータ",
   "content.saves": "セーブデータ",
   "content.screenshots": "スクリーンショット",
@@ -182,7 +174,6 @@
   "content.delete": "削除",
   "content.world_size": "{0} ファイル",
   "content.last_played": "最終更新: {0}",
-
   "settings.title": "設定",
   "settings.language": "言語 / Language",
   "settings.general": "一般",
@@ -218,7 +209,27 @@
   "settings.check_update": "更新を確認",
   "update.up_to_date": "最新です",
   "update.available": "新バージョン {0} が利用可能 — クリックして表示",
-
+  "server.title": "マルチプレイサーバー",
+  "server.subtitle": "お気に入りのサーバーを保存し、オンライン状況を一目で確認。",
+  "server.name": "サーバー名",
+  "server.address": "アドレス（ホスト または ホスト:ポート）",
+  "server.address_hint": "例: play.example.net または 192.168.1.5:25565",
+  "server.add": "追加",
+  "server.empty": "保存済みサーバーなし — 上で追加してください。",
+  "server.ping_all": "全て Ping",
+  "server.pinging_all": "全サーバーに Ping 送信中…",
+  "server.ping_all_done": "全サーバーの Ping 完了。",
+  "server.ping": "再 Ping",
+  "server.connect": "▶ 接続",
+  "server.remove": "削除",
+  "server.move_up": "上へ",
+  "server.move_down": "下へ",
+  "server.pinging": "Ping 中…",
+  "server.online": "オンライン",
+  "server.offline": "オフライン",
+  "server.ping_failed": "Ping 失敗",
+  "server.connect_queued": "次回起動時に接続します",
+  "server.no_instance": "接続前にインスタンスを作成してください",
   "common.cancel": "キャンセル",
   "common.confirm": "OK",
   "common.close": "閉じる",

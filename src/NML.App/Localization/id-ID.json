@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "Didukung AI",
-
   "nav.home": "Beranda",
   "nav.download": "Unduhan",
   "nav.accounts": "Akun",
   "nav.mods": "Mod",
   "nav.assistant": "Asisten AI",
   "nav.game_content": "Data Game",
+  "nav.multiplayer": "Multipemain",
   "nav.settings": "Pengaturan",
-
   "home.title": "Mulai",
   "home.instances": "Instansi saya",
   "home.no_instances": "Belum ada instansi — pasang satu di Unduhan",
@@ -49,7 +48,6 @@
   "home.export_all": "Ekspor semua",
   "home.delete_all": "Hapus semua",
   "home.deleted_all": "Semua instansi dihapus",
-
   "download.title": "Pusat Unduhan",
   "download.search_placeholder": "Cari versi (mis. 1.20.1)…",
   "download.filter_release": "Rilis",
@@ -67,7 +65,6 @@
   "download.column_released": "Tanggal",
   "download.column_action": "Aksi",
   "download.empty": "Tidak ada versi yang cocok",
-
   "accounts.title": "Akun",
   "accounts.add_offline": "Tambah akun offline",
   "accounts.add_microsoft": "Masuk dengan Microsoft",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "Waktu login habis, coba lagi",
   "accounts.ms_success": "Masuk: {0}",
   "accounts.ms_failed": "Login gagal: {0}",
-
   "accounts.authlib_servers": "Server login eksternal",
   "accounts.authlib_add_server": "Tambah server",
   "accounts.authlib_edit_server": "Edit",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "Belum ada server — tambahkan satu (mis. https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "Nama pengguna / email",
   "accounts.authlib_password": "Kata sandi",
-
   "skins.upload_title": "Unggah skin",
   "skins.upload_button": "Unggah PNG",
   "skins.upload_success": "Skin diunggah ke akun",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "Token akses Microsoft diperlukan untuk mengunggah skin",
   "skins.flip": "Balik kiri/kanan",
   "skins.rotate_hint": "🖱️ seret untuk memutar, klik untuk membalik",
-
   "mods.title": "Pusat Mod",
   "mods.search_placeholder": "Cari mod (mis. Sodium)…",
   "mods.search": "Cari",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 Rekomendasi AI",
   "mods.recommend_prompt_placeholder": "Deskripsikan mod yang Anda inginkan (mis. shader halus)",
   "mods.recommend_button": "Rekomendasi AI",
-
   "assistant.title": "Asisten AI",
   "assistant.placeholder": "Ketik pesan atau pertanyaan…",
   "assistant.send": "Kirim",
@@ -149,7 +142,6 @@
   "assistant.thinking": "AI sedang berpikir…",
   "assistant.user": "Anda",
   "assistant.ai": "AI",
-
   "content.title": "Data Game",
   "content.saves": "Simpanan",
   "content.screenshots": "Tangkapan layar",
@@ -182,7 +174,6 @@
   "content.delete": "Hapus",
   "content.world_size": "{0} file",
   "content.last_played": "Dimodifikasi: {0}",
-
   "settings.title": "Pengaturan",
   "settings.language": "Bahasa / Language",
   "settings.general": "Umum",
@@ -218,7 +209,27 @@
   "settings.check_update": "Periksa pembaruan",
   "update.up_to_date": "Anda sudah terbaru",
   "update.available": "Versi baru {0} tersedia — klik untuk melihat",
-
+  "server.title": "Server multipemain",
+  "server.subtitle": "Simpan server favorit dan lihat siapa online dalam sekejap.",
+  "server.name": "Nama server",
+  "server.address": "Alamat (host atau host:port)",
+  "server.address_hint": "cth. play.example.net atau 192.168.1.5:25565",
+  "server.add": "Tambah",
+  "server.empty": "Belum ada server tersimpan — tambah di atas.",
+  "server.ping_all": "Ping semua",
+  "server.pinging_all": "Mem-ping semua server…",
+  "server.ping_all_done": "Ping server selesai.",
+  "server.ping": "Ping ulang",
+  "server.connect": "▶ Hubungkan",
+  "server.remove": "Hapus",
+  "server.move_up": "Naik",
+  "server.move_down": "Turun",
+  "server.pinging": "Mem-ping…",
+  "server.online": "Daring",
+  "server.offline": "Luring",
+  "server.ping_failed": "Ping gagal",
+  "server.connect_queued": "Akan terhubung saat peluncuran berikutnya",
+  "server.no_instance": "Buat instance sebelum menghubungkan",
   "common.cancel": "Batal",
   "common.confirm": "OK",
   "common.close": "Tutup",

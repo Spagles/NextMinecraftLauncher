@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "С ИИ",
-
   "nav.home": "Главная",
   "nav.download": "Загрузки",
   "nav.accounts": "Аккаунты",
   "nav.mods": "Моды",
   "nav.assistant": "ИИ-помощник",
   "nav.game_content": "Игровые данные",
+  "nav.multiplayer": "Сетевая игра",
   "nav.settings": "Настройки",
-
   "home.title": "Запуск",
   "home.instances": "Мои экземпляры",
   "home.no_instances": "Нет экземпляров — установите в Загрузках",
@@ -49,7 +48,6 @@
   "home.console": "Консоль в реальном времени",
   "home.share_generated": "Код поделиться сгенерирован",
   "home.share_invalid": "Неверный код",
-
   "download.title": "Центр загрузок",
   "download.search_placeholder": "Поиск версии (напр. 1.20.1)…",
   "download.filter_release": "Релизы",
@@ -67,7 +65,6 @@
   "download.column_action": "Действие",
   "download.results": "Найдено {0} версий",
   "download.empty": "Нет подходящих версий",
-
   "accounts.title": "Аккаунты",
   "accounts.add_offline": "Добавить офлайн",
   "accounts.add_microsoft": "Войти через Microsoft",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "Время входа истекло, повторите",
   "accounts.ms_success": "Вход выполнен: {0}",
   "accounts.ms_failed": "Ошибка входа: {0}",
-
   "accounts.authlib_servers": "Внешние серверы входа",
   "accounts.authlib_add_server": "Добавить сервер",
   "accounts.authlib_edit_server": "Изменить",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "Нет серверов — добавьте (напр. https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "Имя / email",
   "accounts.authlib_password": "Пароль",
-
   "skins.upload_title": "Загрузить скин",
   "skins.upload_button": "Загрузить PNG",
   "skins.upload_success": "Скин загружен на аккаунт",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "Для загрузки скина нужен токен Microsoft",
   "skins.flip": "Отразить",
   "skins.rotate_hint": "🖱️ тащите для вращения, кнопка для зеркала",
-
   "mods.title": "Центр модов",
   "mods.search_placeholder": "Поиск модов (напр. Sodium)…",
   "mods.search": "Поиск",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 ИИ-рекомендация",
   "mods.recommend_prompt_placeholder": "Опишите нужный мод (напр. плавные шейдеры)",
   "mods.recommend_button": "ИИ-рекомендация",
-
   "assistant.title": "ИИ-помощник",
   "assistant.placeholder": "Введите сообщение или вопрос…",
   "assistant.send": "Отправить",
@@ -149,7 +142,6 @@
   "assistant.thinking": "ИИ думает…",
   "assistant.user": "Вы",
   "assistant.ai": "ИИ",
-
   "content.title": "Игровые данные",
   "content.saves": "Сохранения",
   "content.screenshots": "Скриншоты",
@@ -182,7 +174,6 @@
   "content.delete": "Удалить",
   "content.world_size": "{0} файлов",
   "content.last_played": "Изменён: {0}",
-
   "settings.title": "Настройки",
   "settings.language": "Язык / Language",
   "settings.general": "Общие",
@@ -218,7 +209,27 @@
   "settings.check_update": "Проверить обновления",
   "update.up_to_date": "У вас последняя версия",
   "update.available": "Доступна версия {0} — нажмите для просмотра",
-
+  "server.title": "Серверы сетевой игры",
+  "server.subtitle": "Сохраняйте любимые серверы и видьте онлайн-статус с одного взгляда.",
+  "server.name": "Название сервера",
+  "server.address": "Адрес (хост или хост:порт)",
+  "server.address_hint": "напр. play.example.net или 192.168.1.5:25565",
+  "server.add": "Добавить",
+  "server.empty": "Нет сохранённых серверов — добавьте выше.",
+  "server.ping_all": "Опросить все",
+  "server.pinging_all": "Опрос всех серверов…",
+  "server.ping_all_done": "Опрос серверов завершён.",
+  "server.ping": "Опросить",
+  "server.connect": "▶ Подключиться",
+  "server.remove": "Удалить",
+  "server.move_up": "Вверх",
+  "server.move_down": "Вниз",
+  "server.pinging": "Опрос…",
+  "server.online": "В сети",
+  "server.offline": "Не в сети",
+  "server.ping_failed": "Опрос не удался",
+  "server.connect_queued": "Подключение при следующем запуске",
+  "server.no_instance": "Создайте экземпляр перед подключением",
   "common.cancel": "Отмена",
   "common.confirm": "ОК",
   "common.close": "Закрыть",

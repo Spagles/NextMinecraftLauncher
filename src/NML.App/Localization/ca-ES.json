@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "Amb IA",
-
   "nav.home": "Inici",
   "nav.download": "Descàrregues",
   "nav.accounts": "Comptes",
   "nav.mods": "Mods",
   "nav.assistant": "Assistent IA",
   "nav.game_content": "Dades del joc",
+  "nav.multiplayer": "Multijugador",
   "nav.settings": "Configuració",
-
   "home.title": "Inicia",
   "home.instances": "Les meves instàncies",
   "home.no_instances": "Sense instàncies — instal·la'n una a Descàrregues",
@@ -49,7 +48,6 @@
   "home.export_all": "Exporta-ho tot",
   "home.delete_all": "Suprimeix-ho tot",
   "home.deleted_all": "Totes les instàncies suprimides",
-
   "download.title": "Centre de descàrregues",
   "download.search_placeholder": "Cerca versió (p. ex. 1.20.1)…",
   "download.filter_release": "Versions",
@@ -67,7 +65,6 @@
   "download.column_released": "Data",
   "download.column_action": "Acció",
   "download.empty": "Sense versions coincidents",
-
   "accounts.title": "Comptes",
   "accounts.add_offline": "Afegeix compte fora de línia",
   "accounts.add_microsoft": "Inicia sessió amb Microsoft",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "Temps d'inici de sessió exhaurit, torna-ho a provar",
   "accounts.ms_success": "Sessió iniciada: {0}",
   "accounts.ms_failed": "L'inici de sessió ha fallat: {0}",
-
   "accounts.authlib_servers": "Servidors d'inici de sessió externs",
   "accounts.authlib_add_server": "Afegeix servidor",
   "accounts.authlib_edit_server": "Edita",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "Sense servidors — afegeix-ne un",
   "accounts.authlib_login": "Nom d'usuari / correu electrònic",
   "accounts.authlib_password": "Contrasenya",
-
   "skins.upload_title": "Penja skin",
   "skins.upload_button": "Penja PNG",
   "skins.upload_success": "Skin penjada al compte",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "Es necessita un testimoni d'accés de Microsoft per pujar skins",
   "skins.flip": "Inverteix esquerra/dreta",
   "skins.rotate_hint": "🖱️ arrossega per rotar, fes clic per invertir",
-
   "mods.title": "Centre de Mods",
   "mods.search_placeholder": "Cerca mods (p. ex. Sodium)…",
   "mods.search": "Cerca",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 Recomanació IA",
   "mods.recommend_prompt_placeholder": "Descriu el mod que vols",
   "mods.recommend_button": "Recomanació IA",
-
   "assistant.title": "Assistent IA",
   "assistant.placeholder": "Escriu un missatge o una pregunta…",
   "assistant.send": "Envia",
@@ -149,7 +142,6 @@
   "assistant.thinking": "La IA està pensant…",
   "assistant.user": "Tu",
   "assistant.ai": "IA",
-
   "content.title": "Dades del joc",
   "content.saves": "Partides desades",
   "content.screenshots": "Captures de pantalla",
@@ -182,7 +174,6 @@
   "content.delete": "Suprimeix",
   "content.world_size": "{0} fitxers",
   "content.last_played": "Modificat: {0}",
-
   "settings.title": "Configuració",
   "settings.language": "Llengua / Language",
   "settings.general": "General",
@@ -218,7 +209,27 @@
   "settings.check_update": "Comprova actualitzacions",
   "update.up_to_date": "Estàs actualitzat",
   "update.available": "Nova versió {0} disponible — fes clic per veure",
-
+  "server.title": "Servidors multijugador",
+  "server.subtitle": "Desa els teus servidors preferits i veu qui està en línia d'un cop d'ull.",
+  "server.name": "Nom del servidor",
+  "server.address": "Adreça (amfitrió o amfitrió:port)",
+  "server.address_hint": "ex. play.example.net o 192.168.1.5:25565",
+  "server.add": "Afegeix",
+  "server.empty": "Cap servidor desat — afegeix-ne un a dalt.",
+  "server.ping_all": "Comprova tots",
+  "server.pinging_all": "Comprovant tots els servidors…",
+  "server.ping_all_done": "Comprovació de servidors completada.",
+  "server.ping": "Torna a comprovar",
+  "server.connect": "▶ Connecta",
+  "server.remove": "Suprimeix",
+  "server.move_up": "Amunt",
+  "server.move_down": "Avall",
+  "server.pinging": "Comprovant…",
+  "server.online": "En línia",
+  "server.offline": "Fora de línia",
+  "server.ping_failed": "Comprovació fallida",
+  "server.connect_queued": "Connectarà al proper inici",
+  "server.no_instance": "Crea una instància abans de connectar",
   "common.cancel": "Cancel·la",
   "common.confirm": "D'acord",
   "common.close": "Tanca",

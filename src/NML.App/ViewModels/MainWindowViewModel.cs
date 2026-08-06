@@ -54,6 +54,7 @@ public partial class MainWindowViewModel : ObservableObject
         Pages.HomePageViewModel home,
         Pages.DownloadPageViewModel download,
         Pages.AccountsPageViewModel accounts,
+        Pages.MultiplayerPageViewModel multiplayer,
         Pages.ModsPageViewModel mods,
         Pages.AssistantPageViewModel assistant,
         Pages.GameContentPageViewModel content,
@@ -65,6 +66,7 @@ public partial class MainWindowViewModel : ObservableObject
         Pages.Add(home);
         Pages.Add(download);
         Pages.Add(accounts);
+        Pages.Add(multiplayer);
         Pages.Add(mods);
         Pages.Add(assistant);
         Pages.Add(content);

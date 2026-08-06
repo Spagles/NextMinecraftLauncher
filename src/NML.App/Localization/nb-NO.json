@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "AI-drevet",
-
   "nav.home": "Hjem",
   "nav.download": "Nedlastinger",
   "nav.accounts": "Kontoer",
   "nav.mods": "Modder",
   "nav.assistant": "AI-assistent",
   "nav.game_content": "Spilldata",
+  "nav.multiplayer": "Flerspiller",
   "nav.settings": "Innstillinger",
-
   "home.title": "Start",
   "home.instances": "Mine instanser",
   "home.no_instances": "Ingen instanser — installer en i Nedlastinger",
@@ -49,7 +48,6 @@
   "home.export_all": "Eksporter alle",
   "home.delete_all": "Slett alle",
   "home.deleted_all": "Alle instanser slettet",
-
   "download.title": "Nedlastingssenter",
   "download.search_placeholder": "Søk versjon (f.eks. 1.20.1)…",
   "download.filter_release": "Utgivelser",
@@ -67,7 +65,6 @@
   "download.column_released": "Dato",
   "download.column_action": "Handling",
   "download.empty": "Ingen samsvarende versjoner",
-
   "accounts.title": "Kontoer",
   "accounts.add_offline": "Legg til offline-konto",
   "accounts.add_microsoft": "Logg inn med Microsoft",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "Innloggingen tok for lang tid, prøv igjen",
   "accounts.ms_success": "Logget inn: {0}",
   "accounts.ms_failed": "Innlogging feilet: {0}",
-
   "accounts.authlib_servers": "Eksterne innloggingsservere",
   "accounts.authlib_add_server": "Legg til server",
   "accounts.authlib_edit_server": "Rediger",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "Ingen servere — legg til en (f.eks. https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "Brukernavn / e-post",
   "accounts.authlib_password": "Passord",
-
   "skins.upload_title": "Last opp skin",
   "skins.upload_button": "Last opp PNG",
   "skins.upload_success": "Skin lastet opp til konto",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "En Microsoft-tilgangstoken kreves for å laste opp skinner",
   "skins.flip": "Speilvend venstre/høyre",
   "skins.rotate_hint": "🖱️ dra for å rotere, klikk for å speilvende",
-
   "mods.title": "Mod-senter",
   "mods.search_placeholder": "Søk modder (f.eks. Sodium)…",
   "mods.search": "Søk",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 AI-anbefaling",
   "mods.recommend_prompt_placeholder": "Beskriv mod du vil ha (f.eks. jevne shaders)",
   "mods.recommend_button": "AI-anbefaling",
-
   "assistant.title": "AI-assistent",
   "assistant.placeholder": "Skriv en melding eller et spørsmål…",
   "assistant.send": "Send",
@@ -149,7 +142,6 @@
   "assistant.thinking": "AI tenker…",
   "assistant.user": "Du",
   "assistant.ai": "AI",
-
   "content.title": "Spilldata",
   "content.saves": "Lagrelser",
   "content.screenshots": "Skjermbilder",
@@ -182,7 +174,6 @@
   "content.delete": "Slett",
   "content.world_size": "{0} filer",
   "content.last_played": "Endret: {0}",
-
   "settings.title": "Innstillinger",
   "settings.language": "Språk / Language",
   "settings.general": "Generelt",
@@ -218,7 +209,27 @@
   "settings.check_update": "Sjekk oppdateringer",
   "update.up_to_date": "Du er oppdatert",
   "update.available": "Ny versjon {0} tilgjengelig — klikk for å se",
-
+  "server.title": "Flerspillerservere",
+  "server.subtitle": "Lagre favorittserverne dine og se hvem som er online med et blikk.",
+  "server.name": "Servernavn",
+  "server.address": "Adresse (vert eller vert:port)",
+  "server.address_hint": "f.eks. play.example.net eller 192.168.1.5:25565",
+  "server.add": "Legg til",
+  "server.empty": "Ingen lagrede servere — legg til en over.",
+  "server.ping_all": "Ping alle",
+  "server.pinging_all": "Pinger alle servere…",
+  "server.ping_all_done": "Serverping fullført.",
+  "server.ping": "Ping",
+  "server.connect": "▶ Koble til",
+  "server.remove": "Fjern",
+  "server.move_up": "Opp",
+  "server.move_down": "Ned",
+  "server.pinging": "Pinger…",
+  "server.online": "Pålogget",
+  "server.offline": "Frakoblet",
+  "server.ping_failed": "Ping mislyktes",
+  "server.connect_queued": "Kobler til ved neste oppstart",
+  "server.no_instance": "Opprett en instans før du kobler til",
   "common.cancel": "Avbryt",
   "common.confirm": "OK",
   "common.close": "Lukk",

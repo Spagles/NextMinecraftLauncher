@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "AI 탑재",
-
   "nav.home": "홈",
   "nav.download": "다운로드",
   "nav.accounts": "계정",
   "nav.mods": "Mod",
   "nav.assistant": "AI 어시스턴트",
   "nav.game_content": "게임 데이터",
+  "nav.multiplayer": "멀티플레이",
   "nav.settings": "설정",
-
   "home.title": "실행",
   "home.instances": "인스턴스",
   "home.no_instances": "인스턴스가 없습니다 — 다운로드에서 설치하세요",
@@ -49,7 +48,6 @@
   "home.share_generated": "공유 코드가 생성되었습니다",
   "home.share_invalid": "잘못된 공유 코드",
   "home.exported": "{0}로 내보냈습니다",
-
   "download.title": "다운로드 센터",
   "download.search_placeholder": "버전 검색 (예: 1.20.1)…",
   "download.filter_release": "릴리스",
@@ -67,7 +65,6 @@
   "download.column_action": "작업",
   "download.results": "{0}개 버전을 찾았습니다",
   "download.empty": "일치하는 버전이 없습니다",
-
   "accounts.title": "계정",
   "accounts.add_offline": "오프라인 계정 추가",
   "accounts.add_microsoft": "Microsoft로 로그인",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "로그인 시간 초과, 다시 시도하세요",
   "accounts.ms_success": "로그인 성공: {0}",
   "accounts.ms_failed": "로그인 실패: {0}",
-
   "accounts.authlib_servers": "외부 로그인 서버",
   "accounts.authlib_add_server": "서버 추가",
   "accounts.authlib_edit_server": "편집",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "서버가 없습니다 — 추가 (예: https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "사용자 이름 / 이메일",
   "accounts.authlib_password": "비밀번호",
-
   "skins.upload_title": "스킨 업로드",
   "skins.upload_button": "PNG 업로드",
   "skins.upload_success": "스킨이 계정에 업로드되었습니다",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "스킨을 업로드하려면 Microsoft 계정 액세스 토큰이 필요합니다",
   "skins.flip": "좌우 반전",
   "skins.rotate_hint": "🖱️ 드래그하여 회전, 반전 버튼으로 미러",
-
   "mods.title": "Mod 센터",
   "mods.search_placeholder": "Mod 검색 (예: Sodium 셰이더)…",
   "mods.search": "검색",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 AI 추천",
   "mods.recommend_prompt_placeholder": "원하는 Mod 설명 (예: 부드러운 셰이더)",
   "mods.recommend_button": "AI 추천",
-
   "assistant.title": "AI 어시스턴트",
   "assistant.placeholder": "메시지 또는 질문 입력…",
   "assistant.send": "전송",
@@ -149,7 +142,6 @@
   "assistant.thinking": "AI가 생각 중…",
   "assistant.user": "당신",
   "assistant.ai": "AI",
-
   "content.title": "게임 데이터",
   "content.saves": "세이브",
   "content.screenshots": "스크린샷",
@@ -182,7 +174,6 @@
   "content.delete": "삭제",
   "content.world_size": "{0} 파일",
   "content.last_played": "최종 수정: {0}",
-
   "settings.title": "설정",
   "settings.language": "언어 / Language",
   "settings.general": "일반",
@@ -218,7 +209,27 @@
   "settings.check_update": "업데이트 확인",
   "update.up_to_date": "최신입니다",
   "update.available": "새 버전 {0} 사용 가능 — 클릭하여 보기",
-
+  "server.title": "멀티플레이 서버",
+  "server.subtitle": "즐겨찾는 서버를 저장하고 온라인 상태를 한눈에 확인하세요.",
+  "server.name": "서버 이름",
+  "server.address": "주소 (호스트 또는 호스트:포트)",
+  "server.address_hint": "예: play.example.net 또는 192.168.1.5:25565",
+  "server.add": "추가",
+  "server.empty": "저장된 서버 없음 — 위에서 추가하세요.",
+  "server.ping_all": "전체 핑",
+  "server.pinging_all": "모든 서버에 핑 전송 중…",
+  "server.ping_all_done": "모든 서버 핑 완료.",
+  "server.ping": "다시 핑",
+  "server.connect": "▶ 접속",
+  "server.remove": "제거",
+  "server.move_up": "위로",
+  "server.move_down": "아래로",
+  "server.pinging": "핑 중…",
+  "server.online": "온라인",
+  "server.offline": "오프라인",
+  "server.ping_failed": "핑 실패",
+  "server.connect_queued": "다음 실행 시 연결됩니다",
+  "server.no_instance": "접속 전에 인스턴스를 생성하세요",
   "common.cancel": "취소",
   "common.confirm": "확인",
   "common.close": "닫기",

@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "KI-gestützt",
-
   "nav.home": "Start",
   "nav.download": "Downloads",
   "nav.accounts": "Konten",
   "nav.mods": "Mods",
   "nav.assistant": "KI-Assistent",
   "nav.game_content": "Spieldaten",
+  "nav.multiplayer": "Mehrspieler",
   "nav.settings": "Einstellungen",
-
   "home.title": "Starten",
   "home.instances": "Meine Instanzen",
   "home.no_instances": "Keine Instanzen — installiere eine unter Downloads",
@@ -49,7 +48,6 @@
   "home.export_all": "Alle exportieren",
   "home.delete_all": "Alle löschen",
   "home.deleted_all": "Alle Instanzen gelöscht",
-
   "download.title": "Download-Center",
   "download.search_placeholder": "Version suchen (z.B. 1.20.1)…",
   "download.filter_release": "Releases",
@@ -67,7 +65,6 @@
   "download.column_released": "Veröffentlicht",
   "download.column_action": "Aktion",
   "download.empty": "Keine übereinstimmenden Versionen",
-
   "accounts.title": "Konten",
   "accounts.add_offline": "Offline-Konto hinzufügen",
   "accounts.add_microsoft": "Mit Microsoft anmelden",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "Anmeldung abgelaufen, bitte erneut versuchen",
   "accounts.ms_success": "Angemeldet: {0}",
   "accounts.ms_failed": "Anmeldung fehlgeschlagen: {0}",
-
   "accounts.authlib_servers": "Externe Anmeldeserver",
   "accounts.authlib_add_server": "Server hinzufügen",
   "accounts.authlib_edit_server": "Bearbeiten",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "Keine Server — füge einen hinzu (z.B. https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "Benutzername / E-Mail",
   "accounts.authlib_password": "Passwort",
-
   "skins.upload_title": "Skin hochladen",
   "skins.upload_button": "PNG hochladen",
   "skins.upload_success": "Skin zum Konto hochgeladen",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "Ein Microsoft-Zugriffstoken ist erforderlich, um Skins hochzuladen",
   "skins.flip": "Links/Rechts spiegeln",
   "skins.rotate_hint": "🖱️ ziehen zum Drehen, Klick zum Spiegeln",
-
   "mods.title": "Mod-Center",
   "mods.search_placeholder": "Mods suchen (z.B. Sodium)…",
   "mods.search": "Suchen",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 KI-Empfehlung",
   "mods.recommend_prompt_placeholder": "Beschreibe den gewünschten Mod (z.B. flüssige Shader)",
   "mods.recommend_button": "KI-Empfehlung",
-
   "assistant.title": "KI-Assistent",
   "assistant.placeholder": "Nachricht oder Frage eingeben…",
   "assistant.send": "Senden",
@@ -149,7 +142,6 @@
   "assistant.thinking": "KI denkt nach…",
   "assistant.user": "Du",
   "assistant.ai": "KI",
-
   "content.title": "Spieldaten",
   "content.saves": "Spielstände",
   "content.screenshots": "Screenshots",
@@ -182,7 +174,6 @@
   "content.delete": "Löschen",
   "content.world_size": "{0} Dateien",
   "content.last_played": "Geändert: {0}",
-
   "settings.title": "Einstellungen",
   "settings.language": "Sprache / Language",
   "settings.general": "Allgemein",
@@ -218,7 +209,27 @@
   "settings.check_update": "Nach Updates suchen",
   "update.up_to_date": "Du bist aktuell",
   "update.available": "Neue Version {0} verfügbar — klicken zum Anzeigen",
-
+  "server.title": "Mehrspieler-Server",
+  "server.subtitle": "Speichere deine Lieblingsserver und sieh auf einen Blick, wer online ist.",
+  "server.name": "Servername",
+  "server.address": "Adresse (Host oder Host:Port)",
+  "server.address_hint": "z. B. play.example.net oder 192.168.1.5:25565",
+  "server.add": "Hinzufügen",
+  "server.empty": "Keine Server gespeichert — oben hinzufügen.",
+  "server.ping_all": "Alle testen",
+  "server.pinging_all": "Alle Server werden getestet…",
+  "server.ping_all_done": "Servertest abgeschlossen.",
+  "server.ping": "Erneut testen",
+  "server.connect": "▶ Verbinden",
+  "server.remove": "Entfernen",
+  "server.move_up": "Hoch",
+  "server.move_down": "Runter",
+  "server.pinging": "Testen…",
+  "server.online": "Online",
+  "server.offline": "Offline",
+  "server.ping_failed": "Test fehlgeschlagen",
+  "server.connect_queued": "Verbindet beim nächsten Start",
+  "server.no_instance": "Erstelle vor dem Verbinden eine Instanz",
   "common.cancel": "Abbrechen",
   "common.confirm": "OK",
   "common.close": "Schließen",

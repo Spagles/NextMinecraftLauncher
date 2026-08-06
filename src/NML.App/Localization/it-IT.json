@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "Con IA",
-
   "nav.home": "Home",
   "nav.download": "Download",
   "nav.accounts": "Account",
   "nav.mods": "Mod",
   "nav.assistant": "Assistente IA",
   "nav.game_content": "Dati di gioco",
+  "nav.multiplayer": "Multigiocatore",
   "nav.settings": "Impostazioni",
-
   "home.title": "Avvia",
   "home.instances": "Le mie istanze",
   "home.no_instances": "Nessuna istanza — installane una in Download",
@@ -49,7 +48,6 @@
   "home.export_all": "Esporta tutto",
   "home.delete_all": "Elimina tutto",
   "home.deleted_all": "Tutte le istanze eliminate",
-
   "download.title": "Centro download",
   "download.search_placeholder": "Cerca versione (es. 1.20.1)…",
   "download.filter_release": "Rilasci",
@@ -67,7 +65,6 @@
   "download.column_released": "Data",
   "download.column_action": "Azione",
   "download.empty": "Nessuna versione corrispondente",
-
   "accounts.title": "Account",
   "accounts.add_offline": "Aggiungi account offline",
   "accounts.add_microsoft": "Accedi con Microsoft",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "Tempo di login scaduto, riprova",
   "accounts.ms_success": "Accesso effettuato: {0}",
   "accounts.ms_failed": "Login fallito: {0}",
-
   "accounts.authlib_servers": "Server di login esterni",
   "accounts.authlib_add_server": "Aggiungi server",
   "accounts.authlib_edit_server": "Modifica",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "Nessun server — aggiungine uno (es. https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "Utente / email",
   "accounts.authlib_password": "Password",
-
   "skins.upload_title": "Carica skin",
   "skins.upload_button": "Carica PNG",
   "skins.upload_success": "Skin caricata nell'account",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "È necessario un token di accesso Microsoft per caricare skin",
   "skins.flip": "Specchia sinistra/destra",
   "skins.rotate_hint": "🖱️ trascina per ruotare, clic per specchiare",
-
   "mods.title": "Centro Mod",
   "mods.search_placeholder": "Cerca mod (es. Sodium)…",
   "mods.search": "Cerca",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 Consiglia IA",
   "mods.recommend_prompt_placeholder": "Descrivi la mod che vuoi (es. shader fluidi)",
   "mods.recommend_button": "Consiglia IA",
-
   "assistant.title": "Assistente IA",
   "assistant.placeholder": "Digita un messaggio o una domanda…",
   "assistant.send": "Invia",
@@ -149,7 +142,6 @@
   "assistant.thinking": "L'IA sta pensando…",
   "assistant.user": "Tu",
   "assistant.ai": "IA",
-
   "content.title": "Dati di gioco",
   "content.saves": "Salvataggi",
   "content.screenshots": "Screenshot",
@@ -182,7 +174,6 @@
   "content.delete": "Elimina",
   "content.world_size": "{0} file",
   "content.last_played": "Modificato: {0}",
-
   "settings.title": "Impostazioni",
   "settings.language": "Lingua / Language",
   "settings.general": "Generale",
@@ -218,7 +209,27 @@
   "settings.check_update": "Controlla aggiornamenti",
   "update.up_to_date": "Sei aggiornato",
   "update.available": "Nuova versione {0} disponibile — clicca per vedere",
-
+  "server.title": "Server multigiocatore",
+  "server.subtitle": "Salva i tuoi server preferiti e vedi chi è online a colpo d'occhio.",
+  "server.name": "Nome server",
+  "server.address": "Indirizzo (host o host:porta)",
+  "server.address_hint": "es. play.example.net o 192.168.1.5:25565",
+  "server.add": "Aggiungi",
+  "server.empty": "Nessun server salvato — aggiungine uno sopra.",
+  "server.ping_all": "Testa tutti",
+  "server.pinging_all": "Test di tutti i server…",
+  "server.ping_all_done": "Test dei server completato.",
+  "server.ping": "Testa",
+  "server.connect": "▶ Connetti",
+  "server.remove": "Rimuovi",
+  "server.move_up": "Su",
+  "server.move_down": "Giù",
+  "server.pinging": "Test…",
+  "server.online": "Online",
+  "server.offline": "Offline",
+  "server.ping_failed": "Test fallito",
+  "server.connect_queued": "Connetterà al prossimo avvio",
+  "server.no_instance": "Crea un'istanza prima di connetterti",
   "common.cancel": "Annulla",
   "common.confirm": "OK",
   "common.close": "Chiudi",

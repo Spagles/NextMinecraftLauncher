@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "ขับเคลื่อนด้วย AI",
-
   "nav.home": "หน้าหลัก",
   "nav.download": "ดาวน์โหลด",
   "nav.accounts": "บัญชี",
   "nav.mods": "ม็อด",
   "nav.assistant": "ผู้ช่วย AI",
   "nav.game_content": "ข้อมูลเกม",
+  "nav.multiplayer": "หลายผู้เล่น",
   "nav.settings": "การตั้งค่า",
-
   "home.title": "เริ่มเกม",
   "home.instances": "อินสแตนซ์ของฉัน",
   "home.no_instances": "ยังไม่มีอินสแตนซ์ — ติดตั้งจากดาวน์โหลด",
@@ -49,7 +48,6 @@
   "home.export_all": "ส่งออกทั้งหมด",
   "home.delete_all": "ลบทั้งหมด",
   "home.deleted_all": "ลบอินสแตนซ์ทั้งหมดแล้ว",
-
   "download.title": "ศูนย์ดาวน์โหลด",
   "download.search_placeholder": "ค้นหาเวอร์ชัน (เช่น 1.20.1)…",
   "download.filter_release": "รีลีส",
@@ -67,7 +65,6 @@
   "download.column_released": "วันที่",
   "download.column_action": "การกระทำ",
   "download.empty": "ไม่มีเวอร์ชันที่ตรงกัน",
-
   "accounts.title": "บัญชี",
   "accounts.add_offline": "เพิ่มบัญชีออฟไลน์",
   "accounts.add_microsoft": "เข้าสู่ระบบด้วย Microsoft",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "หมดเวลาเข้าสู่ระบบ กรุณาลองอีกครั้ง",
   "accounts.ms_success": "เข้าสู่ระบบแล้ว: {0}",
   "accounts.ms_failed": "เข้าสู่ระบบล้มเหลว: {0}",
-
   "accounts.authlib_servers": "เซิร์ฟเวอร์เข้าสู่ระบบภายนอก",
   "accounts.authlib_add_server": "เพิ่มเซิร์ฟเวอร์",
   "accounts.authlib_edit_server": "แก้ไข",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "ยังไม่มีเซิร์ฟเวอร์ — เพิ่มหนึ่ง (เช่น https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "ชื่อผู้ใช้ / อีเมล",
   "accounts.authlib_password": "รหัสผ่าน",
-
   "skins.upload_title": "อัปโหลดสกิน",
   "skins.upload_button": "อัปโหลด PNG",
   "skins.upload_success": "อัปโหลดสกินไปยังบัญชีแล้ว",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "ต้องการโทเค็นการเข้าถึง Microsoft เพื่ออัปโหลดสกิน",
   "skins.flip": "พลิกซ้าย/ขวา",
   "skins.rotate_hint": "🖱️ ลากเพื่อหมุน คลิกเพื่อพลิก",
-
   "mods.title": "ศูนย์ม็อด",
   "mods.search_placeholder": "ค้นหาม็อด (เช่น Sodium)…",
   "mods.search": "ค้นหา",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 แนะนำ AI",
   "mods.recommend_prompt_placeholder": "อธิบายม็อดที่คุณต้องการ (เช่น เชดเดอร์ลื่นไหล)",
   "mods.recommend_button": "แนะนำ AI",
-
   "assistant.title": "ผู้ช่วย AI",
   "assistant.placeholder": "พิมพ์ข้อความหรือคำถาม…",
   "assistant.send": "ส่ง",
@@ -149,7 +142,6 @@
   "assistant.thinking": "AI กำลังคิด…",
   "assistant.user": "คุณ",
   "assistant.ai": "AI",
-
   "content.title": "ข้อมูลเกม",
   "content.saves": "บันทึก",
   "content.screenshots": "ภาพหน้าจอ",
@@ -182,7 +174,6 @@
   "content.delete": "ลบ",
   "content.world_size": "{0} ไฟล์",
   "content.last_played": "แก้ไขเมื่อ: {0}",
-
   "settings.title": "การตั้งค่า",
   "settings.language": "ภาษา / Language",
   "settings.general": "ทั่วไป",
@@ -218,7 +209,27 @@
   "settings.check_update": "ตรวจหาการอัปเดต",
   "update.up_to_date": "คุณใช้เวอร์ชันล่าสุด",
   "update.available": "มีเวอร์ชันใหม่ {0} — คลิกเพื่อดู",
-
+  "server.title": "เซิร์ฟเวอร์หลายผู้เล่น",
+  "server.subtitle": "บันทึกเซิร์ฟเวอร์โปรดและดูสถานะออนไลน์ได้ในพริบตา",
+  "server.name": "ชื่อเซิร์ฟเวอร์",
+  "server.address": "ที่อยู่ (โฮสต์ หรือ โฮสต์:พอร์ต)",
+  "server.address_hint": "เช่น play.example.net หรือ 192.168.1.5:25565",
+  "server.add": "เพิ่ม",
+  "server.empty": "ยังไม่มีเซิร์ฟเวอร์ที่บันทึก — เพิ่มด้านบน",
+  "server.ping_all": "ping ทั้งหมด",
+  "server.pinging_all": "กำลัง ping ทุกเซิร์ฟเวอร์…",
+  "server.ping_all_done": "ping เซิร์ฟเวอร์เสร็จสิ้น",
+  "server.ping": "ping อีกครั้ง",
+  "server.connect": "▶ เชื่อมต่อ",
+  "server.remove": "ลบ",
+  "server.move_up": "ขึ้น",
+  "server.move_down": "ลง",
+  "server.pinging": "กำลัง ping…",
+  "server.online": "ออนไลน์",
+  "server.offline": "ออฟไลน์",
+  "server.ping_failed": "ping ล้มเหลว",
+  "server.connect_queued": "จะเชื่อมต่อในการเปิดถัดไป",
+  "server.no_instance": "สร้างอินสแตนซ์ก่อนเชื่อมต่อ",
   "common.cancel": "ยกเลิก",
   "common.confirm": "ตกลง",
   "common.close": "ปิด",

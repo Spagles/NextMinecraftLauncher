@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "AI-ondersteund",
-
   "nav.home": "Start",
   "nav.download": "Downloads",
   "nav.accounts": "Accounts",
   "nav.mods": "Mods",
   "nav.assistant": "AI-assistent",
   "nav.game_content": "Speldata",
+  "nav.multiplayer": "Multiplayer",
   "nav.settings": "Instellingen",
-
   "home.title": "Starten",
   "home.instances": "Mijn instanties",
   "home.no_instances": "Geen instanties — installeer er een in Downloads",
@@ -49,7 +48,6 @@
   "home.export_all": "Alles exporteren",
   "home.delete_all": "Alles verwijderen",
   "home.deleted_all": "Alle instanties verwijderd",
-
   "download.title": "Downloadcentrum",
   "download.search_placeholder": "Zoek versie (bijv. 1.20.1)…",
   "download.filter_release": "Releases",
@@ -67,7 +65,6 @@
   "download.column_released": "Datum",
   "download.column_action": "Actie",
   "download.empty": "Geen overeenkomende versies",
-
   "accounts.title": "Accounts",
   "accounts.add_offline": "Offline account toevoegen",
   "accounts.add_microsoft": "Inloggen met Microsoft",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "Aanmelding verlopen, probeer opnieuw",
   "accounts.ms_success": "Aangemeld: {0}",
   "accounts.ms_failed": "Aanmelding mislukt: {0}",
-
   "accounts.authlib_servers": "Externe aanmeldservers",
   "accounts.authlib_add_server": "Server toevoegen",
   "accounts.authlib_edit_server": "Bewerken",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "Geen servers — voeg er een toe (bijv. https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "Gebruikersnaam / e-mail",
   "accounts.authlib_password": "Wachtwoord",
-
   "skins.upload_title": "Skin uploaden",
   "skins.upload_button": "PNG uploaden",
   "skins.upload_success": "Skin geüpload naar account",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "Een Microsoft-toegangstoken is vereist om skins te uploaden",
   "skins.flip": "Links/rechts spiegelen",
   "skins.rotate_hint": "🖱️ sleep om te draaien, klik om te spiegelen",
-
   "mods.title": "Mod-centrum",
   "mods.search_placeholder": "Zoek mods (bijv. Sodium)…",
   "mods.search": "Zoeken",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 AI-aanbeveling",
   "mods.recommend_prompt_placeholder": "Beschrijf de mod die je wilt (bijv. vloeiende shaders)",
   "mods.recommend_button": "AI-aanbeveling",
-
   "assistant.title": "AI-assistent",
   "assistant.placeholder": "Typ een bericht of vraag…",
   "assistant.send": "Versturen",
@@ -149,7 +142,6 @@
   "assistant.thinking": "AI denkt na…",
   "assistant.user": "Jij",
   "assistant.ai": "AI",
-
   "content.title": "Speldata",
   "content.saves": "Opslagen",
   "content.screenshots": "Schermafbeeldingen",
@@ -182,7 +174,6 @@
   "content.delete": "Verwijderen",
   "content.world_size": "{0} bestanden",
   "content.last_played": "Gewijzigd: {0}",
-
   "settings.title": "Instellingen",
   "settings.language": "Taal / Language",
   "settings.general": "Algemeen",
@@ -218,7 +209,27 @@
   "settings.check_update": "Controleren op updates",
   "update.up_to_date": "Je bent up-to-date",
   "update.available": "Nieuwe versie {0} beschikbaar — klik om te bekijken",
-
+  "server.title": "Multiplayer-servers",
+  "server.subtitle": "Bewaar je favoriete servers en zie in één oogopslag wie online is.",
+  "server.name": "Servernaam",
+  "server.address": "Adres (host of host:poort)",
+  "server.address_hint": "bijv. play.example.net of 192.168.1.5:25565",
+  "server.add": "Toevoegen",
+  "server.empty": "Geen opgeslagen servers — voeg er hierboven een toe.",
+  "server.ping_all": "Allen pingen",
+  "server.pinging_all": "Alle servers pingen…",
+  "server.ping_all_done": "Server-ping voltooid.",
+  "server.ping": "Opnieuw pingen",
+  "server.connect": "▶ Verbinden",
+  "server.remove": "Verwijderen",
+  "server.move_up": "Omhoog",
+  "server.move_down": "Omlaag",
+  "server.pinging": "Pingen…",
+  "server.online": "Online",
+  "server.offline": "Offline",
+  "server.ping_failed": "Ping mislukt",
+  "server.connect_queued": "Verbindt bij volgende start",
+  "server.no_instance": "Maak een instance voordat je verbindt",
   "common.cancel": "Annuleren",
   "common.confirm": "OK",
   "common.close": "Sluiten",

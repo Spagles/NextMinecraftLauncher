@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "AI-driven",
-
   "nav.home": "Hem",
   "nav.download": "Nedladdningar",
   "nav.accounts": "Konton",
   "nav.mods": "Moddar",
   "nav.assistant": "AI-assistent",
   "nav.game_content": "Speldata",
+  "nav.multiplayer": "Flerspelar",
   "nav.settings": "Inställningar",
-
   "home.title": "Starta",
   "home.instances": "Mina instanser",
   "home.no_instances": "Inga instanser — installera en i Nedladdningar",
@@ -49,7 +48,6 @@
   "home.export_all": "Exportera alla",
   "home.delete_all": "Ta bort alla",
   "home.deleted_all": "Alla instanser borttagna",
-
   "download.title": "Nedladdningscenter",
   "download.search_placeholder": "Sök version (t.ex. 1.20.1)…",
   "download.filter_release": "Releaser",
@@ -67,7 +65,6 @@
   "download.column_released": "Datum",
   "download.column_action": "Åtgärd",
   "download.empty": "Inga matchande versioner",
-
   "accounts.title": "Konton",
   "accounts.add_offline": "Lägg till offline-konto",
   "accounts.add_microsoft": "Logga in med Microsoft",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "Inloggning tog för lång tid, försök igen",
   "accounts.ms_success": "Inloggad: {0}",
   "accounts.ms_failed": "Inloggning misslyckades: {0}",
-
   "accounts.authlib_servers": "Externa inloggningsservrar",
   "accounts.authlib_add_server": "Lägg till server",
   "accounts.authlib_edit_server": "Redigera",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "Inga servrar — lägg till en (t.ex. https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "Användarnamn / e-post",
   "accounts.authlib_password": "Lösenord",
-
   "skins.upload_title": "Ladda upp skin",
   "skins.upload_button": "Ladda upp PNG",
   "skins.upload_success": "Skin uppladdad till konto",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "En Microsoft-åtkomsttoken krävs för att ladda upp skins",
   "skins.flip": "Spegel vänster/höger",
   "skins.rotate_hint": "🖱️ dra för att rotera, klicka för att spegla",
-
   "mods.title": "Mod-center",
   "mods.search_placeholder": "Sök moddar (t.ex. Sodium)…",
   "mods.search": "Sök",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 AI-rekommendation",
   "mods.recommend_prompt_placeholder": "Beskriv modden du vill ha (t.ex. mjuka shaders)",
   "mods.recommend_button": "AI-rekommendation",
-
   "assistant.title": "AI-assistent",
   "assistant.placeholder": "Skriv ett meddelande eller fråga…",
   "assistant.send": "Skicka",
@@ -149,7 +142,6 @@
   "assistant.thinking": "AI tänker…",
   "assistant.user": "Du",
   "assistant.ai": "AI",
-
   "content.title": "Speldata",
   "content.saves": "Sparfiler",
   "content.screenshots": "Skärmdumpar",
@@ -182,7 +174,6 @@
   "content.delete": "Ta bort",
   "content.world_size": "{0} filer",
   "content.last_played": "Ändrad: {0}",
-
   "settings.title": "Inställningar",
   "settings.language": "Språk / Language",
   "settings.general": "Allmänt",
@@ -218,7 +209,27 @@
   "settings.check_update": "Kontrollera uppdateringar",
   "update.up_to_date": "Du är uppdaterad",
   "update.available": "Ny version {0} tillgänglig — klicka för att visa",
-
+  "server.title": "Flerspelarservrar",
+  "server.subtitle": "Spara dina favoritservrar och se vem som är online med en blick.",
+  "server.name": "Servernamn",
+  "server.address": "Adress (värd eller värd:port)",
+  "server.address_hint": "t.ex. play.example.net eller 192.168.1.5:25565",
+  "server.add": "Lägg till",
+  "server.empty": "Inga sparade servrar — lägg till en ovan.",
+  "server.ping_all": "Pinga alla",
+  "server.pinging_all": "Pingar alla servrar…",
+  "server.ping_all_done": "Serverping slutförd.",
+  "server.ping": "Pinga",
+  "server.connect": "▶ Anslut",
+  "server.remove": "Ta bort",
+  "server.move_up": "Upp",
+  "server.move_down": "Ner",
+  "server.pinging": "Pingar…",
+  "server.online": "Online",
+  "server.offline": "Offline",
+  "server.ping_failed": "Ping misslyckades",
+  "server.connect_queued": "Ansluter vid nästa start",
+  "server.no_instance": "Skapa en instans innan du ansluter",
   "common.cancel": "Avbryt",
   "common.confirm": "OK",
   "common.close": "Stäng",

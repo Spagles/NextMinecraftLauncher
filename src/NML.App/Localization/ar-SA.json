@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "مدعوم بالذكاء الاصطناعي",
-
   "nav.home": "الرئيسية",
   "nav.download": "التنزيلات",
   "nav.accounts": "الحسابات",
   "nav.mods": "التعديلات",
   "nav.assistant": "مساعد الذكاء الاصطناعي",
   "nav.game_content": "بيانات اللعبة",
+  "nav.multiplayer": "متعدد اللاعبين",
   "nav.settings": "الإعدادات",
-
   "home.title": "تشغيل",
   "home.instances": "نسخي",
   "home.no_instances": "لا توجد نسخ — ثبت واحدة من التنزيلات",
@@ -49,7 +48,6 @@
   "home.export_all": "تصدير الكل",
   "home.delete_all": "حذف الكل",
   "home.deleted_all": "تم حذف جميع النسخ",
-
   "download.title": "مركز التنزيلات",
   "download.search_placeholder": "ابحث عن إصدار (مثل 1.20.1)…",
   "download.filter_release": "إصدارات",
@@ -67,7 +65,6 @@
   "download.column_released": "التاريخ",
   "download.column_action": "إجراء",
   "download.empty": "لا توجد إصدارات مطابقة",
-
   "accounts.title": "الحسابات",
   "accounts.add_offline": "إضافة حساب دون اتصال",
   "accounts.add_microsoft": "تسجيل الدخول بـ Microsoft",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "انتهت مهلة تسجيل الدخول، أعد المحاولة",
   "accounts.ms_success": "تم تسجيل الدخول: {0}",
   "accounts.ms_failed": "فشل تسجيل الدخول: {0}",
-
   "accounts.authlib_servers": "خوادم تسجيل الدخول الخارجية",
   "accounts.authlib_add_server": "إضافة خادم",
   "accounts.authlib_edit_server": "تحرير",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "لا توجد خوادم — أضف واحدا (مثل https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "اسم المستخدم / البريد",
   "accounts.authlib_password": "كلمة المرور",
-
   "skins.upload_title": "رفع المظهر",
   "skins.upload_button": "رفع PNG",
   "skins.upload_success": "تم رفع المظهر إلى الحساب",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "مطلوب رمز وصول Microsoft لرفع المظاهر",
   "skins.flip": "عكس يمين/يسار",
   "skins.rotate_hint": "🖱️ اسحب للتدوير، انقر للعكس",
-
   "mods.title": "مركز التعديلات",
   "mods.search_placeholder": "ابحث عن تعديلات (مثل Sodium)…",
   "mods.search": "بحث",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 توصية الذكاء الاصطناعي",
   "mods.recommend_prompt_placeholder": "صف التعديل الذي تريده (مثل ظلال سلسة)",
   "mods.recommend_button": "توصية الذكاء الاصطناعي",
-
   "assistant.title": "مساعد الذكاء الاصطناعي",
   "assistant.placeholder": "اكتب رسالة أو سؤالا…",
   "assistant.send": "إرسال",
@@ -149,7 +142,6 @@
   "assistant.thinking": "الذكاء الاصطناعي يفكر…",
   "assistant.user": "أنت",
   "assistant.ai": "الذكاء الاصطناعي",
-
   "content.title": "بيانات اللعبة",
   "content.saves": "الحفظ",
   "content.screenshots": "لقطات الشاشة",
@@ -182,7 +174,6 @@
   "content.delete": "حذف",
   "content.world_size": "{0} ملف",
   "content.last_played": "معدل: {0}",
-
   "settings.title": "الإعدادات",
   "settings.language": "اللغة / Language",
   "settings.general": "عام",
@@ -218,7 +209,27 @@
   "settings.check_update": "التحقق من التحديثات",
   "update.up_to_date": "أنت محدث",
   "update.available": "الإصدار الجديد {0} متاح — انقر للعرض",
-
+  "server.title": "خوادم متعدد اللاعبين",
+  "server.subtitle": "احفظ خوادمك المفضلة واعرف من المتصل بنظرة واحدة.",
+  "server.name": "اسم الخادم",
+  "server.address": "العنوان (مضيف أو مضيف:منفذ)",
+  "server.address_hint": "مثال play.example.net أو 192.168.1.5:25565",
+  "server.add": "إضافة",
+  "server.empty": "لا خوادم محفوظة — أضف واحداً بالأعلى.",
+  "server.ping_all": "اختبار الكل",
+  "server.pinging_all": "جارٍ اختبار جميع الخوادم…",
+  "server.ping_all_done": "اكتمل اختبار الخوادم.",
+  "server.ping": "إعادة الاختبار",
+  "server.connect": "▶ اتصال",
+  "server.remove": "إزالة",
+  "server.move_up": "أعلى",
+  "server.move_down": "أسفل",
+  "server.pinging": "اختبار…",
+  "server.online": "متصل",
+  "server.offline": "غير متصل",
+  "server.ping_failed": "فشل الاختبار",
+  "server.connect_queued": "سيتصل عند التشغيل التالي",
+  "server.no_instance": "أنشئ نسخة قبل الاتصال",
   "common.cancel": "إلغاء",
   "common.confirm": "موافق",
   "common.close": "إغلاق",

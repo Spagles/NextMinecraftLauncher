@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "Napędzany przez AI",
-
   "nav.home": "Strona główna",
   "nav.download": "Pobieranie",
   "nav.accounts": "Konta",
   "nav.mods": "Mody",
   "nav.assistant": "Asystent AI",
   "nav.game_content": "Dane gry",
+  "nav.multiplayer": "Wieloosobowa",
   "nav.settings": "Ustawienia",
-
   "home.title": "Uruchom",
   "home.instances": "Moje instancje",
   "home.no_instances": "Brak instancji — zainstaluj jedną w Pobieranie",
@@ -49,7 +48,6 @@
   "home.export_all": "Eksportuj wszystkie",
   "home.delete_all": "Usuń wszystkie",
   "home.deleted_all": "Usunięto wszystkie instancje",
-
   "download.title": "Centrum pobierania",
   "download.search_placeholder": "Szukaj wersji (np. 1.20.1)…",
   "download.filter_release": "Wydania",
@@ -67,7 +65,6 @@
   "download.column_released": "Data",
   "download.column_action": "Akcja",
   "download.empty": "Brak pasujących wersji",
-
   "accounts.title": "Konta",
   "accounts.add_offline": "Dodaj konto offline",
   "accounts.add_microsoft": "Zaloguj się przez Microsoft",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "Czas logowania minął, spróbuj ponownie",
   "accounts.ms_success": "Zalogowano: {0}",
   "accounts.ms_failed": "Logowanie nieudane: {0}",
-
   "accounts.authlib_servers": "Zewnętrzne serwery logowania",
   "accounts.authlib_add_server": "Dodaj serwer",
   "accounts.authlib_edit_server": "Edytuj",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "Brak serwerów — dodaj jeden (np. https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "Nazwa użytkownika / email",
   "accounts.authlib_password": "Hasło",
-
   "skins.upload_title": "Prześlij skin",
   "skins.upload_button": "Prześlij PNG",
   "skins.upload_success": "Skin przesłany na konto",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "Wymagany token dostępu Microsoft do przesyłania skinów",
   "skins.flip": "Odbij lewo/prawo",
   "skins.rotate_hint": "🖱️ przeciągnij, aby obrócić, kliknij, aby odbić",
-
   "mods.title": "Centrum Modów",
   "mods.search_placeholder": "Szukaj modów (np. Sodium)…",
   "mods.search": "Szukaj",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 Rekomendacja AI",
   "mods.recommend_prompt_placeholder": "Opisz mod, którego chcesz (np. płynne shadery)",
   "mods.recommend_button": "Rekomendacja AI",
-
   "assistant.title": "Asystent AI",
   "assistant.placeholder": "Wpisz wiadomość lub pytanie…",
   "assistant.send": "Wyślij",
@@ -149,7 +142,6 @@
   "assistant.thinking": "AI myśli…",
   "assistant.user": "Ty",
   "assistant.ai": "AI",
-
   "content.title": "Dane gry",
   "content.saves": "Zapisy",
   "content.screenshots": "Zrzuty ekranu",
@@ -182,7 +174,6 @@
   "content.delete": "Usuń",
   "content.world_size": "{0} plików",
   "content.last_played": "Zmodyfikowano: {0}",
-
   "settings.title": "Ustawienia",
   "settings.language": "Język / Language",
   "settings.general": "Ogólne",
@@ -218,7 +209,27 @@
   "settings.check_update": "Sprawdź aktualizacje",
   "update.up_to_date": "Masz najnowszą wersję",
   "update.available": "Dostępna nowa wersja {0} — kliknij, aby zobaczyć",
-
+  "server.title": "Serwery wieloosobowe",
+  "server.subtitle": "Zapisz ulubione serwery i zobacz na pierwszy rzut oka, kto jest online.",
+  "server.name": "Nazwa serwera",
+  "server.address": "Adres (host lub host:port)",
+  "server.address_hint": "np. play.example.net lub 192.168.1.5:25565",
+  "server.add": "Dodaj",
+  "server.empty": "Brak zapisanych serwerów — dodaj powyżej.",
+  "server.ping_all": "Sprawdź wszystkie",
+  "server.pinging_all": "Sprawdzanie wszystkich serwerów…",
+  "server.ping_all_done": "Sprawdzanie serwerów zakończone.",
+  "server.ping": "Sprawdź",
+  "server.connect": "▶ Połącz",
+  "server.remove": "Usuń",
+  "server.move_up": "W górę",
+  "server.move_down": "W dół",
+  "server.pinging": "Sprawdzanie…",
+  "server.online": "Online",
+  "server.offline": "Offline",
+  "server.ping_failed": "Sprawdzanie nie powiodło się",
+  "server.connect_queued": "Połączy przy następnym uruchomieniu",
+  "server.no_instance": "Utwórz instancję przed połączeniem",
   "common.cancel": "Anuluj",
   "common.confirm": "OK",
   "common.close": "Zamknij",

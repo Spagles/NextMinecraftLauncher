@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "Підтримка ШІ",
-
   "nav.home": "Головна",
   "nav.download": "Завантаження",
   "nav.accounts": "Акаунти",
   "nav.mods": "Моди",
   "nav.assistant": "Помічник ШІ",
   "nav.game_content": "Дані гри",
+  "nav.multiplayer": "Мережева гра",
   "nav.settings": "Налаштування",
-
   "home.title": "Запустити",
   "home.instances": "Мої екземпляри",
   "home.no_instances": "Немає екземплярів — встановіть один у Завантаженнях",
@@ -49,7 +48,6 @@
   "home.export_all": "Експортувати все",
   "home.delete_all": "Видалити все",
   "home.deleted_all": "Усі екземпляри видалено",
-
   "download.title": "Центр завантажень",
   "download.search_placeholder": "Пошук версії (напр. 1.20.1)…",
   "download.filter_release": "Релізи",
@@ -67,7 +65,6 @@
   "download.column_released": "Дата",
   "download.column_action": "Дія",
   "download.empty": "Немає відповідних версій",
-
   "accounts.title": "Акаунти",
   "accounts.add_offline": "Додати офлайн акаунт",
   "accounts.add_microsoft": "Увійти через Microsoft",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "Час входу минув, спробуйте знову",
   "accounts.ms_success": "Вхід виконано: {0}",
   "accounts.ms_failed": "Помилка входу: {0}",
-
   "accounts.authlib_servers": "Зовнішні сервери входу",
   "accounts.authlib_add_server": "Додати сервер",
   "accounts.authlib_edit_server": "Редагувати",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "Немає серверів — додайте один (напр. https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "Ім'я користувача / email",
   "accounts.authlib_password": "Пароль",
-
   "skins.upload_title": "Завантажити скін",
   "skins.upload_button": "Завантажити PNG",
   "skins.upload_success": "Скін завантажено на акаунт",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "Потрібен маркер доступу Microsoft для завантаження скінів",
   "skins.flip": "Віддзеркалити ліворуч/праворуч",
   "skins.rotate_hint": "🖱️ перетягніть для обертання, натисніть для віддзеркалення",
-
   "mods.title": "Центр Модів",
   "mods.search_placeholder": "Пошук модів (напр. Sodium)…",
   "mods.search": "Пошук",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 Рекомендація ШІ",
   "mods.recommend_prompt_placeholder": "Опишіть мод, який ви хочете (напр. плавні шейдери)",
   "mods.recommend_button": "Рекомендація ШІ",
-
   "assistant.title": "Помічник ШІ",
   "assistant.placeholder": "Введіть повідомлення або запитання…",
   "assistant.send": "Надіслати",
@@ -149,7 +142,6 @@
   "assistant.thinking": "ШІ думає…",
   "assistant.user": "Ви",
   "assistant.ai": "ШІ",
-
   "content.title": "Дані гри",
   "content.saves": "Збереження",
   "content.screenshots": "Знімки екрана",
@@ -182,7 +174,6 @@
   "content.delete": "Видалити",
   "content.world_size": "{0} файлів",
   "content.last_played": "Змінено: {0}",
-
   "settings.title": "Налаштування",
   "settings.language": "Мова / Language",
   "settings.general": "Загальні",
@@ -218,7 +209,27 @@
   "settings.check_update": "Перевірити оновлення",
   "update.up_to_date": "Ви використовуєте останню версію",
   "update.available": "Доступна нова версія {0} — натисніть для перегляду",
-
+  "server.title": "Сервери мережевої гри",
+  "server.subtitle": "Зберігайте улюблені сервери та бачите онлайн-статус з одного погляду.",
+  "server.name": "Назва сервера",
+  "server.address": "Адреса (хост або хост:порт)",
+  "server.address_hint": "напр. play.example.net або 192.168.1.5:25565",
+  "server.add": "Додати",
+  "server.empty": "Немає збережених серверів — додайте вище.",
+  "server.ping_all": "Опитати всі",
+  "server.pinging_all": "Опитування всіх серверів…",
+  "server.ping_all_done": "Опитування серверів завершено.",
+  "server.ping": "Опитати",
+  "server.connect": "▶ Підключитися",
+  "server.remove": "Видалити",
+  "server.move_up": "Вгору",
+  "server.move_down": "Вниз",
+  "server.pinging": "Опитування…",
+  "server.online": "У мережі",
+  "server.offline": "Не в мережі",
+  "server.ping_failed": "Опитування не вдалося",
+  "server.connect_queued": "Підключення при наступному запуску",
+  "server.no_instance": "Створіть екземпляр перед підключенням",
   "common.cancel": "Скасувати",
   "common.confirm": "OK",
   "common.close": "Закрити",

@@ -105,6 +105,10 @@ public static class ServiceRegistration
         services.AddSingleton<InstanceStore>(_ => new InstanceStore(settingsDir));
         services.AddSingleton<InstanceTransferService>();
 
+        // --- Multiplayer server list ---
+        services.AddSingleton<NML.Core.Multiplayer.ServerListStore>(_ => new NML.Core.Multiplayer.ServerListStore(settingsDir));
+        services.AddSingleton<NML.Core.Multiplayer.ServerPinger>();
+
         // --- Game content browser ---
         services.AddSingleton<GameContentBrowser>();
 
@@ -154,6 +158,7 @@ public static class ServiceRegistration
         services.AddSingleton<ViewModels.Pages.HomePageViewModel>();
         services.AddSingleton<ViewModels.Pages.DownloadPageViewModel>();
         services.AddSingleton<ViewModels.Pages.AccountsPageViewModel>();
+        services.AddSingleton<ViewModels.Pages.MultiplayerPageViewModel>();
         services.AddSingleton<ViewModels.Pages.ModsPageViewModel>();
         services.AddSingleton<ViewModels.Pages.AssistantPageViewModel>();
         services.AddSingleton<ViewModels.Pages.GameContentPageViewModel>();

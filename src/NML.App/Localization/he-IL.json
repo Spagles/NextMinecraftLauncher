@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "במינה בינה מלאכותית",
-
   "nav.home": "בית",
   "nav.download": "הורדות",
   "nav.accounts": "חשבונות",
   "nav.mods": "מודים",
   "nav.assistant": "עוזר AI",
   "nav.game_content": "נתוני משחק",
+  "nav.multiplayer": "מרובה משתתפים",
   "nav.settings": "הגדרות",
-
   "home.title": "הפעל",
   "home.instances": "המופעים שלי",
   "home.no_instances": "אין מופעים — התקן אחד בהורדות",
@@ -49,7 +48,6 @@
   "home.export_all": "ייצא הכל",
   "home.delete_all": "מחק הכל",
   "home.deleted_all": "כל המופעים נמחקו",
-
   "download.title": "מרכז הורדות",
   "download.search_placeholder": "חפש גרסה (לדוגמה 1.20.1)…",
   "download.filter_release": "שחרורים",
@@ -67,7 +65,6 @@
   "download.column_released": "תאריך",
   "download.column_action": "פעולה",
   "download.empty": "אין גרסאות תואמות",
-
   "accounts.title": "חשבונות",
   "accounts.add_offline": "הוסף חשבון לא מקוון",
   "accounts.add_microsoft": "התחבר עם Microsoft",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "זמן ההתחברות פג, נסה שוב",
   "accounts.ms_success": "התחברת: {0}",
   "accounts.ms_failed": "ההתחברות נכשלה: {0}",
-
   "accounts.authlib_servers": "שרתי התחברות חיצוניים",
   "accounts.authlib_add_server": "הוסף שרת",
   "accounts.authlib_edit_server": "ערוך",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "אין שרתים — הוסף אחד",
   "accounts.authlib_login": "שם משתמש / דואר אלקטרוני",
   "accounts.authlib_password": "סיסמה",
-
   "skins.upload_title": "העלה סקין",
   "skins.upload_button": "העלה PNG",
   "skins.upload_success": "הסקין הועלה לחשבון",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "נדרש אסימון גישה של Microsoft להעלאת סקינים",
   "skins.flip": "הפוך שמאל/ימין",
   "skins.rotate_hint": "🖱️ גרור לסיבוב, לחץ להיפוך",
-
   "mods.title": "מרכז מודים",
   "mods.search_placeholder": "חפש מודים (לדוגמה Sodium)…",
   "mods.search": "חיפוש",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 המלצת AI",
   "mods.recommend_prompt_placeholder": "תאר את המוד שאתה רוצה",
   "mods.recommend_button": "המלצת AI",
-
   "assistant.title": "עוזר AI",
   "assistant.placeholder": "הקלד הודעה או שאלה…",
   "assistant.send": "שלח",
@@ -149,7 +142,6 @@
   "assistant.thinking": "AI חושב…",
   "assistant.user": "אתה",
   "assistant.ai": "AI",
-
   "content.title": "נתוני משחק",
   "content.saves": "שמירות",
   "content.screenshots": "צילומי מסך",
@@ -182,7 +174,6 @@
   "content.delete": "מחק",
   "content.world_size": "{0} קבצים",
   "content.last_played": "שונה: {0}",
-
   "settings.title": "הגדרות",
   "settings.language": "שפה / Language",
   "settings.general": "כללי",
@@ -218,7 +209,27 @@
   "settings.check_update": "בדוק עדכונים",
   "update.up_to_date": "אתה מעודכן",
   "update.available": "גרסה חדשה {0} זמינה — לחץ לצפייה",
-
+  "server.title": "שרתי מרובה משתתפים",
+  "server.subtitle": "שמור את השרתים המועדפים עליך וראה מי מחובר במבט אחד.",
+  "server.name": "שם השרת",
+  "server.address": "כתובת (מארח או מארח:פורט)",
+  "server.address_hint": "למשל play.example.net או 192.168.1.5:25565",
+  "server.add": "הוסף",
+  "server.empty": "אין שרתים שמורים — הוסף למעלה.",
+  "server.ping_all": "בדוק הכל",
+  "server.pinging_all": "בודק את כל השרתים…",
+  "server.ping_all_done": "בדיקת שרתים הושלמה.",
+  "server.ping": "בדוק שוב",
+  "server.connect": "▶ התחבר",
+  "server.remove": "הסר",
+  "server.move_up": "למעלה",
+  "server.move_down": "למטה",
+  "server.pinging": "בודק…",
+  "server.online": "מחובר",
+  "server.offline": "לא מחובר",
+  "server.ping_failed": "הבדיקה נכשלה",
+  "server.connect_queued": "יתחבר בהפעלה הבאה",
+  "server.no_instance": "צור מופע לפני ההתחברות",
   "common.cancel": "ביטול",
   "common.confirm": "אישור",
   "common.close": "סגור",

@@ -1,15 +1,14 @@
 {
   "app.title": "Next Minecraft Launcher",
   "app.subtitle": "AI-understøttet",
-
   "nav.home": "Hjem",
   "nav.download": "Downloads",
   "nav.accounts": "Konti",
   "nav.mods": "Mods",
   "nav.assistant": "AI-assistent",
   "nav.game_content": "Spildata",
+  "nav.multiplayer": "Flerspiller",
   "nav.settings": "Indstillinger",
-
   "home.title": "Start",
   "home.instances": "Mine instanser",
   "home.no_instances": "Ingen instanser — installer en i Downloads",
@@ -49,7 +48,6 @@
   "home.export_all": "Eksporter alle",
   "home.delete_all": "Slet alle",
   "home.deleted_all": "Alle instanser slettet",
-
   "download.title": "Downloadcenter",
   "download.search_placeholder": "Søg version (f.eks. 1.20.1)…",
   "download.filter_release": "Udgivelser",
@@ -67,7 +65,6 @@
   "download.column_released": "Dato",
   "download.column_action": "Handling",
   "download.empty": "Ingen matchende versioner",
-
   "accounts.title": "Konti",
   "accounts.add_offline": "Tilføj offline-konto",
   "accounts.add_microsoft": "Log ind med Microsoft",
@@ -85,7 +82,6 @@
   "accounts.ms_expired": "Login-tid udløbet, prøv igen",
   "accounts.ms_success": "Logget ind: {0}",
   "accounts.ms_failed": "Login mislykkedes: {0}",
-
   "accounts.authlib_servers": "Eksterne login-servere",
   "accounts.authlib_add_server": "Tilføj server",
   "accounts.authlib_edit_server": "Rediger",
@@ -96,7 +92,6 @@
   "accounts.authlib_no_servers": "Ingen servere — tilføj en (f.eks. https://littleskin.cn/api/yggdrasil)",
   "accounts.authlib_login": "Brugernavn / e-mail",
   "accounts.authlib_password": "Adgangskode",
-
   "skins.upload_title": "Upload skin",
   "skins.upload_button": "Upload PNG",
   "skins.upload_success": "Skin uploadet til konto",
@@ -115,7 +110,6 @@
   "skins.no_ms_token": "Et Microsoft-adgangstoken kræves for at uploade skins",
   "skins.flip": "Spejlvend venstre/højre",
   "skins.rotate_hint": "🖱️ træk for at rotere, klik for at spejlvende",
-
   "mods.title": "Mod-center",
   "mods.search_placeholder": "Søg mods (f.eks. Sodium)…",
   "mods.search": "Søg",
@@ -136,7 +130,6 @@
   "mods.recommend": "🤖 AI-anbefaling",
   "mods.recommend_prompt_placeholder": "Beskriv den mod du vil have (f.eks. bløde shaders)",
   "mods.recommend_button": "AI-anbefaling",
-
   "assistant.title": "AI-assistent",
   "assistant.placeholder": "Skriv en besked eller et spørgsmål…",
   "assistant.send": "Send",
@@ -149,7 +142,6 @@
   "assistant.thinking": "AI tænker…",
   "assistant.user": "Dig",
   "assistant.ai": "AI",
-
   "content.title": "Spildata",
   "content.saves": "Gemte spil",
   "content.screenshots": "Skærmbilleder",
@@ -182,7 +174,6 @@
   "content.delete": "Slet",
   "content.world_size": "{0} filer",
   "content.last_played": "Ændret: {0}",
-
   "settings.title": "Indstillinger",
   "settings.language": "Sprog / Language",
   "settings.general": "Generelt",
@@ -218,7 +209,27 @@
   "settings.check_update": "Tjek for opdateringer",
   "update.up_to_date": "Du er opdateret",
   "update.available": "Ny version {0} tilgængelig — klik for at se",
-
+  "server.title": "Flerspillerservere",
+  "server.subtitle": "Gem dine yndlingsservere og se hvem der er online med ét blik.",
+  "server.name": "Servernavn",
+  "server.address": "Adresse (vært eller vært:port)",
+  "server.address_hint": "f.eks. play.example.net eller 192.168.1.5:25565",
+  "server.add": "Tilføj",
+  "server.empty": "Ingen gemte servere — tilføj en ovenfor.",
+  "server.ping_all": "Ping alle",
+  "server.pinging_all": "Pinger alle servere…",
+  "server.ping_all_done": "Serverping fuldført.",
+  "server.ping": "Ping",
+  "server.connect": "▶ Forbind",
+  "server.remove": "Fjern",
+  "server.move_up": "Op",
+  "server.move_down": "Ned",
+  "server.pinging": "Pinger…",
+  "server.online": "Online",
+  "server.offline": "Offline",
+  "server.ping_failed": "Ping mislykkedes",
+  "server.connect_queued": "Forbinder ved næste start",
+  "server.no_instance": "Opret en instans før du forbinder",
   "common.cancel": "Annuller",
   "common.confirm": "OK",
   "common.close": "Luk",
