@@ -3,6 +3,56 @@
              xmlns:loc="using:NML.App.Localization"
              x:Class="NML.App.Views.Pages.AssistantPage">
     <DockPanel LastChildFill="True">
+        <!-- Command-block generator panel (docked at top) -->
+        <Border DockPanel.Dock="Top" Background="#1a1a20" Padding="16,12" Margin="0,0,0,4">
+            <StackPanel Spacing="8">
+                <TextBlock Text="⚡ Command Block Generator" Foreground="#4fc3f7" FontSize="14" FontWeight="SemiBold"/>
+                <WrapPanel>
+                    <ComboBox SelectedItem="{Binding CmdType}" MinWidth="120">
+                        <ComboBoxItem Content="give"/>
+                        <ComboBoxItem Content="tp"/>
+                        <ComboBoxItem Content="effect"/>
+                        <ComboBoxItem Content="gamemode"/>
+                    </ComboBox>
+                    <TextBox Text="{Binding CmdTarget}" Watermark="@p / @a / name" MinWidth="100" Margin="6,0"/>
+                </WrapPanel>
+                <!-- /give params -->
+                <WrapPanel IsVisible="{Binding CmdType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=give}">
+                    <TextBox Text="{Binding CmdItemId}" Watermark="item id" MinWidth="180" Margin="0,0,6,0"/>
+                    <TextBox Text="{Binding CmdCount}" Watermark="count" MinWidth="60"/>
+                </WrapPanel>
+                <!-- /tp params -->
+                <WrapPanel IsVisible="{Binding CmdType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=tp}">
+                    <TextBox Text="{Binding CmdX}" Watermark="X" MinWidth="80" Margin="0,0,6,0"/>
+                    <TextBox Text="{Binding CmdY}" Watermark="Y" MinWidth="80" Margin="0,0,6,0"/>
+                    <TextBox Text="{Binding CmdZ}" Watermark="Z" MinWidth="80"/>
+                </WrapPanel>
+                <!-- /effect params -->
+                <WrapPanel IsVisible="{Binding CmdType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=effect}">
+                    <TextBox Text="{Binding CmdEffectId}" Watermark="effect id" MinWidth="140" Margin="0,0,6,0"/>
+                    <TextBox Text="{Binding CmdDuration}" Watermark="seconds" MinWidth="80" Margin="0,0,6,0"/>
+                    <TextBox Text="{Binding CmdAmplifier}" Watermark="amplifier" MinWidth="80"/>
+                </WrapPanel>
+                <!-- /gamemode params -->
+                <WrapPanel IsVisible="{Binding CmdType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=gamemode}">
+                    <ComboBox SelectedItem="{Binding CmdGamemode}" MinWidth="140">
+                        <ComboBoxItem Content="creative"/>
+                        <ComboBoxItem Content="survival"/>
+                        <ComboBoxItem Content="adventure"/>
+                        <ComboBoxItem Content="spectator"/>
+                    </ComboBox>
+                </WrapPanel>
+                <!-- Generate + output -->
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Content="Generate" Command="{Binding GenerateCommandCommand}"
+                            Background="#2f5fcc" Foreground="White" Padding="14,5"/>
+                    <Button Content="📋 Copy" Command="{Binding CopyCommandCommand}" Classes="small"/>
+                </StackPanel>
+                <SelectableTextBlock Text="{Binding CmdOutput}" Foreground="#81c784" FontFamily="Cascadia Code,Consolas,monospace"
+                                     FontSize="12" TextWrapping="Wrap" IsVisible="{Binding CmdOutput, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+            </StackPanel>
+        </Border>
+
         <!-- Input bar -->
         <Border DockPanel.Dock="Bottom" Background="#2d2d33" Padding="16,10">
             <StackPanel Orientation="Horizontal" Spacing="8">

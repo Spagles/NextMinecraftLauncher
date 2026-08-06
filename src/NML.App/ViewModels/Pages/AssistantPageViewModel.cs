@@ -26,6 +26,18 @@ public partial class AssistantPageViewModel : PageViewModelBase
     [ObservableProperty] private bool _isBusy;
     [ObservableProperty] private string _status = string.Empty;
 
+    // --- Command-block generator fields ---
+    [ObservableProperty] private string _cmdTarget = "@p";
+    [ObservableProperty] private string _cmdType = "give";
+    [ObservableProperty] private string _cmdItemId = "diamond_sword";
+    [ObservableProperty] private int _cmdCount = 1;
+    [ObservableProperty] private double _cmdX = 0, _cmdY = 64, _cmdZ = 0;
+    [ObservableProperty] private string _cmdEffectId = "speed";
+    [ObservableProperty] private int _cmdDuration = 30;
+    [ObservableProperty] private int _cmdAmplifier = 0;
+    [ObservableProperty] private string _cmdGamemode = "creative";
+    [ObservableProperty] private string _cmdOutput = string.Empty;
+
     public AssistantPageViewModel(
         ChatClientFactory factory,
         SettingsStore settings,
@@ -78,6 +90,37 @@ public partial class AssistantPageViewModel : PageViewModelBase
             Status = $"common.error,{ex.Message}";
         }
         finally { IsBusy = false; }
+    }
+
+    /// <summary>Generate a Minecraft command from the structured fields.</summary>
+    [RelayCommand]
+    private void GenerateCommand()
+    {
+        CmdOutput = CmdType switch
+        {
+            "give"     => NML.Core.Game.MinecraftCommandBuilder.Give(CmdTarget, CmdItemId, CmdCount),
+            "tp"       => NML.Core.Game.MinecraftCommandBuilder.Teleport(CmdTarget, CmdX, CmdY, CmdZ),
+            "effect"   => NML.Core.Game.MinecraftCommandBuilder.EffectGive(CmdTarget, CmdEffectId, CmdDuration, CmdAmplifier),
+            "gamemode" => NML.Core.Game.MinecraftCommandBuilder.Gamemode(CmdTarget, CmdGamemode),
+            "time"     => NML.Core.Game.MinecraftCommandBuilder.TimeSet(CmdGamemode == "day" ? "day" : "night"),
+            "weather"  => NML.Core.Game.MinecraftCommandBuilder.Weather(CmdEffectId),
+            _ => string.Empty,
+        };
+    }
+
+    /// <summary>Copy the generated command to the clipboard.</summary>
+    [RelayCommand]
+    private void CopyCommand()
+    {
+        try
+        {
+            if (Avalonia.Application.Current?.ApplicationLifetime
+                is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
+                && desktop.MainWindow is { Clipboard: var cb } && cb is not null)
+                cb.SetTextAsync(CmdOutput).GetAwaiter().GetResult();
+            Status = "cmd.copied";
+        }
+        catch { /* non-fatal */ }
     }
 }
 

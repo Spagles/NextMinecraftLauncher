@@ -3,7 +3,7 @@
 A cross-platform **Minecraft launcher** built in **C# / Avalonia UI 11 + .NET 8**, aiming to
 match HMCL and PCL while adding **first-class AI features**.
 
-> **153 commits, 392 tests, 0 warnings, 31 languages.** A real, functional launcher.
+> **154 commits, 412 tests, 0 warnings, 31 languages.** A real, functional launcher.
 
 ## What works right now
 
@@ -57,6 +57,8 @@ match HMCL and PCL while adding **first-class AI features**.
 - **Crash diagnosis:** parses crash logs → focused LLM prompt → structured JSON diagnosis +
   one-click "🤖 Diagnose last crash" button (auto-locates newest crash-*.txt + latest.log tail)
 - **Natural-language config:** function-calling tools (set_memory/version/modloader/java/resolution)
+- **Command-block generator:** structured UI builds /give, /tp, /effect, /gamemode, /time, /weather
+  commands from params (auto-namespaced, target-sanitized, copy-to-clipboard)
 - **Mod recommendation:** retrieval-augmented (real catalog candidates → LLM ranks; hallucinated IDs dropped)
 
 ### Mod Ecosystem (NML.Data)
