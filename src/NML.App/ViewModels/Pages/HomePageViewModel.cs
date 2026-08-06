@@ -723,6 +723,20 @@ public partial class HomePageViewModel : PageViewModelBase
 
             // Install modloader if selected.
             string? modloaderProfileId = null;
+
+            // Pre-install compatibility check: warn when the selected modloader type might not
+            // be compatible with this game version (e.g. Forge for 1.21 which only has NeoForge).
+            if (NewInstanceModloader != "None")
+            {
+                var compat = NML.Core.Modloaders.ModloaderCompatibilityChecker.Check(
+                    NewInstanceModloader.ToLowerInvariant(), versionId, versionId);
+                if (!compat.Ok)
+                {
+                    Status = $"home.launch_failed,{compat.Message}";
+                    return;
+                }
+            }
+
             try
             {
                 modloaderProfileId = NewInstanceModloader switch
