@@ -42,6 +42,10 @@ public sealed class AccountStore
                         string? token = _secrets.GetAsync($"account:{acc.Uuid}").GetAwaiter().GetResult();
                         if (!string.IsNullOrEmpty(token))
                             accounts[i] = acc with { AccessToken = token };
+                        else if (acc.AccessToken == "***encrypted***")
+                            // Secret store doesn't have the key (e.g. new machine) — clear
+                            // the placeholder so the app knows to re-authenticate.
+                            accounts[i] = acc with { AccessToken = string.Empty };
                     }
                 }
             }
