@@ -38,6 +38,10 @@ public partial class HomePageViewModel : PageViewModelBase
     private readonly AuthlibInjectorSetup? _authlibInjectorSetup;
     private readonly AccountStore? _activeAccountStore;
     private readonly InstanceTransferService? _instanceTransfer;
+    private readonly Core.Modloaders.FabricInstaller? _fabricInstaller;
+    private readonly Core.Modloaders.QuiltInstaller? _quiltInstaller;
+    private readonly Core.Modloaders.ForgeInstaller? _forgeInstaller;
+    private readonly Core.Modloaders.NeoForgeInstaller? _neoForgeInstaller;
     private readonly ILogger<HomePageViewModel> _logger;
 
     public ObservableCollection<Instance> Instances { get; } = new();
@@ -53,6 +57,10 @@ public partial class HomePageViewModel : PageViewModelBase
     [ObservableProperty] private string _newInstanceName = string.Empty;
     [ObservableProperty] private string _newInstanceVersion = string.Empty;
     [ObservableProperty] private int _newInstanceMemory = 4096;
+    [ObservableProperty] private string _newInstanceModloader = "None";
+
+    /// <summary>Available modloaders for the wizard dropdown.</summary>
+    public IReadOnlyList<string> ModloaderChoices { get; } = new[] { "None", "Fabric", "Quilt", "Forge", "NeoForge" };
 
     /// <summary>Live game console output (stdout+stderr), shown in the console panel.</summary>
     [ObservableProperty] private string _consoleOutput = string.Empty;
@@ -181,7 +189,11 @@ public partial class HomePageViewModel : PageViewModelBase
         CrashAnalyzerFactory? crashFactory = null,
         AuthlibInjectorSetup? authlibInjectorSetup = null,
         AccountStore? activeAccountStore = null,
-        InstanceTransferService? instanceTransfer = null)
+        InstanceTransferService? instanceTransfer = null,
+        Core.Modloaders.FabricInstaller? fabricInstaller = null,
+        Core.Modloaders.QuiltInstaller? quiltInstaller = null,
+        Core.Modloaders.ForgeInstaller? forgeInstaller = null,
+        Core.Modloaders.NeoForgeInstaller? neoForgeInstaller = null)
     {
         _manifest = manifest;
         _vanillaInstaller = vanillaInstaller;
@@ -196,6 +208,10 @@ public partial class HomePageViewModel : PageViewModelBase
         _authlibInjectorSetup = authlibInjectorSetup;
         _activeAccountStore = activeAccountStore;
         _instanceTransfer = instanceTransfer;
+        _fabricInstaller = fabricInstaller;
+        _quiltInstaller = quiltInstaller;
+        _forgeInstaller = forgeInstaller;
+        _neoForgeInstaller = neoForgeInstaller;
         _logger = logger;
         EnsureLanguageSubscribed();
         Status = "home.status_ready";
@@ -428,10 +444,37 @@ public partial class HomePageViewModel : PageViewModelBase
         try
         {
             await _vanillaInstaller.InstallAsync(versionId, mc);
+
+            // Install modloader if selected.
+            string? modloaderProfileId = null;
+            try
+            {
+                modloaderProfileId = NewInstanceModloader switch
+                {
+                    "Fabric" => _fabricInstaller is not null
+                        ? await InstallFabricAsync(versionId, mc)
+                        : null,
+                    "Quilt" => await InstallQuiltAsync(versionId, mc),
+                    "Forge" => await InstallForgeAsync(versionId, mc),
+                    "NeoForge" => await InstallNeoForgeAsync(versionId, mc),
+                    _ => null,
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Modloader install failed for {Loader}; vanilla is still playable.", NewInstanceModloader);
+                Status = $"home.install_failed,{NewInstanceModloader}: {ex.Message}";
+            }
+
+            instance.Modloader = NewInstanceModloader != "None" ? NewInstanceModloader : null;
+            // If a modloader profile was installed, switch the instance to use it.
+            if (!string.IsNullOrEmpty(modloaderProfileId))
+                instance.VersionId = modloaderProfileId;
+
             _instances.Add(instance);
             Instances.Add(instance);
             SelectedInstance = instance;
-            Status = $"home.installed,{versionId}";
+            Status = $"home.installed,{instance.VersionId}";
         }
         catch (Exception ex)
         {
@@ -444,6 +487,43 @@ public partial class HomePageViewModel : PageViewModelBase
     /// <summary>Cancel the new-instance wizard.</summary>
     [RelayCommand]
     private void CancelNewInstanceWizard() => ShowNewInstanceWizard = false;
+
+    private async Task<string?> InstallFabricAsync(string versionId, MinecraftDirectory mc)
+    {
+        if (_fabricInstaller is null) return null;
+        // Fetch latest stable loader.
+        var loaders = await _fabricInstaller.ListLoadersAsync(versionId);
+        var stable = loaders.FirstOrDefault(l => l.IsStable) ?? loaders.FirstOrDefault();
+        if (stable is null) return null;
+        return await _fabricInstaller.InstallAsync(versionId, stable.LoaderVersion, mc);
+    }
+
+    private async Task<string?> InstallQuiltAsync(string versionId, MinecraftDirectory mc)
+    {
+        if (_quiltInstaller is null) return null;
+        var loaders = await _quiltInstaller.ListLoadersAsync(versionId);
+        var stable = loaders.FirstOrDefault(l => l.IsStable) ?? loaders.FirstOrDefault();
+        if (stable is null) return null;
+        return await _quiltInstaller.InstallAsync(versionId, stable.LoaderVersion, mc);
+    }
+
+    private async Task<string?> InstallForgeAsync(string versionId, MinecraftDirectory mc)
+    {
+        if (_forgeInstaller is null) return null;
+        var versions = await _forgeInstaller.ListVersionsAsync(versionId);
+        var latest = versions.FirstOrDefault();
+        if (latest is null) return null;
+        return await _forgeInstaller.InstallAsync(versionId, latest.LoaderVersion, mc);
+    }
+
+    private async Task<string?> InstallNeoForgeAsync(string versionId, MinecraftDirectory mc)
+    {
+        if (_neoForgeInstaller is null) return null;
+        var versions = await _neoForgeInstaller.ListVersionsAsync(versionId);
+        var latest = versions.FirstOrDefault();
+        if (latest is null) return null;
+        return await _neoForgeInstaller.InstallAsync(versionId, latest.LoaderVersion, mc);
+    }
 
     /// <summary>Delete ALL instances (with no confirmation in the MVP — use carefully).</summary>
     [RelayCommand]
