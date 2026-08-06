@@ -275,6 +275,13 @@
   "modpack.include_logs": "Logs",
   "modpack.exported_deep": "Deep export written to {0}",
 
+  "theme.preview.title": "Live preview",
+  "theme.preview.sample_title": "Sample title bar",
+  "theme.preview.primary": "Primary",
+  "theme.preview.secondary": "Secondary",
+  "theme.preview.sample_body": "The quick brown fox jumps over the lazy dog. 0123456789",
+  "theme.preview.invalid": "Invalid hex color — showing default accent",
+
   "common.cancel": "Cancel",
   "common.confirm": "OK",
   "common.close": "Close",

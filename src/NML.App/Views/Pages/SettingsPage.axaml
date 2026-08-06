@@ -45,6 +45,27 @@
                         </ItemsControl>
                         <TextBox Text="{Binding AccentColor}" MinWidth="100" FontFamily="Cascadia Code,Consolas,monospace" FontSize="11"/>
                     </StackPanel>
+                    <!-- Live theme preview card: reflects Theme + Accent the instant either
+                         changes (no restart). Every surface below binds to a Preview* property. -->
+                    <Border Background="{Binding PreviewBackground}" CornerRadius="8" Padding="14" Margin="0,8,0,0">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="{loc:Loc 'theme.preview.title'}" Foreground="{Binding PreviewForeground}" FontWeight="SemiBold" FontSize="13"/>
+                            <TextBlock Text="{Binding PreviewSampleText}" Foreground="{Binding PreviewForeground}" FontSize="11" Opacity="0.8"/>
+                            <!-- Sample title bar -->
+                            <Border Background="{Binding PreviewAccent}" CornerRadius="4" Padding="8,4">
+                                <TextBlock Text="{loc:Loc 'theme.preview.sample_title'}" Foreground="{Binding AccentOnColor}" FontSize="11"/>
+                            </Border>
+                            <!-- Sample buttons + text in the chosen palette -->
+                            <WrapPanel>
+                                <Button Content="{loc:Loc 'theme.preview.primary'}" Background="{Binding PreviewAccent}" Foreground="{Binding AccentOnColor}" BorderThickness="0" Padding="12,4" Margin="0,0,6,0"/>
+                                <Button Content="{loc:Loc 'theme.preview.secondary'}" Background="Transparent" Foreground="{Binding PreviewForeground}" BorderBrush="{Binding PreviewAccent}" BorderThickness="1" Padding="12,4"/>
+                            </WrapPanel>
+                            <TextBlock Text="{loc:Loc 'theme.preview.sample_body'}" Foreground="{Binding PreviewForeground}" FontSize="11" TextWrapping="Wrap" Opacity="0.85"/>
+                            <!-- Invalid-accent warning surfaces only when the hex won't parse -->
+                            <TextBlock Text="{loc:Loc 'theme.preview.invalid'}" Foreground="#ef5350" FontSize="11"
+                                       IsVisible="{Binding !IsAccentValid}"/>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </StackPanel>
 

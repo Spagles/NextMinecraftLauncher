@@ -8,6 +8,7 @@ using NML.AICore.LocalModels;
 using NML.App.Localization;
 using NML.App.Services;
 using NML.Core.Java;
+using NML.Core.Theming;
 using NML.Core.Update;
 
 namespace NML.App.ViewModels.Pages;
@@ -73,6 +74,8 @@ public partial class SettingsPageViewModel : PageViewModelBase
         catch { /* invalid hex — ignore */ }
         // Persist so the accent survives restarts.
         PersistSettings();
+        // Live preview: re-derive the swatch + contrast hint for the new accent.
+        RaisePreviewChanged();
     }
 
     partial void OnBackgroundImagePathChanged(string value)
@@ -113,6 +116,35 @@ public partial class SettingsPageViewModel : PageViewModelBase
         Avalonia.Application.Current!.RequestedThemeVariant = variant;
         // Persist the theme choice so it survives restarts.
         PersistSettings();
+        RaisePreviewChanged();
+    }
+
+    // --- Live theme preview: derived from Theme + AccentColor so the preview card updates the
+    // instant either changes, with no restart. All values come from ThemePreviewModel (tested). ---
+    private ThemePreviewModel PreviewModel => new() { Theme = Theme, Accent = AccentColor };
+
+    /// <summary>Hex background for the preview card (light/dark surface per the active theme).</summary>
+    public string PreviewBackground => PreviewModel.PreviewBackground;
+    /// <summary>Hex foreground text color for the preview card.</summary>
+    public string PreviewForeground => PreviewModel.PreviewForeground;
+    /// <summary>The accent to actually swatch (falls back to default on invalid hex).</summary>
+    public string PreviewAccent => PreviewModel.EffectiveAccent;
+    /// <summary>True when the typed accent parses to a valid hex (drives a validation indicator).</summary>
+    public bool IsAccentValid => PreviewModel.IsAccentValid;
+    /// <summary>Read-on-accent text color (white on dark accents, black on light accents).</summary>
+    public string AccentOnColor => PreviewModel.AccentOnColor;
+    /// <summary>Human-readable preview header describing the current selection.</summary>
+    public string PreviewSampleText => PreviewModel.SampleText;
+
+    /// <summary>Re-raise every preview-derived property so the live card re-renders immediately.</summary>
+    private void RaisePreviewChanged()
+    {
+        OnPropertyChanged(nameof(PreviewBackground));
+        OnPropertyChanged(nameof(PreviewForeground));
+        OnPropertyChanged(nameof(PreviewAccent));
+        OnPropertyChanged(nameof(IsAccentValid));
+        OnPropertyChanged(nameof(AccentOnColor));
+        OnPropertyChanged(nameof(PreviewSampleText));
     }
 
     /// <summary>Resolved lazily to avoid circular DI (MainWindowVM depends on SettingsPageVM).</summary>
