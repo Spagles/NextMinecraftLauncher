@@ -28,6 +28,13 @@ public sealed class LauncherSettings
     /// <summary>UI theme: "dark", "light", or "system". Null = dark.</summary>
     public string? Theme { get; set; }
 
+    /// <summary>Max simultaneous downloads for version installs (1–64). Null = default (8).</summary>
+    public int? DownloadConcurrency { get; set; }
+
+    /// <summary>Mirror base URL to route Mojang asset downloads through (BMCLAPI-style), or
+    /// null/empty = official Mojang endpoints. Example: <c>https://bmclapi2.bangbang93.com</c>.</summary>
+    public string? DownloadMirrorUrl { get; set; }
+
     /// <summary>Launcher settings directory (where this file, instances.json, secrets live).</summary>
     public string SettingsDir { get; set; } = string.Empty;
 }

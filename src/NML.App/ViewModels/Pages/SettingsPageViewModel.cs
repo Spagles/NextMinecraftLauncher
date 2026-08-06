@@ -7,6 +7,7 @@ using NML.AICore;
 using NML.AICore.LocalModels;
 using NML.App.Localization;
 using NML.App.Services;
+using NML.Core.Download;
 using NML.Core.Java;
 using NML.Core.Theming;
 using NML.Core.Update;
@@ -34,6 +35,21 @@ public partial class SettingsPageViewModel : PageViewModelBase
 
     [ObservableProperty] private CultureInfo? _selectedLanguage;
     [ObservableProperty] private string _minecraftPath = string.Empty;
+
+    /// <summary>Max simultaneous downloads (1–64). Persisted; feeds VanillaInstaller.</summary>
+    [ObservableProperty] private int _downloadConcurrency = 8;
+
+    /// <summary>Mirror base URL (BMCLAPI-style) or empty = official Mojang endpoints. Persisted.</summary>
+    [ObservableProperty] private string _downloadMirrorUrl = string.Empty;
+
+    /// <summary>Well-known mirrors offered in the dropdown (empty entry = official).</summary>
+    public IReadOnlyList<string> MirrorPresets { get; } = new[]
+    {
+        "", // official Mojang
+        "https://bmclapi2.bangbang93.com",
+        "https://mcdownload.azureedge.net",
+    };
+
     [ObservableProperty] private string _newProviderName = string.Empty;
     [ObservableProperty] private string _newProviderUrl = "https://api.openai.com/v1";
     [ObservableProperty] private string _newProviderModel = string.Empty;
@@ -97,6 +113,17 @@ public partial class SettingsPageViewModel : PageViewModelBase
 
     /// <summary>Persist MinecraftPath immediately on change (not just when other commands fire).</summary>
     partial void OnMinecraftPathChanged(string value) => PersistSettings();
+
+    /// <summary>Clamp concurrency into range + persist on change.</summary>
+    partial void OnDownloadConcurrencyChanged(int value)
+    {
+        // Re-clamp if the binding (or a typed-in value) overshot the range.
+        if (value < DownloadSettings.MinConcurrency) DownloadConcurrency = DownloadSettings.MinConcurrency;
+        else if (value > DownloadSettings.MaxConcurrency) DownloadConcurrency = DownloadSettings.MaxConcurrency;
+        else PersistSettings();
+    }
+
+    partial void OnDownloadMirrorUrlChanged(string value) => PersistSettings();
 
     [ObservableProperty] private bool _isCheckingUpdate;
     private readonly UpdateChecker? _updateChecker;
@@ -177,6 +204,8 @@ public partial class SettingsPageViewModel : PageViewModelBase
 
         LauncherSettings s = settings.Load();
         MinecraftPath = s.MinecraftRoot ?? string.Empty;
+        DownloadConcurrency = s.DownloadConcurrency ?? DownloadSettings.DefaultConcurrency;
+        DownloadMirrorUrl = s.DownloadMirrorUrl ?? string.Empty;
         BackgroundImagePath = s.BackgroundImagePath ?? string.Empty;
         AccentColor = s.AccentColor ?? "#4fc3f7";
         Theme = s.Theme ?? "dark";
@@ -264,6 +293,8 @@ public partial class SettingsPageViewModel : PageViewModelBase
         s.Providers = Providers.ToList();
         s.ActiveProviderName = ActiveProvider?.Name;
         s.MinecraftRoot = MinecraftPath;
+        s.DownloadConcurrency = DownloadSettings.Clamp(DownloadConcurrency);
+        s.DownloadMirrorUrl = string.IsNullOrEmpty(DownloadMirrorUrl) ? null : DownloadMirrorUrl;
         s.BackgroundImagePath = string.IsNullOrEmpty(BackgroundImagePath) ? null : BackgroundImagePath;
         s.AccentColor = string.IsNullOrEmpty(AccentColor) ? null : AccentColor;
         s.Theme = Theme;

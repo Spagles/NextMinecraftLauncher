@@ -40,16 +40,24 @@ public sealed class VanillaInstaller
         RuleContext? ruleCtx = null,
         DownloadCancel? cancel = null,
         ProgressReporter? progress = null,
+        DownloadSettings? downloadSettings = null,
         CancellationToken ct = default)
     {
+        // Fall back to defaults (concurrency 8/16, no mirror) when no explicit settings are passed.
+        int libConcurrency = downloadSettings?.Concurrency ?? 8;
+        int assetConcurrency = downloadSettings?.Concurrency is { } c && c > 0
+            ? Math.Min(c * 2, DownloadSettings.MaxConcurrency) // assets are tiny; allow 2× the cap
+            : 16;
+        string? mirror = downloadSettings?.MirrorUrl;
         ruleCtx ??= RuleContext.Current();
-        _logger.LogInformation("Installing vanilla {Id}…", versionId);
+        _logger.LogInformation("Installing vanilla {Id} (concurrency={Lib}, mirror={Mirror})…",
+            versionId, libConcurrency, mirror ?? "official");
 
         VersionInfo info = await _versions.GetAsync(versionId, mc, ct);
 
         await DownloadClientJarAsync(info, mc, cancel, progress, ct);
-        await DownloadLibrariesAsync(info, mc, ruleCtx, cancel, progress, ct);
-        await DownloadAssetsAsync(info, mc, cancel, progress, ct);
+        await DownloadLibrariesAsync(info, mc, ruleCtx, cancel, progress, libConcurrency, mirror, ct);
+        await DownloadAssetsAsync(info, mc, cancel, progress, assetConcurrency, mirror, ct);
         await ExtractNativesAsync(info, mc, ruleCtx, ct);
 
         _logger.LogInformation("Install of {Id} complete.", versionId);
@@ -73,7 +81,8 @@ public sealed class VanillaInstaller
 
     private async Task DownloadLibrariesAsync(
         VersionInfo info, MinecraftDirectory mc, RuleContext ruleCtx,
-        DownloadCancel? cancel, ProgressReporter? progress, CancellationToken ct)
+        DownloadCancel? cancel, ProgressReporter? progress, int libConcurrency, string? mirror,
+        CancellationToken ct)
     {
         var toFetch = new List<(Downloadable File, string RelativePath)>();
 
@@ -103,13 +112,18 @@ public sealed class VanillaInstaller
 
         if (toFetch.Count == 0) return;
         _logger.LogInformation("Downloading {Count} libraries…", toFetch.Count);
-        await _downloader.DownloadBatchAsync(toFetch, mc.LibrariesDir, maxConcurrency: 8,
+        // Route through the configured mirror if one is set (rewrites Mojang hosts only).
+        var mirroredLibs = mirror is null
+            ? toFetch
+            : toFetch.Select(t => (WithMirror(t.File, mirror), t.RelativePath)).ToList();
+        await _downloader.DownloadBatchAsync(mirroredLibs, mc.LibrariesDir, maxConcurrency: libConcurrency,
             cancel, progress, ct);
     }
 
     private async Task DownloadAssetsAsync(
         VersionInfo info, MinecraftDirectory mc,
-        DownloadCancel? cancel, ProgressReporter? progress, CancellationToken ct)
+        DownloadCancel? cancel, ProgressReporter? progress, int assetConcurrency, string? mirror,
+        CancellationToken ct)
     {
         AssetIndexRef? indexRef = info.AssetIndex;
         if (indexRef is null)
@@ -148,7 +162,10 @@ public sealed class VanillaInstaller
         }
 
         _logger.LogInformation("Downloading {Count} asset objects…", toFetch.Count);
-        await _downloader.DownloadBatchAsync(toFetch, mc.AssetObjectsDir, maxConcurrency: 16,
+        var mirroredAssets = mirror is null
+            ? toFetch
+            : toFetch.Select(t => (WithMirror(t.File, mirror), t.RelativePath)).ToList();
+        await _downloader.DownloadBatchAsync(mirroredAssets, mc.AssetObjectsDir, maxConcurrency: assetConcurrency,
             cancel, progress, ct);
     }
 
@@ -213,5 +230,14 @@ public sealed class VanillaInstaller
             }
         }
         return false;
+    }
+
+    /// <summary>Clone a <see cref="Downloadable"/> with its URL rewritten to go through the mirror
+    /// (if the URL targets a known Mojang host; otherwise unchanged). Lets us keep the immutable
+    /// source model intact while routing the actual bytes through a mirror.</summary>
+    private static Downloadable WithMirror(Downloadable src, string mirror)
+    {
+        string rewritten = MirrorUrlRewriter.Rewrite(src.Url, mirror);
+        return new Downloadable { Url = rewritten, Sha1 = src.Sha1, Size = src.Size, Path = src.Path };
     }
 }

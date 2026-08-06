@@ -292,6 +292,11 @@
   "account.refresh.done": "Refreshed {0} account(s)",
   "account.refresh.uptodate": "All tokens are current",
 
+  "download.settings.title": "Download",
+  "download.settings.concurrency": "Concurrent downloads",
+  "download.settings.mirror": "Mirror source",
+  "download.settings.mirror_hint": "Route Mojang assets/libraries through a mirror (e.g. BMCLAPI) for faster downloads. Empty = official Mojang endpoints.",
+
   "common.cancel": "Cancel",
   "common.confirm": "OK",
   "common.close": "Close",
