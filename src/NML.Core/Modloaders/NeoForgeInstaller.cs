@@ -15,8 +15,9 @@ namespace NML.Core.Modloaders;
 /// </summary>
 public sealed class NeoForgeInstaller
 {
-    private const string MavenBase = "https://maven.neoforged.net/releases/net/neoforged/neoforge";
-    private const string MavenMirror = "https://bmclapi2.bangbang93.com/maven/net/neoforged/neoforge";
+    // BMCLAPI mirror first (works in CN networks), official maven as fallback.
+    private const string MavenBase = "https://bmclapi2.bangbang93.com/maven/net/neoforged/neoforge";
+    private const string MavenFallback = "https://maven.neoforged.net/releases/net/neoforged/neoforge";
 
     private readonly IHttpFetcher _http;
     private readonly Downloader _downloader;
@@ -50,16 +51,16 @@ public sealed class NeoForgeInstaller
         }
         catch (Exception ex)
         {
-            // The official maven may be unreachable (e.g. GFW/DNS). Try BMCLAPI mirror.
-            _logger.LogWarning(ex, "NeoForge maven unreachable, trying BMCLAPI mirror…");
+            // The mirror may be unreachable (non-CN networks). Try official maven.
+            _logger.LogWarning(ex, "NeoForge BMCLAPI mirror unreachable, trying official maven…");
             try
             {
-                string mirrorUrl = $"{MavenMirror}/maven-metadata.xml";
-                xml = await _http.GetStringAsync(mirrorUrl, ct);
+                string fallbackUrl = $"{MavenFallback}/maven-metadata.xml";
+                xml = await _http.GetStringAsync(fallbackUrl, ct);
             }
             catch (Exception ex2)
             {
-                _logger.LogError(ex2, "Both NeoForge maven and BMCLAPI mirror are unreachable.");
+                _logger.LogError(ex2, "Both NeoForge BMCLAPI and official maven are unreachable.");
                 throw new InvalidOperationException(
                     "NeoForge maven is unreachable. This is likely a network issue (GFW/DNS/firewall). " +
                     "Try using a VPN, or check your network connection. " +
