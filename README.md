@@ -3,7 +3,7 @@
 A cross-platform **Minecraft launcher** built in **C# / Avalonia UI 11 + .NET 8**, aiming to
 match HMCL and PCL while adding **first-class AI features**.
 
-> **155 commits, 428 tests, 0 warnings, 31 languages.** A real, functional launcher.
+> **156 commits, 443 tests, 0 warnings, 31 languages.** A real, functional launcher.
 
 ## What works right now
 
@@ -17,7 +17,8 @@ match HMCL and PCL while adding **first-class AI features**.
 - **Download tuning (PCL-style):** user-configurable concurrency (1–64) + mirror source
   (BMCLAPI-style host remap for libraries.minecraft.net / piston-*.mojang.com / etc.)
 - **5 modloaders:** Fabric, Quilt, Forge (with processor execution + type coverage + mods.toml
-  reader for 1.13+), NeoForge, OptiFine
+  reader for 1.13+), NeoForge, OptiFine + version-compatibility checker (catches mismatched
+  modloader builds before install)
 - **Authlib-injector:** Full external-login server support — server list persistence UI,
   Yggdrasil login, and `-javaagent` injection at launch time
 - **Instance management:** version-isolated game dirs (toggleable per-instance: own .minecraft vs
