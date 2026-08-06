@@ -52,8 +52,19 @@ public sealed class NeoForgeInstaller
         {
             // The official maven may be unreachable (e.g. GFW/DNS). Try BMCLAPI mirror.
             _logger.LogWarning(ex, "NeoForge maven unreachable, trying BMCLAPI mirror…");
-            string mirrorUrl = $"{MavenMirror}/maven-metadata.xml";
-            xml = await _http.GetStringAsync(mirrorUrl, ct);
+            try
+            {
+                string mirrorUrl = $"{MavenMirror}/maven-metadata.xml";
+                xml = await _http.GetStringAsync(mirrorUrl, ct);
+            }
+            catch (Exception ex2)
+            {
+                _logger.LogError(ex2, "Both NeoForge maven and BMCLAPI mirror are unreachable.");
+                throw new InvalidOperationException(
+                    "NeoForge maven is unreachable. This is likely a network issue (GFW/DNS/firewall). " +
+                    "Try using a VPN, or check your network connection. " +
+                    "You can still play with Fabric, Quilt, or Forge instead.", ex2);
+            }
         }
 
         // NeoForge uses a short version key derived from the MC version (e.g. 1.20.1 → "20.1").
