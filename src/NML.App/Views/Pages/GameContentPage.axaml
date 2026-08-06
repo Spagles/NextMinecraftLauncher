@@ -125,6 +125,17 @@
                                                     Command="{Binding #Root.DataContext.DeleteWorldCardCommand}"
                                                     CommandParameter="{Binding}"/>
                                         </StackPanel>
+                                        <Button Content="📊 Details" Classes="small" HorizontalAlignment="Center" Margin="0,2"
+                                                Command="{Binding #Root.DataContext.ToggleWorldDetailsCommand}"
+                                                CommandParameter="{Binding}"
+                                                IsVisible="{Binding StatLines, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                                        <ItemsControl ItemsSource="{Binding StatLines}" IsVisible="{Binding ShowDetails}" Margin="0,4">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding}" Foreground="#aaa" FontSize="10" HorizontalAlignment="Center"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>

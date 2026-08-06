@@ -300,6 +300,13 @@ public partial class GameContentPageViewModel : PageViewModelBase
                             PlayTimeDisplay = stats.PlayTimeMinutes > 0 ? stats.PlayTimeDisplay : string.Empty,
                             DifficultyDisplay = settings.Difficulty,
                         });
+                        // Populate stat lines for the expandable detail panel.
+                        if (stats.TrackedStats.Count > 0)
+                        {
+                            var lastCard = WorldCards.Last();
+                            foreach (var entry in stats.TrackedStats.Values)
+                                lastCard.StatLines.Add($"{entry.Label}: {entry.Value:N0}");
+                        }
                     }
                     // Populate the backups panel (every {world}-{stamp}.zip, newest first).
                     foreach (BackupInfo b in browser.ListBackups())
@@ -420,6 +427,13 @@ public partial class GameContentPageViewModel : PageViewModelBase
             Status = $"seed.copied,{card.SeedDisplay}";
         }
         catch { /* non-fatal */ }
+    }
+
+    /// <summary>Toggle a world card's expandable detail panel (shows full stats).</summary>
+    [RelayCommand]
+    private void ToggleWorldDetails(WorldCardEntry card)
+    {
+        card.ShowDetails = !card.ShowDetails;
     }
 
     /// <summary>One-click export from a grid world card.</summary>
@@ -929,8 +943,14 @@ public sealed class WorldCardEntry : ObservableObject
     /// <summary>Play time display (e.g. "2h 15m"), or empty when no stats.</summary>
     public string PlayTimeDisplay { get; set; } = string.Empty;
 
-    /// <summary>Difficulty name (peaceful/easy/normal/hard), or empty when unreadable.</summary>
+    /// <summary>Difficulty name, or empty when unreadable.</summary>
     public string DifficultyDisplay { get; set; } = string.Empty;
+
+    /// <summary>True when this card's detail panel is expanded.</summary>
+    public bool ShowDetails { get; set; }
+
+    /// <summary>Formatted stat lines for the detail panel (e.g. "Mob Kills: 42").</summary>
+    public System.Collections.ObjectModel.ObservableCollection<string> StatLines { get; } = new();
 
     /// <summary>Human-readable size, e.g. "12.3 MB".</summary>
     public string SizeDisplay => SizeBytes switch
