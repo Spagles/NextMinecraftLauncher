@@ -250,6 +250,38 @@ public partial class MultiplayerPageViewModel : PageViewModelBase
         Status = "server.connect_queued";
     }
 
+    /// <summary>Path to a servers-export zip to import (bound to a textbox).</summary>
+    [ObservableProperty] private string _importServersPath = string.Empty;
+
+    /// <summary>Export the saved server list to a portable .zip on the desktop.</summary>
+    [RelayCommand]
+    private void ExportServers()
+    {
+        try
+        {
+            string desktop = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
+            string zipPath = System.IO.Path.Combine(desktop, "nml-servers.zip");
+            _store.ExportToZip(zipPath);
+            Status = $"server.exported,{zipPath}";
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    /// <summary>Import servers from a portable .zip, merging into the current list.</summary>
+    [RelayCommand]
+    private void ImportServers()
+    {
+        string zipPath = ImportServersPath?.Trim() ?? string.Empty;
+        if (string.IsNullOrEmpty(zipPath)) { Status = "server.import.needed"; return; }
+        try
+        {
+            int count = _store.ImportFromZip(zipPath);
+            Status = $"server.imported,{count}";
+            Reload();
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
     // Re-evaluate CanExecute on the relevant observables.
     partial void OnNewServerAddressChanged(string value) => AddCommand.NotifyCanExecuteChanged();
     partial void OnIsBusyChanged(bool value) => AddCommand.NotifyCanExecuteChanged();

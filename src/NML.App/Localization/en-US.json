@@ -330,6 +330,13 @@
   "crash.submit.result": "Diagnosis ({0}): {1}",
   "crash.submit.failed": "Crash analysis failed (check AI provider settings)",
 
+  "server.export": "📦 Export servers",
+  "server.import": "📥 Import",
+  "server.import_placeholder": "path to nml-servers.zip",
+  "server.import.needed": "Enter a server-list zip path",
+  "server.exported": "Exported to {0}",
+  "server.imported": "Imported {0} server(s)",
+
   "account.refresh.button": "🔄 Refresh tokens",
   "account.refresh.refreshing": "Refreshing expired tokens…",
   "account.refresh.done": "Refreshed {0} account(s)",

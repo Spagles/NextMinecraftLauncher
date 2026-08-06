@@ -125,6 +125,56 @@ public sealed class ServerListStore
         all.Insert(newIndex, item);
         SaveAll(all);
     }
+
+    /// <summary>
+    /// Export the saved server list to a portable <c>.zip</c> (containing <c>servers.json</c>) so the
+    /// user can back up or share their favorites across machines/instances. Returns the zip path.
+    /// </summary>
+    public string ExportToZip(string outputZipPath)
+    {
+        string? dir = Path.GetDirectoryName(outputZipPath);
+        if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
+        // Serialize fresh so the export reflects the current in-memory list, not a stale file.
+        var opts = new JsonSerializerOptions(JsonOptions.Default) { WriteIndented = true };
+        string json = JsonSerializer.Serialize(LoadAll(), opts);
+        using var archive = System.IO.Compression.ZipFile.Open(outputZipPath, System.IO.Compression.ZipArchiveMode.Create);
+        var entry = archive.CreateEntry("servers.json");
+        using (var s = entry.Open())
+        using (var w = new StreamWriter(s))
+            w.Write(json);
+        return outputZipPath;
+    }
+
+    /// <summary>
+    /// Import servers from a portable <c>.zip</c> (containing <c>servers.json</c>) previously
+    /// produced by <see cref="ExportToZip"/>. Imported servers are merged into the existing list
+    /// (de-duped by host:port, imported entries replace existing ones with the same endpoint).
+    /// Returns the number of servers imported.
+    /// </summary>
+    public int ImportFromZip(string inputZipPath)
+    {
+        if (!File.Exists(inputZipPath))
+            throw new FileNotFoundException("Server-list zip not found.", inputZipPath);
+
+        using var archive = System.IO.Compression.ZipFile.OpenRead(inputZipPath);
+        var entry = archive.GetEntry("servers.json")
+                    ?? throw new InvalidDataException("Zip has no servers.json.");
+        using var s = entry.Open();
+        using var r = new StreamReader(s);
+        string json = r.ReadToEnd();
+        var imported = JsonSerializer.Deserialize<List<ServerEntry>>(json) ?? new List<ServerEntry>();
+        if (imported.Count == 0) return 0;
+
+        // Merge: replace existing entries with the same host:port, then append the new ones.
+        var all = LoadAll();
+        foreach (var srv in imported)
+        {
+            all.RemoveAll(s => s.Host == srv.Host && s.Port == srv.Port);
+            all.Add(srv);
+        }
+        SaveAll(all);
+        return imported.Count;
+    }
 }
 
 /// <summary>
