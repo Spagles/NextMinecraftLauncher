@@ -80,6 +80,9 @@ public partial class HomePageViewModel : PageViewModelBase
     [ObservableProperty] private string _newInstanceVersion = string.Empty;
     [ObservableProperty] private int _newInstanceMemory = 4096;
     [ObservableProperty] private string _newInstanceModloader = "None";
+    /// <summary>Wizard toggle: whether the new instance gets its own .minecraft (default) or
+    /// shares the common one. Bound to a checkbox in the new-instance wizard.</summary>
+    [ObservableProperty] private bool _newInstanceIsIsolated = true;
 
     /// <summary>Available modloaders for the wizard dropdown.</summary>
     public IReadOnlyList<string> ModloaderChoices { get; } = new[] { "None", "Fabric", "Quilt", "Forge", "NeoForge" };
@@ -207,6 +210,14 @@ public partial class HomePageViewModel : PageViewModelBase
         set { if (SelectedInstance is not null) { SelectedInstance.WindowHeight = value; OnPropertyChanged(); MarkOptionsDirty(); } }
     }
 
+    /// <summary>Two-way bindable isolation mode for the selected instance (own .minecraft vs shared).
+    /// Persisted via the existing Save launch options command.</summary>
+    public bool SelectedInstanceIsIsolated
+    {
+        get => SelectedInstance?.IsIsolated ?? true;
+        set { if (SelectedInstance is not null && SelectedInstance.IsIsolated != value) { SelectedInstance.IsIsolated = value; OnPropertyChanged(); MarkOptionsDirty(); } }
+    }
+
     /// <summary>True when the selected instance's launch options have unsaved edits
     /// (drives the Save button's enabled state + a "modified" indicator).</summary>
     [ObservableProperty] private bool _isInstanceOptionsDirty;
@@ -242,7 +253,11 @@ public partial class HomePageViewModel : PageViewModelBase
 
     /// <summary>Switching instances clears the dirty flag (the new instance shows its own
     /// persisted state, not the previous one's unsaved edits).</summary>
-    partial void OnSelectedInstanceChanged(Instance? value) => IsInstanceOptionsDirty = false;
+    partial void OnSelectedInstanceChanged(Instance? value)
+    {
+        IsInstanceOptionsDirty = false;
+        OnPropertyChanged(nameof(SelectedInstanceIsIsolated)); // refresh the toggle when switching instances
+    }
 
     public HomePageViewModel(
         VersionManifestService manifest,
@@ -305,7 +320,7 @@ public partial class HomePageViewModel : PageViewModelBase
     {
         if (SelectedInstance is null) { Status = "home.select_first"; return; }
         Instance inst = SelectedInstance;
-        var mc = new MinecraftDirectory(_instances.GameDirFor(inst.Name));
+        var mc = new MinecraftDirectory(_instances.GameDirFor(inst));
         Directory.CreateDirectory(mc.Root);
 
         IsBusy = true;
@@ -501,6 +516,7 @@ public partial class HomePageViewModel : PageViewModelBase
         NewInstanceName = $"Minecraft {DateTimeOffset.UtcNow:yyyyMMdd}";
         NewInstanceVersion = string.Empty;
         NewInstanceMemory = 4096;
+        NewInstanceIsIsolated = true;
         ShowNewInstanceWizard = true;
     }
 
@@ -530,9 +546,10 @@ public partial class HomePageViewModel : PageViewModelBase
             VersionId = versionId,
             MaxMemoryMb = NewInstanceMemory,
             MinMemoryMb = Math.Min(1024, NewInstanceMemory / 2),
+            IsIsolated = NewInstanceIsIsolated,
         };
 
-        var mc = new MinecraftDirectory(_instances.GameDirFor(name));
+        var mc = new MinecraftDirectory(_instances.GameDirFor(instance));
         Directory.CreateDirectory(mc.Root);
 
         IsBusy = true;

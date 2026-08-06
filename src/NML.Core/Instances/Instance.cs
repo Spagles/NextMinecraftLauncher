@@ -37,6 +37,12 @@ public sealed class Instance
     /// <summary>Last account used (display only; the actual account is passed at launch).</summary>
     public string? LastUsername { get; set; }
 
+    /// <summary>True (default) = version isolation: this instance keeps its own saves/mods/configs
+    /// under <c>{root}/{name}/.minecraft</c>. False = share the launcher's common <c>.minecraft</c>
+    /// so multiple instances reuse one set of saves/mods (HMCL/PCL's "non-isolated" mode).
+    /// Toggling does not move existing files — the user is prompted to migrate separately.</summary>
+    public bool IsIsolated { get; set; } = true;
+
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 }
 
@@ -58,9 +64,34 @@ public sealed class InstanceStore
     /// <summary>The root directory under which each instance's isolated .minecraft lives.</summary>
     public string InstancesRoot => Path.GetDirectoryName(_instancesFile)!;
 
+    /// <summary>
+    /// The shared <c>.minecraft</c> directory used by non-isolated instances (when
+    /// <see cref="Instance.IsIsolated"/> is false). Defaults to the OS-standard location
+    /// (<c>%APPDATA%/.minecraft</c> on Windows, <c>~/.minecraft</c> elsewhere); the launcher
+    /// UI overrides this with the user-configured Minecraft root when one is set.
+    /// </summary>
+    public string SharedRoot
+    {
+        get => _sharedRoot ?? DefaultSharedRoot();
+        set => _sharedRoot = value;
+    }
+    private string? _sharedRoot;
+
+    /// <summary>The OS-standard Minecraft directory, used when no shared root is configured.</summary>
+    public static string DefaultSharedRoot() =>
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".minecraft");
+
     /// <summary>The isolated game directory for a given instance name.</summary>
     public string GameDirFor(string name) =>
         Path.Combine(InstancesRoot, SafeName(name), ".minecraft");
+
+    /// <summary>
+    /// The resolved game directory for an instance, honoring its isolation mode: isolated
+    /// instances get their own <c>{InstancesRoot}/{name}/.minecraft</c>; non-isolated instances
+    /// share <see cref="SharedRoot"/>. This is what every launch/install path should call.
+    /// </summary>
+    public string GameDirFor(Instance instance) =>
+        instance.IsIsolated ? GameDirFor(instance.Name) : SharedRoot;
 
     /// <summary>
     /// Clone an existing instance: creates a new Instance with the given name (sharing the
@@ -90,6 +121,7 @@ public sealed class InstanceStore
             WindowHeight = source.WindowHeight,
             CustomJvmArgs = source.CustomJvmArgs,
             CustomGameArgs = source.CustomGameArgs,
+            IsIsolated = source.IsIsolated,
             Java = source.Java,
         };
 
