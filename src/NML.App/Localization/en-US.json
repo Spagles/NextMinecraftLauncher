@@ -282,6 +282,11 @@
   "theme.preview.sample_body": "The quick brown fox jumps over the lazy dog. 0123456789",
   "theme.preview.invalid": "Invalid hex color — showing default accent",
 
+  "backup.title": "World backups",
+  "backup.empty": "No backups yet — back up a world above to create one.",
+  "backup.restore": "♻ Restore",
+  "backup.restored": "Restored world: {0}",
+
   "common.cancel": "Cancel",
   "common.confirm": "OK",
   "common.close": "Close",

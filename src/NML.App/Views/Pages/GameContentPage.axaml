@@ -107,6 +107,35 @@
                     </ItemsControl>
                 </WrapPanel>
 
+                <!-- Backups panel (visible on the saves tab): list + restore / delete per row -->
+                <StackPanel IsVisible="{Binding IsSavesTab}" Spacing="6" Margin="0,8,0,0">
+                    <TextBlock Text="{loc:Loc 'backup.title'}" Foreground="#4fc3f7" FontSize="13" FontWeight="SemiBold"/>
+                    <TextBlock Text="{loc:Loc 'backup.empty'}" Foreground="#666" FontSize="11" FontStyle="Italic"
+                               IsVisible="{Binding Backups.Count, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=0}"/>
+                    <ItemsControl ItemsSource="{Binding Backups}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#1a1a20" CornerRadius="4" Padding="10,6" Margin="0,2">
+                                    <Grid ColumnDefinitions="*,Auto,Auto">
+                                        <StackPanel Grid.Column="0" Spacing="1">
+                                            <TextBlock Text="{Binding WorldName}" Foreground="White" FontSize="12" FontWeight="SemiBold"/>
+                                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                                <TextBlock Text="{Binding DateDisplay}" Foreground="#888" FontSize="10"/>
+                                                <TextBlock Text="{Binding SizeDisplay}" Foreground="#888" FontSize="10"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <Button Grid.Column="1" Content="{loc:Loc 'backup.restore'}" Classes="small"
+                                                Command="{Binding #Root.DataContext.RestoreBackupCommand}" CommandParameter="{Binding}"
+                                                Background="#388e3c" Foreground="White" Margin="6,0"/>
+                                        <Button Grid.Column="2" Content="{loc:Loc 'content.delete'}" Classes="small danger"
+                                                Command="{Binding #Root.DataContext.DeleteBackupCommand}" CommandParameter="{Binding}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
                 <!-- Screenshot grid (visible on the screenshots tab): thumbnail cards + multi-select + batch export -->
                 <StackPanel IsVisible="{Binding IsScreenshotsTab}" Spacing="8" Margin="0,4">
                     <!-- Batch toolbar: select-all toggle + export-selected -->

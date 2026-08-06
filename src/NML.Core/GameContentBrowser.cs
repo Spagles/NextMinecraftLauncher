@@ -165,6 +165,53 @@ public sealed class GameContentBrowser
         return zipPath;
     }
 
+    /// <summary>Enumerate every <c>{world}-{timestamp}.zip</c> in the instance's backups/ folder,
+    /// parsed into <see cref="BackupInfo"/> records. Newest first. Empty when none exist.</summary>
+    public IReadOnlyList<BackupInfo> ListBackups()
+    {
+        string backupDir = Path.Combine(_mc.Root, "backups");
+        if (!Directory.Exists(backupDir)) return Array.Empty<BackupInfo>();
+        var result = new List<BackupInfo>();
+        foreach (string zip in Directory.EnumerateFiles(backupDir, "*.zip"))
+        {
+            var info = BackupInfo.FromPath(zip);
+            if (info is not null) result.Add(info);
+        }
+        // Newest backup first.
+        result.Sort((a, b) => b.Timestamp.CompareTo(a.Timestamp));
+        return result;
+    }
+
+    /// <summary>
+    /// Restore a world from a backup zip: extracts it back over the matching <c>saves/{world}</c>
+    /// folder, replacing the current contents. Creates the folder if it no longer exists. Throws
+    /// if the backup zip is missing. The caller should confirm since this overwrites live data.
+    /// </summary>
+    public string RestoreWorld(string backupZipPath)
+    {
+        if (!File.Exists(backupZipPath))
+            throw new FileNotFoundException("Backup not found.", backupZipPath);
+
+        // Derive the world name from the backup filename: "{world}-{stamp}.zip" → "{world}".
+        string worldName = BackupInfo.WorldNameFromFileName(Path.GetFileName(backupZipPath));
+        string savesDir = Path.Combine(_mc.Root, "saves");
+        string worldDir = Path.Combine(savesDir, worldName);
+
+        // Clear the existing world folder so the restore is exact (no stale files left behind).
+        if (Directory.Exists(worldDir))
+            Directory.Delete(worldDir, recursive: true);
+        Directory.CreateDirectory(worldDir);
+
+        System.IO.Compression.ZipFile.ExtractToDirectory(backupZipPath, worldDir, overwriteFiles: true);
+        return worldDir;
+    }
+
+    /// <summary>Delete a backup zip (after the caller confirms).</summary>
+    public void DeleteBackup(string backupZipPath)
+    {
+        if (File.Exists(backupZipPath)) File.Delete(backupZipPath);
+    }
+
     /// <summary>Delete a world save folder (after the caller confirms).</summary>
     public void DeleteWorld(string worldPath)
     {
@@ -359,3 +406,67 @@ public sealed class GameFile
     public long SizeBytes { get; init; }
     public DateTimeOffset LastModified { get; init; }
 }
+
+/// <summary>
+/// One world-backup zip: the world name it snapshots, the captured timestamp parsed from the
+/// filename, the file size, and the absolute path (passed back to RestoreWorld/DeleteBackup).
+/// </summary>
+public sealed class BackupInfo
+{
+    /// <summary>The world this backup snapshots (folder name under saves/).</summary>
+    public string WorldName { get; init; } = string.Empty;
+
+    /// <summary>UTC timestamp parsed from the <c>{world}-yyyyMMdd-HHmmss.zip</c> filename.
+    /// Falls back to the file's last-write time if the stamp is unparseable.</summary>
+    public DateTimeOffset Timestamp { get; init; }
+
+    /// <summary>Backup file size in bytes.</summary>
+    public long SizeBytes { get; init; }
+
+    /// <summary>Absolute path to the backup zip.</summary>
+    public string Path { get; init; } = string.Empty;
+
+    /// <summary>Parse a backup filename into a BackupInfo, or null if the path isn't a valid
+    /// <c>{world}-yyyyMMdd-HHmmss.zip</c> shape.</summary>
+    public static BackupInfo? FromPath(string zipPath)
+    {
+        if (!File.Exists(zipPath)) return null;
+        string fileName = System.IO.Path.GetFileName(zipPath);
+        string worldName = WorldNameFromFileName(fileName);
+        if (string.IsNullOrEmpty(worldName)) return null;
+
+        var fi = new FileInfo(zipPath);
+        // Stamp sits after the final hyphen: "World1-20240101-120000.zip".
+        DateTimeOffset ts = fi.LastWriteTimeUtc;
+        // Explicit parse: strip ".zip", take the trailing "yyyyMMdd-HHmmss".
+        string noExt = fileName[..^4];
+        const int stampLen = 15; // "yyyyMMdd-HHmmss"
+        if (noExt.Length > stampLen + 1)
+        {
+            string stamp = noExt[^stampLen..];
+            if (DateTimeOffset.TryParseExact(stamp, "yyyyMMdd-HHmmss",
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.AssumeUniversal, out var parsed))
+                ts = parsed.ToUniversalTime();
+        }
+
+        return new BackupInfo
+        {
+            WorldName = worldName,
+            Timestamp = ts,
+            SizeBytes = fi.Length,
+            Path = zipPath,
+        };
+    }
+
+    /// <summary>Extract the world name from a backup filename by stripping the trailing
+    /// <c>-yyyyMMdd-HHmmss.zip</c> stamp. Returns empty if the shape doesn't match.</summary>
+    public static string WorldNameFromFileName(string fileName)
+    {
+        string noExt = fileName.EndsWith(".zip", StringComparison.OrdinalIgnoreCase)
+            ? fileName[..^4] : fileName;
+        const int stampLen = 16; // "-yyyyMMdd-HHmmss"
+        return noExt.Length > stampLen ? noExt[..^stampLen] : noExt;
+    }
+}
+

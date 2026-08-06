@@ -107,6 +107,9 @@ public partial class GameContentPageViewModel : PageViewModelBase
     /// <summary>Screenshot cards shown in the screenshots grid (thumbnail + select + actions).</summary>
     public ObservableCollection<ScreenshotCardEntry> ScreenshotCards { get; } = new();
 
+    /// <summary>World backups shown in the saves-tab backups panel (restore / delete per row).</summary>
+    public ObservableCollection<BackupEntry> Backups { get; } = new();
+
     /// <summary>True when at least one screenshot card is selected (drives export button).</summary>
     public bool HasScreenshotSelection => ScreenshotCards.Any(c => c.IsSelected);
 
@@ -240,6 +243,7 @@ public partial class GameContentPageViewModel : PageViewModelBase
         Items.Clear();
         WorldCards.Clear();
         ScreenshotCards.Clear();
+        Backups.Clear();
         try
         {
             switch (Tab)
@@ -256,6 +260,17 @@ public partial class GameContentPageViewModel : PageViewModelBase
                             SizeBytes = s.SizeBytes,
                             LastModified = s.LastModified,
                             PreviewIconPath = s.PreviewIconPath,
+                        });
+                    }
+                    // Populate the backups panel (every {world}-{stamp}.zip, newest first).
+                    foreach (BackupInfo b in browser.ListBackups())
+                    {
+                        Backups.Add(new BackupEntry
+                        {
+                            WorldName = b.WorldName,
+                            Timestamp = b.Timestamp,
+                            SizeBytes = b.SizeBytes,
+                            Path = b.Path,
                         });
                     }
                     break;
@@ -321,7 +336,12 @@ public partial class GameContentPageViewModel : PageViewModelBase
 
     /// <summary>One-click backup from a grid world card (converts the card back to a GameSave).</summary>
     [RelayCommand]
-    private void BackupWorldCard(WorldCardEntry card) => BackupWorld(card.ToGameSave());
+    private void BackupWorldCard(WorldCardEntry card)
+    {
+        BackupWorld(card.ToGameSave());
+        // Refresh so the new backup appears in the backups panel immediately.
+        Refresh();
+    }
 
     /// <summary>One-click export from a grid world card.</summary>
     [RelayCommand]
@@ -330,6 +350,37 @@ public partial class GameContentPageViewModel : PageViewModelBase
     /// <summary>One-click delete from a grid world card (refreshes the grid afterward).</summary>
     [RelayCommand]
     private void DeleteWorldCard(WorldCardEntry card) => DeleteWorld(card.ToGameSave());
+
+    /// <summary>Restore a world from a backup zip (overwrites the current saves/{world} folder).</summary>
+    [RelayCommand]
+    private void RestoreBackup(BackupEntry backup)
+    {
+        try
+        {
+            Instance? inst = GetActiveInstance();
+            if (inst is null) return;
+            var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
+            string restored = browser.RestoreWorld(backup.Path);
+            Status = $"backup.restored,{backup.WorldName}";
+            Refresh(); // reload worlds + backups panels
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    /// <summary>Delete a backup zip from the backups/ folder.</summary>
+    [RelayCommand]
+    private void DeleteBackup(BackupEntry backup)
+    {
+        try
+        {
+            Instance? inst = GetActiveInstance();
+            if (inst is null) return;
+            var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
+            browser.DeleteBackup(backup.Path);
+            Refresh();
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
 
     [RelayCommand]
     private void ExportWorld(GameSave save)
@@ -699,5 +750,28 @@ public sealed class ScreenshotCardEntry : ObservableObject
         Name = Name,
         Path = Path,
         LastModified = LastModified,
+    };
+}
+
+/// <summary>
+/// A world-backup zip rendered in the saves-tab backups panel: the world name, the capture
+/// timestamp, a human-readable size, and the absolute path passed back to RestoreWorld/DeleteBackup.
+/// </summary>
+public sealed class BackupEntry : ObservableObject
+{
+    public string WorldName { get; set; } = string.Empty;
+    public DateTimeOffset Timestamp { get; set; }
+    public long SizeBytes { get; set; }
+    public string Path { get; set; } = string.Empty;
+
+    /// <summary>Localized-friendly capture timestamp for display.</summary>
+    public string DateDisplay => Timestamp.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+
+    /// <summary>Human-readable size, e.g. "1.2 MB".</summary>
+    public string SizeDisplay => SizeBytes switch
+    {
+        < 1024 => $"{SizeBytes} B",
+        < 1024 * 1024 => $"{SizeBytes / 1024.0:F1} KB",
+        _ => $"{SizeBytes / (1024.0 * 1024):F1} MB",
     };
 }
