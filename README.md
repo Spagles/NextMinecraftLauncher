@@ -3,7 +3,7 @@
 A cross-platform **Minecraft launcher** built in **C# / Avalonia UI 11 + .NET 8**, aiming to
 match HMCL and PCL while adding **first-class AI features**.
 
-> **160 commits, 459 tests, 0 warnings, 31 languages.** A real, functional launcher.
+> **161 commits, 463 tests, 0 warnings, 31 languages.** A real, functional launcher.
 
 ## What works right now
 
@@ -22,8 +22,8 @@ match HMCL and PCL while adding **first-class AI features**.
 - **Authlib-injector:** Full external-login server support — server list persistence UI,
   Yggdrasil login, and `-javaagent` injection at launch time
 - **Instance management:** version-isolated game dirs (toggleable per-instance: own .minecraft vs
-  shared common root) with a one-click content migrator, clone (preserves custom args),
-  import/export (zip bundles), share codes (base64), batch export/delete, remove single,
+  shared common root) with a one-click content migrator, favorites/star toggle, clone (preserves
+  custom args), import/export (zip bundles), share codes (base64), batch export/delete, remove single,
   per-instance launch options (memory / window / JVM & game args) persisted to instances.json
 - **Deep modpack export:** bundle an instance with optional worlds, screenshots, client
   settings (options.txt/servers.dat) and logs on top of the always-included mods/config —

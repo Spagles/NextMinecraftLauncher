@@ -43,6 +43,9 @@ public sealed class Instance
     /// Toggling does not move existing files — the user is prompted to migrate separately.</summary>
     public bool IsIsolated { get; set; } = true;
 
+    /// <summary>True when the user starred this instance as a favorite (surfaced for quick-launch).</summary>
+    public bool IsFavorite { get; set; }
+
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 }
 
@@ -122,6 +125,7 @@ public sealed class InstanceStore
             CustomJvmArgs = source.CustomJvmArgs,
             CustomGameArgs = source.CustomGameArgs,
             IsIsolated = source.IsIsolated,
+            IsFavorite = source.IsFavorite,
             Java = source.Java,
         };
 
