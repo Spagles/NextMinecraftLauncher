@@ -271,6 +271,7 @@
   "java.check.incompatible": "Java {0} bu versiya üçün çox köhnədir (Java {1}+ tələb olunur). Daha yeni runtime seçin.",
   "seed.copied": "Toxum mübadilə buferinə kopyalandı: {0}",
   "cmd.copied": "Əmr mübadilə buferinə kopyalandı",
+  "stats.exported": "Statistika {0} -ə ixrac edildi",
   "account.refresh.button": "🔄 Tokenləri yenilə",
   "account.refresh.refreshing": "Vaxtı keçmiş tokenlər yenilənir…",
   "account.refresh.done": "{0} hesab yeniləndi",

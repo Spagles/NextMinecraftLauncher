@@ -271,6 +271,7 @@
   "java.check.incompatible": "Java {0} قديمة جدًا لهذا الإصدار (تتطلب Java {1}+). اختر بيئة تشغيل أحدث.",
   "seed.copied": "تم نسخ البذرة إلى الحافظة: {0}",
   "cmd.copied": "تم نسخ الأمر إلى الحافظة",
+  "stats.exported": "تم تصدير الإحصائيات إلى {0}",
   "account.refresh.button": "🔄 تحديث الرموز",
   "account.refresh.refreshing": "جارٍ تحديث الرموز المنتهية…",
   "account.refresh.done": "تم تحديث {0} حساب",

@@ -271,6 +271,7 @@
   "java.check.incompatible": "Java {0} เก่าเกินไปสำหรับเวอร์ชันนี้ (ต้องการ Java {1}+) เลือกรันไทม์ใหม่กว่า",
   "seed.copied": "คัดลอกเมล็ดพันธุ์ไปยังคลิปบอร์ดแล้ว: {0}",
   "cmd.copied": "คัดลอกคำสั่งไปยังคลิปบอร์ดแล้ว",
+  "stats.exported": "ส่งออกสถิติไปยัง {0}",
   "account.refresh.button": "🔄 รีเฟรชโทเคน",
   "account.refresh.refreshing": "กำลังรีเฟรชโทเคนหมดอายุ…",
   "account.refresh.done": "รีเฟรช {0} บัญชี",

@@ -271,6 +271,7 @@
   "java.check.incompatible": "Java {0} is te oud vir hierdie weergawe (benodig Java {1}+). Kies 'n nuwer runtime.",
   "seed.copied": "Seed na knipbord gekopieer: {0}",
   "cmd.copied": "Opdrag na knipbord gekopieer",
+  "stats.exported": "Statistiek uitgevoer na {0}",
   "account.refresh.button": "🔄 Verfris tokens",
   "account.refresh.refreshing": "Verfris vervalde tokens…",
   "account.refresh.done": "{0} rekening(e) verfris",

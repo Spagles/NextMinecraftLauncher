@@ -271,6 +271,7 @@
   "java.check.incompatible": "Java {0} ישן מדי לגרסה זו (דורש Java {1}+). בחר סביבת הרצה חדשה יותר.",
   "seed.copied": "הזרע הועתק ללוח: {0}",
   "cmd.copied": "הפקודה הועתקה ללוח",
+  "stats.exported": "הסטטיסטיקה יוצאה ל-{0}",
   "account.refresh.button": "🔄 רענן אסימונים",
   "account.refresh.refreshing": "מרענן אסימונים שפג תוקפם…",
   "account.refresh.done": "רעננו {0} חשבונות",

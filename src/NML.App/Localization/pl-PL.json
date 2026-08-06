@@ -271,6 +271,7 @@
   "java.check.incompatible": "Java {0} jest za stara dla tej wersji (wymaga Java {1}+). Wybierz nowsze środowisko.",
   "seed.copied": "Seed skopiowany do schowka: {0}",
   "cmd.copied": "Komenda skopiowana do schowka",
+  "stats.exported": "Statystyki wyeksportowano do {0}",
   "account.refresh.button": "🔄 Odśwież tokeny",
   "account.refresh.refreshing": "Odświeżanie wygasłych tokenów…",
   "account.refresh.done": "Odświeżono {0} kont",

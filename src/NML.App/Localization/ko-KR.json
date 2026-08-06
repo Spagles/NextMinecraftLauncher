@@ -271,6 +271,7 @@
   "java.check.incompatible": "Java {0}은(는) 이 버전에 너무 오래되었습니다(Java {1}+ 필요). 최신 런타임을 선택하세요.",
   "seed.copied": "시드가 클립보드에 복사됨: {0}",
   "cmd.copied": "명령이 클립보드에 복사됨",
+  "stats.exported": "통계를 {0}에 내보냈습니다",
   "account.refresh.button": "🔄 토큰 새로고침",
   "account.refresh.refreshing": "만료된 토큰 새로고침 중…",
   "account.refresh.done": "{0}개 계정 새로고침됨",

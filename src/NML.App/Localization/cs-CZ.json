@@ -271,6 +271,7 @@
   "java.check.incompatible": "Java {0} je pro tuto verzi příliš stará (vyžaduje Java {1}+). Vyberte novější runtime.",
   "seed.copied": "Seed zkopírován do schránky: {0}",
   "cmd.copied": "Příkaz zkopírován do schránky",
+  "stats.exported": "Statistiky exportovány do {0}",
   "account.refresh.button": "🔄 Obnovit tokeny",
   "account.refresh.refreshing": "Obnovování propadlých tokenů…",
   "account.refresh.done": "Obnoveno {0} účtů",

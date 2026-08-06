@@ -271,6 +271,7 @@
   "java.check.incompatible": "Java {0} terlalu tua untuk versi ini (butuh Java {1}+). Pilih runtime yang lebih baru.",
   "seed.copied": "Seed disalin ke papan klip: {0}",
   "cmd.copied": "Perintah disalin ke papan klip",
+  "stats.exported": "Statistik diekspor ke {0}",
   "account.refresh.button": "🔄 Segarkan token",
   "account.refresh.refreshing": "Menyegarkan token kedaluwarsa…",
   "account.refresh.done": "{0} akun disegarkan",

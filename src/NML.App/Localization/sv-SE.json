@@ -271,6 +271,7 @@
   "java.check.incompatible": "Java {0} är för gammal för denna version (kräver Java {1}+). Välj en nyare runtime.",
   "seed.copied": "Seed kopierad till urklipp: {0}",
   "cmd.copied": "Kommando kopierad till urklipp",
+  "stats.exported": "Statistik exporterad till {0}",
   "account.refresh.button": "🔄 Uppdatera token",
   "account.refresh.refreshing": "Uppdaterar utgångna token…",
   "account.refresh.done": "Uppdaterade {0} konto",

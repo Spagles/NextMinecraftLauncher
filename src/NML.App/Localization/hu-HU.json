@@ -271,6 +271,7 @@
   "java.check.incompatible": "A Java {0} túl régi ehhez a verzióhoz (Java {1}+ szükséges). Válassz újabb futtatókörnyezetet.",
   "seed.copied": "Seed a vágólapra másolva: {0}",
   "cmd.copied": "Parancs a vágólapra másolva",
+  "stats.exported": "Statisztikák exportálva: {0}",
   "account.refresh.button": "🔄 Tokenek frissítése",
   "account.refresh.refreshing": "Lejárt tokenek frissítése…",
   "account.refresh.done": "{0} fiók frissítve",

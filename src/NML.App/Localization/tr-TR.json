@@ -271,6 +271,7 @@
   "java.check.incompatible": "Java {0} bu sürüm için çok eski (Java {1}+ gerekli). Daha yeni bir çalışma zamanı seçin.",
   "seed.copied": "Tohum panoya kopyalandı: {0}",
   "cmd.copied": "Komut panoya kopyalandı",
+  "stats.exported": "İstatistikler {0} konumuna dışa aktarıldı",
   "account.refresh.button": "🔄 Belirteçleri yenile",
   "account.refresh.refreshing": "Süresi dolmuş belirteçler yenileniyor…",
   "account.refresh.done": "{0} hesap yenilendi",

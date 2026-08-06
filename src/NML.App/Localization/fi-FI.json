@@ -271,6 +271,7 @@
   "java.check.incompatible": "Java {0} on liian vanha tälle versiolle (vaatii Java {1}+). Valitse uudempi runtime.",
   "seed.copied": "Seed kopioitu leikepöydälle: {0}",
   "cmd.copied": "Komento kopioitu leikepöydälle",
+  "stats.exported": "Tilastot viety kohteeseen {0}",
   "account.refresh.button": "🔄 Päivitä tokenit",
   "account.refresh.refreshing": "Päivitetään vanhentuneita tokeneita…",
   "account.refresh.done": "Päivitetty {0} tiliä",

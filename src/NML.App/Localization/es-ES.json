@@ -271,6 +271,7 @@
   "java.check.incompatible": "Java {0} es demasiado antiguo para esta versión (requiere Java {1}+). Elige un runtime más reciente.",
   "seed.copied": "Semilla copiada al portapapeles: {0}",
   "cmd.copied": "Comando copiado al portapapeles",
+  "stats.exported": "Estadísticas exportadas a {0}",
   "account.refresh.button": "🔄 Refrescar tokens",
   "account.refresh.refreshing": "Refrescando tokens caducados…",
   "account.refresh.done": "{0} cuenta(s) refrescada(s)",
