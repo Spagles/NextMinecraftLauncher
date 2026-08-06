@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using NML.App.Services;
 using NML.Core;
+using NML.Core.Logging;
 using NML.Core.Auth;
 using NML.Core.Auth.AuthlibInjector;
 using NML.Core.Download;
@@ -470,6 +471,39 @@ public partial class HomePageViewModel : PageViewModelBase
             Status = $"diagnosis|{d.Confidence}|{d.RootCause}";
         }
         catch (Exception ex) { _logger.LogWarning(ex, "Crash diagnosis failed."); }
+    }
+
+    /// <summary>
+    /// One-click "diagnose crash": locate the newest crash report + latest.log tail in the active
+    /// instance's game dir, submit them to the configured AI crash analyzer, and surface the
+    /// structured diagnosis (root cause + confidence) as a status. Unlike the automatic post-crash
+    /// diagnosis, this is user-triggered and works even when no game was launched this session.
+    /// </summary>
+    [RelayCommand]
+    private async Task SubmitCrashToAiAsync()
+    {
+        if (SelectedInstance is null) { Status = "home.select_first"; return; }
+        if (_crashFactory?.TryCreate() is not { } analyzer) { Status = "crash.submit.no_ai"; return; }
+
+        try
+        {
+            var inputs = LatestCrashFinder.Find(_instances.GameDirFor(SelectedInstance));
+            if (!inputs.HasAny) { Status = "crash.submit.none"; return; }
+
+            string report = inputs.CrashReportPath is not null && File.Exists(inputs.CrashReportPath)
+                ? await File.ReadAllTextAsync(inputs.CrashReportPath)
+                : inputs.LogTail ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(report)) { Status = "crash.submit.none"; return; }
+
+            Status = "crash.submit.analyzing";
+            var d = await analyzer.AnalyzeAsync(report, inputs.LogTail);
+            Status = $"crash.submit.result,{d.Confidence},{d.RootCause}";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Manual crash submission failed.");
+            Status = "crash.submit.failed";
+        }
     }
 
     /// <summary>Export the selected instance to a .zip bundle (instance.json + mods + config).</summary>

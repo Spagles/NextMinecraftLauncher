@@ -3,7 +3,7 @@
 A cross-platform **Minecraft launcher** built in **C# / Avalonia UI 11 + .NET 8**, aiming to
 match HMCL and PCL while adding **first-class AI features**.
 
-> **142 commits, 331 tests, 0 warnings, 31 languages.** A real, functional launcher.
+> **143 commits, 339 tests, 0 warnings, 31 languages.** A real, functional launcher.
 
 ## What works right now
 
@@ -49,7 +49,8 @@ match HMCL and PCL while adding **first-class AI features**.
 - **Provider-agnostic streaming chat** (`IChatClient`): OpenAI-compatible SSE, Anthropic Messages API,
   local models (Ollama/LM Studio) — zero-cost default with BYOK for cloud
 - **API keys encrypted** with Windows DPAPI (never in settings.json or accounts.json)
-- **Crash diagnosis:** parses crash logs → focused LLM prompt → structured JSON diagnosis
+- **Crash diagnosis:** parses crash logs → focused LLM prompt → structured JSON diagnosis +
+  one-click "🤖 Diagnose last crash" button (auto-locates newest crash-*.txt + latest.log tail)
 - **Natural-language config:** function-calling tools (set_memory/version/modloader/java/resolution)
 - **Mod recommendation:** retrieval-augmented (real catalog candidates → LLM ranks; hallucinated IDs dropped)
 
@@ -80,7 +81,7 @@ match HMCL and PCL while adding **first-class AI features**.
   silent multi-account token refresh (MSA refresh-token lifecycle, 5-min proactive margin)
 
 ### Internationalization
-- **31 languages, 322 keys each (9,982 total translated keys):** 中文, English, 日本語, 한국어,
+- **31 languages, 328 keys each (10,168 total translated keys):** 中文, English, 日本語, 한국어,
   Русский, Français, Español, Deutsch, Português, Italiano, العربية, Türkçe, हिन्दी, ไทย,
   Tiếng Việt, Bahasa Indonesia, Polski, Українська, Nederlands, Svenska, Čeština,
   Norsk, Suomi, Dansk, Magyar, Română, Azərbaycan, Afrikaans, עברית, Català, Қазақша

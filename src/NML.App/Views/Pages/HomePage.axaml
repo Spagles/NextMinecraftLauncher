@@ -68,6 +68,11 @@
                 </StackPanel>
             </Border>
 
+            <!-- One-click AI crash diagnosis: locate the newest crash report + latest.log tail and submit to the AI -->
+            <Button Content="{loc:Loc 'crash.submit.button'}" Command="{Binding SubmitCrashToAiCommand}"
+                    Classes="small" Background="#ab47bc" Foreground="White" Padding="14,5" HorizontalAlignment="Left"
+                    IsEnabled="{Binding !IsBusy}"/>
+
             <!-- Share code -->
             <StackPanel Spacing="4">
                 <StackPanel Orientation="Horizontal" Spacing="6">

@@ -323,6 +323,13 @@
   "migration.button": "🔀 Migrate content to the other isolation mode",
   "migration.done": "Migrated {0} file(s)",
 
+  "crash.submit.button": "🤖 Diagnose last crash",
+  "crash.submit.no_ai": "No AI provider configured",
+  "crash.submit.none": "No crash report or log found for this instance",
+  "crash.submit.analyzing": "Analyzing crash with AI…",
+  "crash.submit.result": "Diagnosis ({0}): {1}",
+  "crash.submit.failed": "Crash analysis failed (check AI provider settings)",
+
   "account.refresh.button": "🔄 Refresh tokens",
   "account.refresh.refreshing": "Refreshing expired tokens…",
   "account.refresh.done": "Refreshed {0} account(s)",
