@@ -82,9 +82,16 @@ public partial class AssistantPageViewModel : PageViewModelBase
 }
 
 /// <summary>One turn in the chat conversation (user or assistant).</summary>
-public sealed class ChatTurn
+public sealed class ChatTurn : ObservableObject
 {
     /// <summary>Localization key for the speaker label (<c>assistant.user</c> or <c>assistant.ai</c>).</summary>
     public string Role { get; init; } = string.Empty;
-    public string Content { get; set; } = string.Empty;
+
+    private string _content = string.Empty;
+    /// <summary>Content text — observable so streaming updates render live.</summary>
+    public string Content
+    {
+        get => _content;
+        set => SetProperty(ref _content, value);
+    }
 }
