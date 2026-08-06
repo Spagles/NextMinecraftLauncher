@@ -653,6 +653,24 @@ public partial class GameContentPageViewModel : PageViewModelBase
         catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
     }
 
+    /// <summary>Browse the contents of a resource-pack .zip (list textures/models/sounds/etc.).</summary>
+    [RelayCommand]
+    private void BrowseResourcePackContents(ResourcePackCard card)
+    {
+        try
+        {
+            var categories = ResourcePackContentBrowser.ListContents(card.Path);
+            card.ContentSummary = categories.Count > 0
+                ? $"{categories.Sum(c => c.FileCount)} files in {categories.Count} categories"
+                : "No content found";
+            card.ContentCategories.Clear();
+            foreach (var cat in categories)
+                card.ContentCategories.Add(cat);
+            card.ShowContents = !card.ShowContents; // toggle expand/collapse
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
     [RelayCommand]
     private void SelectConfig(GameFile file)
     {
@@ -1016,4 +1034,14 @@ public sealed class ResourcePackCard : ObservableObject
 
     /// <summary>Display label for the toggle button.</summary>
     public string ToggleLabel => _isEnabled ? "✓ Enabled" : "Disabled";
+
+    private bool _showContents;
+    /// <summary>True when the content browser is expanded for this card.</summary>
+    public bool ShowContents { get => _showContents; set => SetProperty(ref _showContents, value); }
+
+    /// <summary>Summary text ("42 files in 3 categories").</summary>
+    public string ContentSummary { get; set; } = string.Empty;
+
+    /// <summary>Content categories listed when expanded.</summary>
+    public System.Collections.ObjectModel.ObservableCollection<ResourcePackContentCategory> ContentCategories { get; } = new();
 }

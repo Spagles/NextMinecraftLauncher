@@ -257,6 +257,26 @@
                                                 CommandParameter="{Binding}"
                                                 Background="#2f5fcc" Foreground="White" Padding="10,3"
                                                 HorizontalAlignment="Center" Margin="0,2,0,0" FontSize="11"/>
+                                        <Button Content="📂 Browse contents"
+                                                Command="{Binding #Root.DataContext.BrowseResourcePackContentsCommand}"
+                                                CommandParameter="{Binding}"
+                                                Classes="small" HorizontalAlignment="Center" Margin="0,2,0,0" FontSize="11"/>
+                                        <!-- Expandable content summary + category list -->
+                                        <StackPanel IsVisible="{Binding ShowContents}" Spacing="2" Margin="0,4,0,0">
+                                            <TextBlock Text="{Binding ContentSummary}" Foreground="#888" FontSize="10" HorizontalAlignment="Center"/>
+                                            <ItemsControl ItemsSource="{Binding ContentCategories}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Foreground="#aaa" FontSize="10" Margin="0,1">
+                                                            <Run Text="{Binding Category}"/>
+                                                            <Run Text=" (" />
+                                                            <Run Text="{Binding FileCount}"/>
+                                                            <Run Text=" files)" />
+                                                        </TextBlock>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>
