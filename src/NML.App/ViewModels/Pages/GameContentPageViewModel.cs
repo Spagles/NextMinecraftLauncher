@@ -724,6 +724,58 @@ public partial class GameContentPageViewModel : PageViewModelBase
         }
         finally { IsCheckingModUpdates = false; }
     }
+
+    /// <summary>
+    /// One-click "upgrade all": build a plan from the last update check, download each newer jar
+    /// into the mods/ folder (replacing the old file), and report how many were upgraded. Skips
+    /// mods with no usable download URL. Requires a prior CheckModUpdatesAsync so the plan is fresh.
+    /// </summary>
+    [RelayCommand]
+    private async Task UpgradeAllModsAsync()
+    {
+        if (InstalledMods.Count == 0) { Status = "mods.upgrade.no_check"; return; }
+        Instance? inst = GetActiveInstance();
+        if (inst is null) { Status = "mods.no_instance"; return; }
+
+        string modsDir = Path.Combine(_instances.GameDirFor(inst.Name), "mods");
+        var plan = ModUpdatePlanner.Plan(InstalledMods, modsDir);
+        if (plan.Count == 0) { Status = "mods.upgrade.none"; return; }
+
+        IsCheckingModUpdates = true;
+        Status = $"mods.upgrade.upgrading,{plan.Count}";
+        int upgraded = 0;
+        try
+        {
+            using var http = new System.Net.Http.HttpClient();
+            foreach (var item in plan)
+            {
+                try
+                {
+                    // Download to a .part file then atomically replace the old jar.
+                    string part = item.TargetPath + ".part";
+                    using (var resp = await http.GetStreamAsync(item.SourceUrl))
+                    using (var fs = File.Create(part))
+                        await resp.CopyToAsync(fs);
+                    // Remove the old jar if its name differs from the new target.
+                    string oldPath = Path.Combine(modsDir, item.OldFileName);
+                    if (File.Exists(oldPath) && !string.Equals(oldPath, item.TargetPath, StringComparison.OrdinalIgnoreCase))
+                        File.Delete(oldPath);
+                    if (File.Exists(item.TargetPath)) File.Delete(item.TargetPath);
+                    File.Move(part, item.TargetPath);
+                    upgraded++;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Mod upgrade failed for {Mod}", item.ModId);
+                }
+            }
+            Status = upgraded > 0 ? $"mods.upgrade.done,{upgraded}" : "mods.upgrade.failed";
+            // Re-scan so the InstalledMods list reflects the upgraded versions.
+            await CheckModUpdatesAsync();
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+        finally { IsCheckingModUpdates = false; }
+    }
 }
 
 /// <summary>

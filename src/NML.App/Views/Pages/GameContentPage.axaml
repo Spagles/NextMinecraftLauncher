@@ -11,6 +11,10 @@
             <Button Content="{loc:Loc 'content.mods'}"           Click="SelectTab" Tag="mods" Classes="tabbtn"/>
             <Button Content="{loc:Loc 'content.enable_all'}"     Command="{Binding EnableAllModsCommand}" Classes="small" Margin="16,0,0,0"/>
             <Button Content="{loc:Loc 'content.disable_all'}"    Command="{Binding DisableAllModsCommand}" Classes="small"/>
+            <!-- One-click mod upgrade: check updates, then upgrade all flagged mods. -->
+            <Button Content="{loc:Loc 'mods.upgrade.upgrade_all'}" Command="{Binding UpgradeAllModsCommand}"
+                    Classes="small" Background="#388e3c" Foreground="White"
+                    IsEnabled="{Binding !IsCheckingModUpdates}" Margin="8,0,0,0"/>
             <Button Content="{loc:Loc 'content.logs'}"           Click="SelectTab" Tag="logs" Classes="tabbtn"/>
             <Button Content="{loc:Loc 'content.configs'}"        Click="SelectTab" Tag="configs" Classes="tabbtn"/>
             <Button Content="{loc:Loc 'content.open_folder'}" Command="{Binding OpenFolderCommand}" Classes="small" Margin="16,0,0,0"/>

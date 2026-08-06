@@ -313,6 +313,13 @@
 
   "java.check.incompatible": "Java {0} is too old for this version (needs Java {1}+). Pick a newer runtime.",
 
+  "mods.upgrade.upgrade_all": "⬆ Upgrade all",
+  "mods.upgrade.upgrading": "Upgrading {0} mod(s)…",
+  "mods.upgrade.done": "Upgraded {0} mod(s)",
+  "mods.upgrade.failed": "No mods could be upgraded",
+  "mods.upgrade.no_check": "Check for updates first",
+  "mods.upgrade.none": "No upgradable mods found",
+
   "account.refresh.button": "🔄 Refresh tokens",
   "account.refresh.refreshing": "Refreshing expired tokens…",
   "account.refresh.done": "Refreshed {0} account(s)",
