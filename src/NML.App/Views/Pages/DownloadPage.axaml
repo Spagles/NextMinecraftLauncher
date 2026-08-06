@@ -17,7 +17,9 @@
                 <Button Content="{loc:Loc 'download.filter_snapshot'}" Click="SelectFilter" Tag="snapshot" Classes="tabbtn"/>
                 <Button Content="{loc:Loc 'download.filter_old'}"      Click="SelectFilter" Tag="old_beta" Classes="tabbtn"/>
             </StackPanel>
-            <Button Content="{loc:Loc 'common.refresh'}" Command="{Binding LoadCommand}" HorizontalAlignment="Left"/>
+            <Button Content="{loc:Loc 'common.refresh'}" Command="{Binding LoadCommand}" HorizontalAlignment="Left"
+                    IsEnabled="{Binding !IsLoading}"/>
+            <ProgressBar IsIndeterminate="True" Height="3" IsVisible="{Binding IsLoading}" Margin="0,4"/>
         </StackPanel>
 
         <!-- Version list -->
