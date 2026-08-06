@@ -282,8 +282,11 @@ public partial class GameContentPageViewModel : PageViewModelBase
                     foreach (GameSave s in browser.ListSaves())
                     {
                         Items.Add(s);
-                        // Read the world seed for the card display.
+                        // Read world metadata for the card display.
                         long? seed = NML.Core.Game.WorldSeedReader.ReadSeed(s.Path);
+                        var ach = NML.Core.Game.AchievementReader.Read(s.Path);
+                        var stats = NML.Core.Game.WorldStatsReader.Read(s.Path);
+                        var settings = NML.Core.Game.WorldSettingsManager.Read(s.Path);
                         WorldCards.Add(new WorldCardEntry
                         {
                             Name = s.Name,
@@ -293,6 +296,9 @@ public partial class GameContentPageViewModel : PageViewModelBase
                             LastModified = s.LastModified,
                             PreviewIconPath = s.PreviewIconPath,
                             SeedDisplay = seed.HasValue ? seed.Value.ToString() : string.Empty,
+                            AchievementDisplay = ach.TotalAdvancements > 0 ? ach.Display : string.Empty,
+                            PlayTimeDisplay = stats.PlayTimeMinutes > 0 ? stats.PlayTimeDisplay : string.Empty,
+                            DifficultyDisplay = settings.Difficulty,
                         });
                     }
                     // Populate the backups panel (every {world}-{stamp}.zip, newest first).
@@ -914,8 +920,17 @@ public sealed class WorldCardEntry : ObservableObject
     /// <summary>True when the world has a custom preview icon (drives the Image/placeholder swap).</summary>
     public bool HasIcon => !string.IsNullOrEmpty(PreviewIconPath);
 
-    /// <summary>The world seed as a readable string (e.g. "-123456789"), or empty when unreadable.</summary>
+    /// <summary>The world seed as a readable string, or empty when unreadable.</summary>
     public string SeedDisplay { get; set; } = string.Empty;
+
+    /// <summary>Achievement progress display (e.g. "3 / 120 (2.5%)"), or empty when none.</summary>
+    public string AchievementDisplay { get; set; } = string.Empty;
+
+    /// <summary>Play time display (e.g. "2h 15m"), or empty when no stats.</summary>
+    public string PlayTimeDisplay { get; set; } = string.Empty;
+
+    /// <summary>Difficulty name (peaceful/easy/normal/hard), or empty when unreadable.</summary>
+    public string DifficultyDisplay { get; set; } = string.Empty;
 
     /// <summary>Human-readable size, e.g. "12.3 MB".</summary>
     public string SizeDisplay => SizeBytes switch

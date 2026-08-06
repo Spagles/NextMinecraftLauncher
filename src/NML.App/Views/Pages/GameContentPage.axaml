@@ -90,6 +90,18 @@
                                                    HorizontalAlignment="Center"/>
                                         <TextBlock Text="{Binding SizeDisplay}" Foreground="#888" FontSize="10"
                                                    HorizontalAlignment="Center"/>
+                                        <!-- Achievement + play-time + difficulty summary -->
+                                        <StackPanel Spacing="1" Margin="0,2">
+                                            <TextBlock Text="{Binding PlayTimeDisplay}" Foreground="#81c784" FontSize="10"
+                                                       HorizontalAlignment="Center"
+                                                       IsVisible="{Binding PlayTimeDisplay, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                                            <TextBlock Text="{Binding AchievementDisplay}" Foreground="#ffb74d" FontSize="10"
+                                                       HorizontalAlignment="Center"
+                                                       IsVisible="{Binding AchievementDisplay, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                                            <TextBlock Text="{Binding DifficultyDisplay}" Foreground="#888" FontSize="10"
+                                                       HorizontalAlignment="Center"
+                                                       IsVisible="{Binding DifficultyDisplay, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                                        </StackPanel>
                                         <!-- World seed display + copy button -->
                                         <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center"
                                                     IsVisible="{Binding SeedDisplay, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
