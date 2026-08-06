@@ -51,10 +51,34 @@ public partial class HomePageViewModel : PageViewModelBase
     /// <summary>Live game console output (stdout+stderr), shown in the console panel.</summary>
     [ObservableProperty] private string _consoleOutput = string.Empty;
 
+    // Batch console updates to avoid UI freeze on high-frequency game output.
+    private readonly System.Collections.Concurrent.ConcurrentQueue<string> _consoleBuffer = new();
+    private int _consoleFlushScheduled;
+
     private void OnGameOutput(string line)
     {
-        // Append to console (cap at 5000 chars to avoid unbounded growth).
-        string next = ConsoleOutput + line + "\n";
+        _consoleBuffer.Enqueue(line);
+
+        // Schedule a flush on the UI thread if not already pending (coalesces many lines
+        // into a single PropertyChanged notification per ~100ms).
+        if (Interlocked.CompareExchange(ref _consoleFlushScheduled, 1, 0) == 0)
+        {
+            Avalonia.Threading.DispatcherTimer.RunOnce(() =>
+            {
+                Interlocked.Exchange(ref _consoleFlushScheduled, 0);
+                FlushConsole();
+            }, TimeSpan.FromMilliseconds(100));
+        }
+    }
+
+    private void FlushConsole()
+    {
+        var sb = new System.Text.StringBuilder();
+        while (_consoleBuffer.TryDequeue(out string? line))
+            sb.AppendLine(line);
+        if (sb.Length == 0) return;
+
+        string next = ConsoleOutput + sb.ToString();
         if (next.Length > 5000) next = next[^5000..];
         ConsoleOutput = next;
     }
