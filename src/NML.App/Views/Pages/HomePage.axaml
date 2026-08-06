@@ -26,6 +26,8 @@
 
             <!-- Per-instance actions + batch operations -->
             <StackPanel Orientation="Horizontal" Spacing="4">
+                <Button Content="⭐ Favorite" Command="{Binding ToggleFavoriteCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"
+                        IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}"/>
                 <Button Content="➕ New" Command="{Binding OpenNewInstanceWizardCommand}" Classes="small"/>
                 <Button Content="📋 Clone" Command="{Binding CloneInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"
                         IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}"/>

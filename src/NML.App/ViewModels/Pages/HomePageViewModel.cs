@@ -48,7 +48,7 @@ public partial class HomePageViewModel : PageViewModelBase
     private readonly ILogger<HomePageViewModel> _logger;
 
     /// <summary>Available sort modes for the instance list.</summary>
-    public IReadOnlyList<string> SortModes { get; } = new[] { "Name", "Version", "Created" };
+    public IReadOnlyList<string> SortModes { get; } = new[] { "Name", "Version", "Created", "Favorites" };
 
     [ObservableProperty] private string _sortMode = "Name";
 
@@ -61,6 +61,7 @@ public partial class HomePageViewModel : PageViewModelBase
         {
             "Version" => Instances.OrderBy(i => i.VersionId).ThenBy(i => i.Name).ToList(),
             "Created" => Instances.OrderByDescending(i => i.CreatedAt).ToList(),
+            "Favorites" => Instances.OrderByDescending(i => i.IsFavorite).ThenBy(i => i.Name).ToList(),
             _ => Instances.OrderBy(i => i.Name).ToList(),
         };
 
@@ -236,6 +237,18 @@ public partial class HomePageViewModel : PageViewModelBase
 
     /// <summary>
     /// Persist the selected instance's edited launch options (memory, window size, JVM/game
+    /// <summary>Toggle the selected instance's favorite/star state, persist, and re-sort.</summary>
+    [RelayCommand]
+    private void ToggleFavorite(Instance instance)
+    {
+        if (instance is null) return;
+        instance.IsFavorite = !instance.IsFavorite;
+        var all = _instances.LoadAll();
+        int idx = all.FindIndex(i => string.Equals(i.Name, instance.Name, StringComparison.OrdinalIgnoreCase));
+        if (idx >= 0) { all[idx] = instance; _instances.SaveAll(all); }
+        ApplySort();
+    }
+
     /// args) back to <c>instances.json</c>. Without this the in-memory edits would be lost on
     /// restart — the original launch-options panel mutated the model but never saved it.
     /// </summary>
