@@ -5,16 +5,14 @@ using NML.Core.Download;
 namespace NML.Core.Java;
 
 /// <summary>
-/// Downloads and installs a Mojang-provided Java runtime (JRT) from
-/// <c>https://piston-meta.mojang.com/v1/products/java-runtime/2/json.json</c>.
-/// Selects the runtime matching a Mojang component name (e.g. <c>java-runtime-gamma</c>
-/// for Java 17) and the current OS/arch, then extracts the archive under
-/// <c>.minecraft/runtime/{component}/{platform}/</c>.
+/// Downloads and installs a Java runtime (JDK) from the Eclipse Adoptium (AdoptOpenJDK) API.
+/// Replaces the dead Mojang JRT manifest endpoint (which returns 404 as of 2026).
+/// Fetches the latest LTS JDK for a given major version (17 or 21) matching the current OS/arch.
 /// </summary>
 public sealed class JavaRuntimeInstaller
 {
-    private const string ManifestUrl =
-        "https://piston-meta.mojang.com/v1/products/java-runtime/2/json.json";
+    private const string AdoptiumLatestUrl =
+        "https://api.adoptium.net/v3/assets/latest/{0}/hotspot?architecture={1}&image_type=jdk&os={2}";
 
     private readonly IHttpFetcher _http;
     private readonly ILogger<JavaRuntimeInstaller> _logger;
@@ -25,9 +23,7 @@ public sealed class JavaRuntimeInstaller
         _logger = logger;
     }
 
-    /// <summary>
-    /// Resolve the platform identifier Mojang uses in the JRT manifest for the current OS.
-    /// </summary>
+    /// <summary>Resolve the current OS/arch for the Adoptium API.</summary>
     public static string CurrentPlatform()
     {
         bool isWindows = OperatingSystem.IsWindows();
@@ -35,60 +31,18 @@ public sealed class JavaRuntimeInstaller
         string arch = System.Runtime.InteropServices.RuntimeInformation.OSArchitecture switch
         {
             System.Runtime.InteropServices.Architecture.X64 => "x64",
-            System.Runtime.InteropServices.Architecture.Arm64 => "arm64",
-            System.Runtime.InteropServices.Architecture.X86 => "x86",
+            System.Runtime.InteropServices.Architecture.Arm64 => "aarch64",
+            System.Runtime.InteropServices.Architecture.X86 => "x32",
             _ => "x64",
         };
-
         if (isWindows) return $"windows-{arch}";
-        if (isMac) return arch == "arm64" ? "mac-os-arm64" : "mac-os";
-        return arch == "arm64" ? "linux-arm64" : "linux";
+        if (isMac) return $"mac-{arch}";
+        return $"linux-{arch}";
     }
 
     /// <summary>
-    /// Fetch and parse the Mojang JRT manifest. The structure is:
-    /// <c>{ "linux": [ { "availability": {...}, "manifest": {...} }, ...], "windows-x64": [...], ... }</c>
-    /// Each platform key is a list of candidate runtimes; we pick the one whose
-    /// <c>availability.group</c> matches the requested component (e.g. "java-runtime-gamma").
-    /// </summary>
-    public async Task<Dictionary<string, List<JavaRuntimeManifestFile>>> GetManifestAsync(CancellationToken ct = default)
-    {
-        string json = await _http.GetStringAsync(ManifestUrl, ct);
-        using var doc = System.Text.Json.JsonDocument.Parse(json);
-
-        var result = new Dictionary<string, List<JavaRuntimeManifestFile>>(StringComparer.OrdinalIgnoreCase);
-        foreach (var prop in doc.RootElement.EnumerateObject())
-        {
-            var entries = new List<JavaRuntimeManifestFile>();
-            foreach (var entry in prop.Value.EnumerateArray())
-            {
-                var availability = entry.GetProperty("availability");
-                var manifest = entry.GetProperty("manifest");
-                entries.Add(new JavaRuntimeManifestFile
-                {
-                    Availability = new Availability
-                    {
-                        Group = availability.GetProperty("group").GetString() ?? string.Empty,
-                        Priority = availability.TryGetProperty("group", out _) ? 1 : 0,
-                    },
-                    Download = new DownloadManifest
-                    {
-                        Url = manifest.GetProperty("url").GetString() ?? string.Empty,
-                        Checksum = manifest.TryGetProperty("sha1", out var s) ? s.GetString() ?? string.Empty : string.Empty,
-                        Size = manifest.TryGetProperty("size", out var sz) ? sz.GetInt64() : 0,
-                        Version = manifest.TryGetProperty("version", out var v) ? v.GetString() ?? string.Empty : string.Empty,
-                    },
-                });
-            }
-            result[prop.Name] = entries;
-        }
-        return result;
-    }
-
-    /// <summary>
-    /// Install a JRT for the given Mojang component (e.g. <c>java-runtime-gamma</c>) under
-    /// <c><paramref name="runtimesRoot"/>/{component}/{platform}/</c>. Returns the install directory
-    /// (the <c>bin</c> dir of the extracted runtime). Idempotent if already extracted.
+    /// Install a JDK for the given major version (e.g. 17) under
+    /// <c><paramref name="runtimesRoot"/>/jdk-{major}/</c>. Returns the install directory.
     /// </summary>
     public async Task<JavaRuntime> InstallAsync(
         string component,
@@ -97,94 +51,123 @@ public sealed class JavaRuntimeInstaller
         IProgress<long>? progress = null,
         CancellationToken ct = default)
     {
-        string platform = CurrentPlatform();
-        _logger.LogInformation("Installing Java runtime {Component} for {Platform}…", component, platform);
+        // Map component → major version. "java-runtime-gamma" = 17, "java-runtime-delta" = 21.
+        int majorVersion = component switch
+        {
+            "java-runtime-alpha" => 8,
+            "java-runtime-gamma" => 17,
+            "java-runtime-delta" => 21,
+            _ when int.TryParse(component, out int v) => v,
+            _ => 17,
+        };
 
-        var manifest = await GetManifestAsync(ct);
-        if (!manifest.TryGetValue(platform, out var candidates) || candidates.Count == 0)
-            throw new InvalidOperationException($"No Java runtime available for platform '{platform}'.");
+        string osStr = OperatingSystem.IsWindows() ? "windows"
+                      : OperatingSystem.IsMacOS() ? "mac"
+                      : "linux";
+        string archStr = System.Runtime.InteropServices.RuntimeInformation.OSArchitecture switch
+        {
+            System.Runtime.InteropServices.Architecture.X64 => "x64",
+            System.Runtime.InteropServices.Architecture.Arm64 => "aarch64",
+            _ => "x64",
+        };
 
-        JavaRuntimeManifestFile? chosen = candidates.FirstOrDefault(c => c.Availability.Group == component)
-                                          ?? candidates[0];
+        string apiUrl = string.Format(AdoptiumLatestUrl, majorVersion, archStr, osStr);
+        _logger.LogInformation("Fetching Adoptium JDK {Major} for {Os}-{Arch}…", majorVersion, osStr, archStr);
 
-        string componentRoot = Path.Combine(runtimesRoot, component, platform);
-        string binDir = Path.Combine(componentRoot, "bin");
+        // Fetch the asset metadata JSON.
+        string json = await _http.GetStringAsync(apiUrl, ct);
+        using var doc = System.Text.Json.JsonDocument.Parse(json);
+        var root = doc.RootElement.EnumerateArray().First();
+        string downloadUrl = root.GetProperty("binary").GetProperty("package").GetProperty("link").GetString()!;
+        string pkgName = root.GetProperty("binary").GetProperty("package").GetProperty("name").GetString()!;
+        long pkgSize = root.GetProperty("binary").GetProperty("package").GetProperty("size").GetInt64();
+
+        // Determine install dir.
+        string installDir = Path.Combine(runtimesRoot, $"jdk-{majorVersion}");
+        string binDir = Path.Combine(installDir, "bin");
         string exeName = OperatingSystem.IsWindows() ? "javaw.exe" : "java";
         string exePath = Path.Combine(binDir, exeName);
 
         if (File.Exists(exePath))
         {
-            _logger.LogInformation("Runtime {Component} already installed at {Path}.", component, componentRoot);
-            int major = JavaRuntimeDetector.ParseMajorVersion("version \"17.0.0\"");
-            // Real major version would require a probe; the JRT component maps to a known major.
-            return new JavaRuntime { BinDirectory = binDir, ExecutablePath = exePath, MajorVersion = 17, Component = component };
+            _logger.LogInformation("JDK {Major} already installed at {Path}.", majorVersion, installDir);
+            return new JavaRuntime { BinDirectory = binDir, ExecutablePath = exePath, MajorVersion = majorVersion, Component = component };
         }
 
-        // Download the runtime archive manifest (the .url points to a manifest-of-files, not the JVM zip directly).
-        // For the common path, we just download and extract the .tar.gz/.zip pointed by the manifest.
-        Directory.CreateDirectory(componentRoot);
-        string archivePath = Path.Combine(componentRoot, "jrt.archive");
-        byte[] archive = await _http.GetByteArrayAsync(chosen.Download.Url, ct);
+        // Download the archive.
+        Directory.CreateDirectory(runtimesRoot);
+        string archivePath = Path.Combine(runtimesRoot, pkgName);
+        _logger.LogInformation("Downloading {Name} ({Size} bytes)…", pkgName, pkgSize);
+        byte[] archive = await _http.GetByteArrayAsync(downloadUrl, ct);
         await File.WriteAllBytesAsync(archivePath, archive, ct);
 
-        await ExtractArchiveAsync(archivePath, componentRoot);
-        File.Delete(archivePath);
-
-        // The archive typically expands to a single top-level dir (jre-17/...) — flatten it.
-        FlattenIfSingleChild(componentRoot);
-
-        _logger.LogInformation("Runtime {Component} extracted to {Path}.", component, componentRoot);
-        return new JavaRuntime
+        // Extract (zip on Windows/mac, tar.gz on Linux).
+        Directory.CreateDirectory(installDir);
+        if (pkgName.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
         {
-            BinDirectory = binDir,
-            ExecutablePath = exePath,
-            MajorVersion = component switch
+            ZipFile.ExtractToDirectory(archivePath, installDir, overwriteFiles: true);
+        }
+        else if (pkgName.EndsWith(".tar.gz", StringComparison.OrdinalIgnoreCase))
+        {
+            // Use tar to extract on Linux/mac.
+            var psi = new System.Diagnostics.ProcessStartInfo("tar", $"xzf \"{archivePath}\" -C \"{installDir}\" --strip-components=1")
             {
-                "java-runtime-alpha" => 25,
-                "java-runtime-beta" => 21,
-                "java-runtime-gamma" => 17,
-                "jre-legacy" => 8,
-                _ => 17,
-            },
-            Component = component,
-        };
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+            };
+            var proc = System.Diagnostics.Process.Start(psi);
+            proc?.WaitForExit();
+        }
+
+        // The archive may extract into a subfolder (e.g. jdk-17.0.9+9/). Find the bin dir.
+        if (!Directory.Exists(binDir))
+        {
+            // Look for a single subdirectory containing bin/.
+            foreach (string sub in Directory.GetDirectories(installDir))
+            {
+                string subBin = Path.Combine(sub, "bin");
+                if (Directory.Exists(subBin))
+                {
+                    // Move contents up.
+                    foreach (string entry in Directory.GetFileSystemEntries(sub))
+                    {
+                        string dest = Path.Combine(installDir, Path.GetFileName(entry));
+                        if (!Directory.Exists(dest) && !File.Exists(dest))
+                            Directory.Move(entry, dest);
+                    }
+                    break;
+                }
+            }
+        }
+
+        // Clean up archive.
+        try { File.Delete(archivePath); } catch { }
+
+        if (!File.Exists(exePath))
+        {
+            // Search recursively for javaw.exe / java.
+            exePath = Directory.GetFiles(installDir, exeName, SearchOption.AllDirectories).FirstOrDefault()
+                      ?? throw new InvalidOperationException($"Java executable not found after extraction in {installDir}.");
+            binDir = Path.GetDirectoryName(exePath)!;
+        }
+
+        _logger.LogInformation("JDK {Major} installed at {Path}.", majorVersion, binDir);
+        return new JavaRuntime { BinDirectory = binDir, ExecutablePath = exePath, MajorVersion = majorVersion, Component = component };
     }
 
-    private static async Task ExtractArchiveAsync(string archivePath, string destDir)
+    /// <summary>Resolve the platform identifier (kept for compatibility with DI consumers).</summary>
+    public Task<Dictionary<string, List<JavaRuntimeManifestFile>>> GetManifestAsync(CancellationToken ct = default)
     {
-        // Mojang ships .zip on Windows and .tar.gz on Linux/macOS.
-        if (archivePath.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
-        {
-            ZipFile.ExtractToDirectory(archivePath, destDir, overwriteFiles: true);
-            return;
-        }
-
-        // Treat anything else as tar.gz (System.Formats.Tar is in the BCL on net8).
-        string tempTar = archivePath + ".tar";
-        await using (var fs = File.OpenRead(archivePath))
-        await using (var gz = new GZipStream(fs, CompressionMode.Decompress))
-        await using (var outTar = File.Create(tempTar))
-        {
-            await gz.CopyToAsync(outTar);
-        }
-        System.Formats.Tar.TarFile.ExtractToDirectory(tempTar, destDir, overwriteFiles: true);
-        File.Delete(tempTar);
+        // Legacy API — Mojang JRT is dead. Return empty so callers know to use InstallAsync directly.
+        return Task.FromResult(new Dictionary<string, List<JavaRuntimeManifestFile>>());
     }
 
-    /// <summary>If the extract produced a single subdirectory, move its contents up one level.</summary>
-    private static void FlattenIfSingleChild(string dir)
+    // Legacy model types kept for compatibility.
+    public sealed class JavaRuntimeManifestFile
     {
-        string[] children = Directory.GetDirectories(dir);
-        string[] files = Directory.GetFiles(dir);
-        if (files.Length > 0 || children.Length != 1) return;
-
-        string child = children[0];
-        foreach (string entry in Directory.EnumerateFileSystemEntries(child))
-        {
-            string dest = Path.Combine(dir, Path.GetFileName(entry));
-            if (Directory.Exists(entry)) Directory.Move(entry, dest);
-            else File.Move(entry, dest);
-        }
-        Directory.Delete(child);
+        public Availability Availability { get; set; } = new();
+        public DownloadManifest Download { get; set; } = new();
     }
+    public sealed class Availability { public string Group { get; set; } = ""; public int Priority { get; set; } }
+    public sealed class DownloadManifest { public string Url { get; set; } = ""; public string Checksum { get; set; } = ""; public long Size { get; set; } public string Version { get; set; } = ""; }
 }
