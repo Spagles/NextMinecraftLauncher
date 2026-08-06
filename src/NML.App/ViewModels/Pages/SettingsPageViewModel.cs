@@ -27,9 +27,38 @@ public partial class SettingsPageViewModel : PageViewModelBase
     private readonly LocalModelProbe _probe;
     private readonly ChatClientFactory _factory;
     private readonly JavaRuntimeDetector _javaDetector;
+    private readonly NML.Core.Java.JavaRuntimeInstaller? _javaInstaller;
     private readonly ILogger<SettingsPageViewModel> _logger;
 
     public ObservableCollection<JavaRuntime> JavaRuntimes { get; } = new();
+
+    /// <summary>True while a Java runtime is downloading/installing.</summary>
+    [ObservableProperty] private bool _isInstallingJava;
+    [ObservableProperty] private string _javaInstallStatus = string.Empty;
+
+    /// <summary>Download and install a Mojang Java runtime (java-runtime-gamma = Java 17+).</summary>
+    [RelayCommand]
+    private async Task InstallJavaRuntimeAsync()
+    {
+        if (_javaInstaller is null || IsInstallingJava) return;
+        IsInstallingJava = true;
+        JavaInstallStatus = "Downloading Java runtime…";
+        try
+        {
+            string runtimesRoot = System.IO.Path.Combine(_settings.SettingsDir, "runtimes");
+            var jrt = await _javaInstaller.InstallAsync("java-runtime-gamma", runtimesRoot, ct: default);
+            JavaInstallStatus = $"Installed Java {jrt.MajorVersion} to: {jrt.BinDirectory}";
+            // Re-detect so the new runtime appears in the list.
+            JavaRuntimes.Clear();
+            foreach (JavaRuntime j in _javaDetector.DetectAll()) JavaRuntimes.Add(j);
+        }
+        catch (Exception ex)
+        {
+            JavaInstallStatus = $"Install failed: {ex.Message}";
+            _logger.LogWarning(ex, "Java runtime install failed.");
+        }
+        finally { IsInstallingJava = false; }
+    }
     public ObservableCollection<ChatProviderConfig> Providers { get; } = new();
     public ObservableCollection<CultureInfo> AvailableLanguages { get; } = new();
 
@@ -253,7 +282,8 @@ public partial class SettingsPageViewModel : PageViewModelBase
         ChatClientFactory factory,
         JavaRuntimeDetector javaDetector,
         ILogger<SettingsPageViewModel> logger,
-        UpdateChecker? updateChecker = null)
+        UpdateChecker? updateChecker = null,
+        NML.Core.Java.JavaRuntimeInstaller? javaInstaller = null)
     {
         _settings = settings;
         _probe = probe;
@@ -261,6 +291,7 @@ public partial class SettingsPageViewModel : PageViewModelBase
         _javaDetector = javaDetector;
         _logger = logger;
         _updateChecker = updateChecker;
+        _javaInstaller = javaInstaller;
         EnsureLanguageSubscribed();
 
         // Populate the language picker from the registered cultures.

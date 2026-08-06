@@ -101,7 +101,13 @@
             <!-- Java -->
             <StackPanel Spacing="8">
                 <TextBlock Text="{loc:Loc 'settings.java'}" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
-                <Button Content="{loc:Loc 'common.refresh'}" Command="{Binding DetectJavaCommand}" HorizontalAlignment="Left"/>
+                <WrapPanel>
+                    <Button Content="{loc:Loc 'common.refresh'}" Command="{Binding DetectJavaCommand}" HorizontalAlignment="Left"/>
+                    <Button Content="{loc:Loc 'settings.install_java'}" Command="{Binding InstallJavaRuntimeCommand}"
+                            IsEnabled="{Binding !IsInstallingJava}" Background="#2f5fcc" Foreground="White" Padding="14,5" Margin="8,0"/>
+                </WrapPanel>
+                <TextBlock Text="{Binding JavaInstallStatus}" Foreground="#4fc3f7" FontSize="11"
+                           IsVisible="{Binding JavaInstallStatus, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
                 <ItemsControl ItemsSource="{Binding JavaRuntimes}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
