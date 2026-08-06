@@ -307,6 +307,18 @@ public partial class GameContentPageViewModel : PageViewModelBase
                             foreach (var entry in stats.TrackedStats.Values)
                                 lastCard.StatLines.Add($"{entry.Label}: {entry.Value:N0}");
                         }
+                        // Populate completed achievement IDs.
+                        if (ach.CompletedAdvancements > 0)
+                        {
+                            var lastCard = WorldCards.Last();
+                            foreach (string id in ach.CompletedIds)
+                            {
+                                // Strip "minecraft:" prefix for readability.
+                                string display = id.StartsWith("minecraft:", StringComparison.OrdinalIgnoreCase)
+                                    ? id["minecraft:".Length..] : id;
+                                lastCard.AchievementLines.Add($"✓ {display}");
+                            }
+                        }
                     }
                     // Populate the backups panel (every {world}-{stamp}.zip, newest first).
                     foreach (BackupInfo b in browser.ListBackups())
@@ -978,6 +990,9 @@ public sealed class WorldCardEntry : ObservableObject
 
     /// <summary>Formatted stat lines for the detail panel (e.g. "Mob Kills: 42").</summary>
     public System.Collections.ObjectModel.ObservableCollection<string> StatLines { get; } = new();
+
+    /// <summary>Completed achievement IDs for the detail panel (e.g. "minecraft:story/mine_diamond").</summary>
+    public System.Collections.ObjectModel.ObservableCollection<string> AchievementLines { get; } = new();
 
     /// <summary>Human-readable size, e.g. "12.3 MB".</summary>
     public string SizeDisplay => SizeBytes switch

@@ -143,6 +143,14 @@
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
+                                        <!-- Completed achievements -->
+                                        <ItemsControl ItemsSource="{Binding AchievementLines}" IsVisible="{Binding ShowDetails}" Margin="0,4">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding}" Foreground="#81c784" FontSize="9" HorizontalAlignment="Center"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>
