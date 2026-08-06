@@ -90,6 +90,15 @@
                                                    HorizontalAlignment="Center"/>
                                         <TextBlock Text="{Binding SizeDisplay}" Foreground="#888" FontSize="10"
                                                    HorizontalAlignment="Center"/>
+                                        <!-- World seed display + copy button -->
+                                        <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center"
+                                                    IsVisible="{Binding SeedDisplay, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                                            <TextBlock Text="Seed:" Foreground="#666" FontSize="10" VerticalAlignment="Center"/>
+                                            <SelectableTextBlock Text="{Binding SeedDisplay}" Foreground="#4fc3f7" FontSize="10"
+                                                                  FontFamily="Cascadia Code,Consolas,monospace" VerticalAlignment="Center"/>
+                                            <Button Content="📋" Command="{Binding #Root.DataContext.CopySeedCommand}"
+                                                    CommandParameter="{Binding}" Padding="4,2" FontSize="9"/>
+                                        </StackPanel>
                                         <!-- One-click backup is the primary action; export/delete as secondary -->
                                         <Button Content="{loc:Loc 'world.quick_backup'}" Classes="small"
                                                 Command="{Binding #Root.DataContext.BackupWorldCardCommand}"

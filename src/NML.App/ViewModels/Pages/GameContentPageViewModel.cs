@@ -282,6 +282,8 @@ public partial class GameContentPageViewModel : PageViewModelBase
                     foreach (GameSave s in browser.ListSaves())
                     {
                         Items.Add(s);
+                        // Read the world seed for the card display.
+                        long? seed = NML.Core.Game.WorldSeedReader.ReadSeed(s.Path);
                         WorldCards.Add(new WorldCardEntry
                         {
                             Name = s.Name,
@@ -290,6 +292,7 @@ public partial class GameContentPageViewModel : PageViewModelBase
                             SizeBytes = s.SizeBytes,
                             LastModified = s.LastModified,
                             PreviewIconPath = s.PreviewIconPath,
+                            SeedDisplay = seed.HasValue ? seed.Value.ToString() : string.Empty,
                         });
                     }
                     // Populate the backups panel (every {world}-{stamp}.zip, newest first).
@@ -395,6 +398,22 @@ public partial class GameContentPageViewModel : PageViewModelBase
         BackupWorld(card.ToGameSave());
         // Refresh so the new backup appears in the backups panel immediately.
         Refresh();
+    }
+
+    /// <summary>Copy a world's seed to the clipboard for sharing.</summary>
+    [RelayCommand]
+    private void CopySeed(WorldCardEntry card)
+    {
+        if (string.IsNullOrEmpty(card.SeedDisplay)) return;
+        try
+        {
+            if (Avalonia.Application.Current?.ApplicationLifetime
+                is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
+                && desktop.MainWindow is { Clipboard: var cb } && cb is not null)
+                cb.SetTextAsync(card.SeedDisplay).GetAwaiter().GetResult();
+            Status = $"seed.copied,{card.SeedDisplay}";
+        }
+        catch { /* non-fatal */ }
     }
 
     /// <summary>One-click export from a grid world card.</summary>
@@ -894,6 +913,9 @@ public sealed class WorldCardEntry : ObservableObject
 
     /// <summary>True when the world has a custom preview icon (drives the Image/placeholder swap).</summary>
     public bool HasIcon => !string.IsNullOrEmpty(PreviewIconPath);
+
+    /// <summary>The world seed as a readable string (e.g. "-123456789"), or empty when unreadable.</summary>
+    public string SeedDisplay { get; set; } = string.Empty;
 
     /// <summary>Human-readable size, e.g. "12.3 MB".</summary>
     public string SizeDisplay => SizeBytes switch
