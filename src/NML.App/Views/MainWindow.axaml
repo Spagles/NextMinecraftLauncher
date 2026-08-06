@@ -11,6 +11,7 @@
         Title="Next Minecraft Launcher"
         Width="1100" Height="700" MinWidth="900" MinHeight="560"
         WindowStartupLocation="CenterScreen"
+        FlowDirection="{Binding WindowFlowDirection}"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
         ExtendClientAreaTitleBarHeightHint="-1">

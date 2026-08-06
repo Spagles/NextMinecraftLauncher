@@ -31,6 +31,22 @@ public partial class MainWindowViewModel : ObservableObject
 
     partial void OnBackgroundImagePathChanged(string? value) => OnPropertyChanged(nameof(HasBackground));
 
+    /// <summary>True when the current language is RTL (Arabic, Hebrew, etc.).</summary>
+    public bool IsRtl =>
+        System.Globalization.CultureInfo.CurrentCulture.TextInfo.IsRightToLeft;
+
+    /// <summary>FlowDirection for the window (RightToLeft for RTL languages, LeftToRight otherwise).</summary>
+    public Avalonia.Media.FlowDirection WindowFlowDirection => IsRtl
+        ? Avalonia.Media.FlowDirection.RightToLeft
+        : Avalonia.Media.FlowDirection.LeftToRight;
+
+    /// <summary>Re-raise RTL properties when the language changes.</summary>
+    public void NotifyLanguageChanged()
+    {
+        OnPropertyChanged(nameof(IsRtl));
+        OnPropertyChanged(nameof(WindowFlowDirection));
+    }
+
     /// <summary>Localized window title (resolves via {Loc}).</summary>
     public string Title => "Next Minecraft Launcher";
 
@@ -55,6 +71,8 @@ public partial class MainWindowViewModel : ObservableObject
         Pages.Add(settings);
         // Load the saved background image path.
         BackgroundImagePath = settingsStore.Load().BackgroundImagePath;
+        // Subscribe to language changes for RTL re-evaluation.
+        Localization.LocalizationService.Instance.LanguageChanged += (_, _) => NotifyLanguageChanged();
         NavigateTo(home);
     }
 
