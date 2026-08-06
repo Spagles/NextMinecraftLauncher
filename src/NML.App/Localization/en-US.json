@@ -302,6 +302,15 @@
   "modpack.import.detected_instance": "Detected NML instance bundle",
   "modpack.import.detected_unknown": "Unrecognized archive",
 
+  "theme.css.title": "Custom CSS",
+  "theme.css.placeholder": "/* custom CSS injected into the live theme */",
+  "theme.css.apply": "Apply CSS",
+  "theme.css.clear": "Clear",
+  "theme.css.active": "Custom CSS active",
+  "theme.css.applied": "Custom CSS applied",
+  "theme.css.cleared": "Custom CSS cleared",
+  "theme.css.invalid": "Invalid CSS (empty, binary, or too large)",
+
   "account.refresh.button": "🔄 Refresh tokens",
   "account.refresh.refreshing": "Refreshing expired tokens…",
   "account.refresh.done": "Refreshed {0} account(s)",

@@ -81,6 +81,20 @@
                                        IsVisible="{Binding !IsAccentValid}"/>
                         </StackPanel>
                     </Border>
+                    <!-- Custom CSS import: paste CSS, apply to inject live, clear to remove -->
+                    <StackPanel Spacing="4" Margin="0,8,0,0">
+                        <TextBlock Text="{loc:Loc 'theme.css.title'}" Foreground="#ccc" FontSize="12"/>
+                        <TextBox Text="{Binding CustomCss}" AcceptsReturn="True" FontFamily="Cascadia Code,Consolas,monospace"
+                                 FontSize="11" MinHeight="90" MaxHeight="220" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                 Watermark="{loc:Loc 'theme.css.placeholder'}" TextWrapping="NoWrap"/>
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Button Content="{loc:Loc 'theme.css.apply'}" Command="{Binding ApplyCustomCssCommand}"
+                                    Background="#2f5fcc" Foreground="White" Padding="14,5"/>
+                            <Button Content="{loc:Loc 'theme.css.clear'}" Command="{Binding ClearCustomCssCommand}" Classes="small"/>
+                            <TextBlock Text="{loc:Loc 'theme.css.active'}" Foreground="#81c784" FontSize="11"
+                                       VerticalAlignment="Center" IsVisible="{Binding HasActiveCustomCss}"/>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
 

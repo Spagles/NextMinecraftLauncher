@@ -50,6 +50,16 @@ public partial class SettingsPageViewModel : PageViewModelBase
         "https://mcdownload.azureedge.net",
     };
 
+    /// <summary>User-typed custom CSS body (multi-line). Bound to the textarea; persisted + applied on Apply.</summary>
+    [ObservableProperty] private string _customCss = string.Empty;
+
+    /// <summary>True when a custom stylesheet is currently active (applied to the live theme).</summary>
+    [ObservableProperty] private bool _hasActiveCustomCss;
+
+    /// <summary>Lazy-instantiated CSS manager over the launcher settings dir.</summary>
+    private CustomCssManager? _cssManager;
+    private CustomCssManager CssManager => _cssManager ??= new CustomCssManager(_settings.SettingsDir);
+
     [ObservableProperty] private string _newProviderName = string.Empty;
     [ObservableProperty] private string _newProviderUrl = "https://api.openai.com/v1";
     [ObservableProperty] private string _newProviderModel = string.Empty;
@@ -146,6 +156,60 @@ public partial class SettingsPageViewModel : PageViewModelBase
         RaisePreviewChanged();
     }
 
+    // --- Custom CSS import: validate + persist + inject the user stylesheet into the live theme.
+    // The CSS is persisted to a file, then loaded via a StyleInclude so Avalonia parses it. We keep
+    // a single injected-instance reference so re-applying/clearing swaps it cleanly.
+    private Avalonia.Markup.Xaml.Styling.StyleInclude? _injectedCss;
+
+    /// <summary>Apply the typed CSS: validate → persist → inject live. Empty/invalid input clears.</summary>
+    [RelayCommand]
+    private void ApplyCustomCss()
+    {
+        try
+        {
+            bool saved = CssManager.Save(CustomCss); // persists + validates; false when rejected/cleared
+            RemoveInjectedCustomCss();
+            if (saved && CssManager.HasCustomCss())
+            {
+                // StyleInclude loads + compiles the CSS from the file path at runtime.
+                _injectedCss = new Avalonia.Markup.Xaml.Styling.StyleInclude(
+                    new System.Uri("avares://NML.App/Styles/custom.css"))
+                {
+                    Source = new System.Uri(CssManager.FilePath),
+                };
+                Avalonia.Application.Current?.Styles.Add(_injectedCss);
+                HasActiveCustomCss = true;
+                Status = "theme.css.applied";
+            }
+            else
+            {
+                HasActiveCustomCss = false;
+                Status = string.IsNullOrWhiteSpace(CustomCss) ? "theme.css.cleared" : "theme.css.invalid";
+            }
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    /// <summary>Remove any previously-injected custom-CSS style.</summary>
+    private void RemoveInjectedCustomCss()
+    {
+        if (_injectedCss is null) return;
+        try { Avalonia.Application.Current?.Styles.Remove(_injectedCss); }
+        catch { /* not present */ }
+        _injectedCss = null;
+    }
+
+    /// <summary>Clear the persisted stylesheet + remove the injected style.</summary>
+    [RelayCommand]
+    private void ClearCustomCss()
+    {
+        CssManager.Clear();
+        CustomCss = string.Empty;
+        RemoveInjectedCustomCss();
+        HasActiveCustomCss = false;
+        Status = "theme.css.cleared";
+    }
+
     // --- Live theme preview: derived from Theme + AccentColor so the preview card updates the
     // instant either changes, with no restart. All values come from ThemePreviewModel (tested). ---
     private ThemePreviewModel PreviewModel => new() { Theme = Theme, Accent = AccentColor };
@@ -209,6 +273,9 @@ public partial class SettingsPageViewModel : PageViewModelBase
         BackgroundImagePath = s.BackgroundImagePath ?? string.Empty;
         AccentColor = s.AccentColor ?? "#4fc3f7";
         Theme = s.Theme ?? "dark";
+        // Load any persisted custom CSS into the editor and apply it live at startup.
+        CustomCss = CssManager.Load() ?? string.Empty;
+        if (!string.IsNullOrWhiteSpace(CustomCss)) ApplyCustomCss();
         foreach (ChatProviderConfig p in s.Providers) Providers.Add(p);
         SelectedLanguage = AvailableLanguages.FirstOrDefault(c =>
             c.Name.Equals(LocalizationService.Instance.CurrentCulture.Name, StringComparison.OrdinalIgnoreCase));
