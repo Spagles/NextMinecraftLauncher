@@ -30,6 +30,10 @@ public partial class SettingsPageViewModel : PageViewModelBase
     private readonly NML.Core.Java.JavaRuntimeInstaller? _javaInstaller;
     private readonly ILogger<SettingsPageViewModel> _logger;
 
+    /// <summary>Human-readable system info summary (CPU, RAM, OS, arch).</summary>
+    public string SystemInfoDisplay { get; } = NML.Core.Platform.SystemInfoCollector.FormatSummary(
+        NML.Core.Platform.SystemInfoCollector.Collect());
+
     public ObservableCollection<JavaRuntime> JavaRuntimes { get; } = new();
 
     /// <summary>True while a Java runtime is downloading/installing.</summary>

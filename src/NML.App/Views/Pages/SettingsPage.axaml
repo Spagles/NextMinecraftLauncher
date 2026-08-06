@@ -98,6 +98,14 @@
                 </StackPanel>
             </StackPanel>
 
+            <!-- System info -->
+            <Border Background="#1a1a20" CornerRadius="4" Padding="10,8" Margin="0,4">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="💻 System" Foreground="#4fc3f7" FontSize="12" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding SystemInfoDisplay}" Foreground="#aaa" FontSize="11"/>
+                </StackPanel>
+            </Border>
+
             <!-- Java -->
             <StackPanel Spacing="8">
                 <TextBlock Text="{loc:Loc 'settings.java'}" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
