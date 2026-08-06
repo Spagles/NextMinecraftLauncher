@@ -12,6 +12,7 @@ using NML.Core.Instances;
 using NML.Core.Java;
 using NML.Core.Launch;
 using NML.Core.Models;
+using NML.Core.Modpacks;
 
 namespace NML.App.ViewModels.Pages;
 
@@ -38,6 +39,7 @@ public partial class HomePageViewModel : PageViewModelBase
     private readonly AuthlibInjectorSetup? _authlibInjectorSetup;
     private readonly AccountStore? _activeAccountStore;
     private readonly InstanceTransferService? _instanceTransfer;
+    private readonly ModpackInstaller? _modpackInstaller;
     private readonly Core.Modloaders.FabricInstaller? _fabricInstaller;
     private readonly Core.Modloaders.QuiltInstaller? _quiltInstaller;
     private readonly Core.Modloaders.ForgeInstaller? _forgeInstaller;
@@ -83,6 +85,9 @@ public partial class HomePageViewModel : PageViewModelBase
     /// <summary>Wizard toggle: whether the new instance gets its own .minecraft (default) or
     /// shares the common one. Bound to a checkbox in the new-instance wizard.</summary>
     [ObservableProperty] private bool _newInstanceIsIsolated = true;
+
+    /// <summary>Path to a modpack zip (.mrpack / CurseForge manifest) to import as a new instance.</summary>
+    [ObservableProperty] private string _importModpackPath = string.Empty;
 
     /// <summary>Available modloaders for the wizard dropdown.</summary>
     public IReadOnlyList<string> ModloaderChoices { get; } = new[] { "None", "Fabric", "Quilt", "Forge", "NeoForge" };
@@ -274,6 +279,7 @@ public partial class HomePageViewModel : PageViewModelBase
         AuthlibInjectorSetup? authlibInjectorSetup = null,
         AccountStore? activeAccountStore = null,
         InstanceTransferService? instanceTransfer = null,
+        ModpackInstaller? modpackInstaller = null,
         Core.Modloaders.FabricInstaller? fabricInstaller = null,
         Core.Modloaders.QuiltInstaller? quiltInstaller = null,
         Core.Modloaders.ForgeInstaller? forgeInstaller = null,
@@ -292,6 +298,7 @@ public partial class HomePageViewModel : PageViewModelBase
         _authlibInjectorSetup = authlibInjectorSetup;
         _activeAccountStore = activeAccountStore;
         _instanceTransfer = instanceTransfer;
+        _modpackInstaller = modpackInstaller;
         _fabricInstaller = fabricInstaller;
         _quiltInstaller = quiltInstaller;
         _forgeInstaller = forgeInstaller;
@@ -473,6 +480,68 @@ public partial class HomePageViewModel : PageViewModelBase
             Status = $"home.installed,{imported.Name}";
         }
         catch (Exception ex) { Status = $"home.launch_failed,{ex.Message}"; _logger.LogError(ex, "Import failed."); }
+    }
+
+    /// <summary>
+    /// Import a modpack archive (Modrinth <c>.mrpack</c>, CurseForge <c>manifest.json</c>, or an
+    /// NML instance bundle) as a new instance. The format is detected from the archive contents
+    /// and routed to the right handler, so the same button accepts packs from multiple sources.
+    /// </summary>
+    [RelayCommand]
+    private async Task ImportModpackAsync()
+    {
+        string zipPath = ImportModpackPath?.Trim() ?? string.Empty;
+        if (string.IsNullOrEmpty(zipPath)) { Status = "modpack.import.needed"; return; }
+        if (!File.Exists(zipPath)) { Status = "modpack.import.not_found"; return; }
+
+        // Detect the format up front so the status tells the user what we recognized.
+        ModpackFormat fmt = ModpackFormatDetector.DetectFile(zipPath);
+        Status = fmt switch
+        {
+            ModpackFormat.Modrinth       => "modpack.import.detected_modrinth",
+            ModpackFormat.CurseForge     => "modpack.import.detected_curseforge",
+            ModpackFormat.InstanceBundle => "modpack.import.detected_instance",
+            _                            => "modpack.import.detected_unknown",
+        };
+
+        try
+        {
+            string instanceName = Path.GetFileNameWithoutExtension(zipPath);
+            // Instance bundles re-use the dedicated instance-transfer import path (preserves the
+            // bundled mods/config/launch-options), keeping behavior consistent with .nml-import.
+            if (fmt == ModpackFormat.InstanceBundle && _instanceTransfer is not null)
+            {
+                Instance imported = _instanceTransfer.Import(zipPath);
+                Instances.Add(imported); ApplySort();
+                SelectedInstance = imported;
+                Status = $"home.installed,{imported.Name}";
+                ImportModpackPath = string.Empty;
+                return;
+            }
+
+            if (_modpackInstaller is null) { Status = "common.error"; return; }
+            if (fmt == ModpackFormat.Unknown)
+            {
+                Status = "modpack.import.unrecognized";
+                return;
+            }
+
+            // Install the modpack into a new isolated game dir, then register the instance.
+            Instance inst = new() { Name = instanceName, VersionId = "(modpack)", IsIsolated = true };
+            var mc = new MinecraftDirectory(_instances.GameDirFor(inst));
+            Directory.CreateDirectory(mc.Root);
+            await _modpackInstaller.InstallAsync(zipPath, instanceName, mc);
+            _instances.Add(inst);
+            Instances.Add(inst); ApplySort();
+            SelectedInstance = inst;
+            Status = $"home.installed,{instanceName}";
+            ImportModpackPath = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            Status = $"home.launch_failed,{ex.Message}";
+            _logger.LogError(ex, "Modpack import failed.");
+        }
     }
 
     /// <summary>Export ALL instances to .zip bundles on the Desktop.</summary>

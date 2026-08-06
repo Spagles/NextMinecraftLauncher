@@ -55,6 +55,19 @@
                 </StackPanel>
             </Border>
 
+            <!-- Multi-source modpack import: paste a .mrpack / CurseForge / instance-bundle path → detect → install -->
+            <Border Background="#1a1a20" CornerRadius="6" Padding="10" Margin="0,4">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="{loc:Loc 'modpack.import.title'}" Foreground="#4fc3f7" FontSize="12" FontWeight="SemiBold"/>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBox Text="{Binding ImportModpackPath}" Watermark="{loc:Loc 'modpack.import.path_hint'}" MinWidth="380" FontSize="11" FontFamily="Cascadia Code,Consolas,monospace"/>
+                        <Button Content="{loc:Loc 'modpack.import.button'}" Command="{Binding ImportModpackCommand}"
+                                Background="#388e3c" Foreground="White" Padding="14,5"/>
+                    </StackPanel>
+                    <TextBlock Text="{loc:Loc 'modpack.import.hint'}" Foreground="#666" FontSize="10" FontStyle="Italic" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
             <!-- Share code -->
             <StackPanel Spacing="4">
                 <StackPanel Orientation="Horizontal" Spacing="6">

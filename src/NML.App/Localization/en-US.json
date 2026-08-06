@@ -290,6 +290,18 @@
   "backup.restore.cancel": "Cancel restore",
   "backup.restore.cancelled": "Restore cancelled",
 
+  "modpack.import.title": "Import modpack",
+  "modpack.import.button": "📥 Import",
+  "modpack.import.path_hint": "path to a .mrpack / CurseForge / instance-bundle .zip",
+  "modpack.import.hint": "Detects the format automatically: Modrinth .mrpack, CurseForge manifest.json, or an NML instance bundle.",
+  "modpack.import.needed": "Enter a modpack zip path",
+  "modpack.import.not_found": "File not found",
+  "modpack.import.unrecognized": "Unrecognized modpack format",
+  "modpack.import.detected_modrinth": "Detected Modrinth modpack (.mrpack)",
+  "modpack.import.detected_curseforge": "Detected CurseForge modpack (manifest.json)",
+  "modpack.import.detected_instance": "Detected NML instance bundle",
+  "modpack.import.detected_unknown": "Unrecognized archive",
+
   "account.refresh.button": "🔄 Refresh tokens",
   "account.refresh.refreshing": "Refreshing expired tokens…",
   "account.refresh.done": "Refreshed {0} account(s)",

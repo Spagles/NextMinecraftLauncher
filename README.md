@@ -3,7 +3,7 @@
 A cross-platform **Minecraft launcher** built in **C# / Avalonia UI 11 + .NET 8**, aiming to
 match HMCL and PCL while adding **first-class AI features**.
 
-> **137 commits, 274 tests, 0 warnings, 31 languages.** A real, functional launcher.
+> **138 commits, 281 tests, 0 warnings, 31 languages.** A real, functional launcher.
 
 ## What works right now
 
@@ -35,6 +35,8 @@ match HMCL and PCL while adding **first-class AI features**.
 - **Live theme preview:** a settings card reflecting the active theme + accent the instant either
   changes (title bar, primary/secondary buttons, sample body text, invalid-hex fallback)
 - **Modpack support:** Modrinth .mrpack + CurseForge manifest import with mod resolution
+- **Multi-source modpack import:** one button auto-detects Modrinth / CurseForge / NML instance
+  bundle from the archive contents and routes to the right handler
 - **Multiplayer server list:** saves favorites (servers.json) + live Server-List-Ping
   (MOTD, player count, latency, favicon), add/remove/reorder, one-click connect
   (`--server/--port` game args)
@@ -72,7 +74,7 @@ match HMCL and PCL while adding **first-class AI features**.
   silent multi-account token refresh (MSA refresh-token lifecycle, 5-min proactive margin)
 
 ### Internationalization
-- **31 languages, 294 keys each (9,114 total translated keys):** 中文, English, 日本語, 한국어,
+- **31 languages, 305 keys each (9,455 total translated keys):** 中文, English, 日本語, 한국어,
   Русский, Français, Español, Deutsch, Português, Italiano, العربية, Türkçe, हिन्दी, ไทย,
   Tiếng Việt, Bahasa Indonesia, Polski, Українська, Nederlands, Svenska, Čeština,
   Norsk, Suomi, Dansk, Magyar, Română, Azərbaycan, Afrikaans, עברית, Català, Қазақша
