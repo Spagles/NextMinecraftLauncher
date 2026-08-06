@@ -71,15 +71,30 @@
 
                 <!-- Log viewer (visible on the logs tab) -->
                 <StackPanel IsVisible="{Binding IsLogsTab}" Spacing="8" Margin="0,12,0,0">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <TextBox Text="{Binding LogSearchText}" Watermark="{loc:Loc 'content.log_search'}" MinWidth="300"/>
+                    <!-- Filter toolbar: search box + regex toggle + severity dropdown + refresh -->
+                    <WrapPanel>
+                        <TextBox Text="{Binding LogSearchText}" Watermark="{loc:Loc 'content.log_search'}" MinWidth="280"/>
+                        <CheckBox Content="{loc:Loc 'log.regex'}" IsChecked="{Binding IsRegexSearch}"
+                                  VerticalAlignment="Center" Margin="8,0" Foreground="#c0c0c0"/>
+                        <TextBlock Text="{loc:Loc 'log.level'}" VerticalAlignment="Center" Margin="4,0" Foreground="#c0c0c0"/>
+                        <ComboBox ItemsSource="{Binding LogSeverityOptions}" SelectedItem="{Binding MinSeverity}"
+                                  MinWidth="90"/>
                         <Button Content="{loc:Loc 'common.refresh'}" Command="{Binding LoadLogCommand}" Classes="small"/>
-                    </StackPanel>
+                    </WrapPanel>
+                    <TextBlock Text="{loc:Loc 'log.regex_hint'}" Foreground="#666" FontSize="10" FontStyle="Italic"
+                               IsVisible="{Binding IsRegexSearch}"/>
+                    <!-- Colored, per-line log list: severity-driven Foreground on each line. -->
                     <Border Background="#1a1a1e" CornerRadius="4" Padding="8" MaxHeight="500">
                         <ScrollViewer>
-                            <SelectableTextBlock Text="{Binding FilteredLog}" Foreground="#c0c0c0"
-                                                 FontFamily="Cascadia Code,Consolas,monospace" FontSize="11"
-                                                 TextWrapping="NoWrap"/>
+                            <ItemsControl ItemsSource="{Binding FilteredLogLines}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Text}" Foreground="{Binding Color}"
+                                                   FontFamily="Cascadia Code,Consolas,monospace" FontSize="11"
+                                                   TextWrapping="NoWrap"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </ScrollViewer>
                     </Border>
                 </StackPanel>

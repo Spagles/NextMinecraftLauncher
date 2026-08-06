@@ -1,10 +1,12 @@
 using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using NML.App.Services;
 using NML.Core;
 using NML.Core.Instances;
+using NML.Core.Logging;
 using NML.Core.Modloaders;
 
 namespace NML.App.ViewModels.Pages;
@@ -73,6 +75,31 @@ public partial class GameContentPageViewModel : PageViewModelBase
     [ObservableProperty] private string _logContent = string.Empty;
     [ObservableProperty] private string _logSearchText = string.Empty;
 
+    /// <summary>True when the search box is treated as a regex pattern (false = plain substring).</summary>
+    [ObservableProperty] private bool _isRegexSearch;
+
+    /// <summary>
+    /// Minimum severity to display ("Error" hides Warn/Info/Debug/Trace, etc.).
+    /// Bound to a dropdown of <see cref="LogSeverityOptions"/>.
+    /// </summary>
+    [ObservableProperty] private string _minSeverity = nameof(LogSeverityClassifier.Severity.Trace);
+
+    /// <summary>Severity bands offered in the filter dropdown, most-severe first.</summary>
+    public IReadOnlyList<string> LogSeverityOptions { get; } = new[]
+    {
+        nameof(LogSeverityClassifier.Severity.Trace),
+        nameof(LogSeverityClassifier.Severity.Debug),
+        nameof(LogSeverityClassifier.Severity.Info),
+        nameof(LogSeverityClassifier.Severity.Warn),
+        nameof(LogSeverityClassifier.Severity.Error),
+    };
+
+    /// <summary>All classified lines from the current log (pre-filter).</summary>
+    private List<LogLine> _allLogLines = new();
+
+    /// <summary>Filtered + classified lines bound to the colored ItemsControl.</summary>
+    public ObservableCollection<LogLineEntry> FilteredLogLines { get; } = new();
+
     /// <summary>Currently-edited config file content.</summary>
     [ObservableProperty] private string _configContent = string.Empty;
     /// <summary>Path of the currently-selected config file.</summary>
@@ -100,27 +127,61 @@ public partial class GameContentPageViewModel : PageViewModelBase
             Instance? inst = GetActiveInstance();
             if (inst is null) { LogContent = "content.empty"; return; }
             var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
-            LogContent = await Task.Run(() => browser.ReadLatestLog());
-            if (string.IsNullOrEmpty(LogContent)) LogContent = "content.empty";
+            string raw = await Task.Run(() => browser.ReadLatestLog());
+            LogContent = string.IsNullOrEmpty(raw) ? "content.empty" : raw;
+            // Classify every line once; the filter rebuild is cheap relative to the I/O.
+            _allLogLines = LogSeverityClassifier.ClassifyAll(
+                LogContent.Split('\n', StringSplitOptions.RemoveEmptyEntries)).ToList();
+            RebuildFilteredLog();
         }
         catch (Exception ex) { LogContent = $"common.error: {ex.Message}"; }
     }
 
-    /// <summary>Filtered log lines matching the search text (null/empty = all).</summary>
-    public string FilteredLog
+    /// <summary>
+    /// Rebuild <see cref="FilteredLogLines"/> from <see cref="_allLogLines"/> by applying the
+    /// severity floor and the substring-or-regex search. Swallows invalid regex patterns
+    /// (treats them as "no match" and clears the list) so a half-typed pattern never crashes.
+    /// </summary>
+    private void RebuildFilteredLog()
     {
-        get
+        FilteredLogLines.Clear();
+        if (_allLogLines.Count == 0) return;
+
+        // Parse the severity floor (default Trace = show everything).
+        if (!Enum.TryParse<LogSeverityClassifier.Severity>(MinSeverity, out var floor))
+            floor = LogSeverityClassifier.Severity.Trace;
+
+        // Compile the regex once if in regex mode; fall back to substring comparison otherwise.
+        Regex? regex = null;
+        bool hasSearch = !string.IsNullOrWhiteSpace(LogSearchText);
+        if (hasSearch && IsRegexSearch)
         {
-            if (string.IsNullOrEmpty(LogSearchText) || string.IsNullOrEmpty(LogContent))
-                return LogContent;
-            var lines = LogContent.Split('\n');
-            var filtered = lines.Where(l => l.Contains(LogSearchText, StringComparison.OrdinalIgnoreCase));
-            return string.Join('\n', filtered);
+            try { regex = new Regex(LogSearchText, RegexOptions.IgnoreCase); }
+            catch (ArgumentException) { FilteredLogLines.Clear(); return; } // invalid pattern
+        }
+
+        foreach (var line in _allLogLines)
+        {
+            // Severity floor: Error(0) < Warn(1) < Info(2) < Debug(3) < Trace(4).
+            // Show a line only if its severity is at-or-above the floor (i.e. <= floor numerically).
+            if ((int)line.Severity > (int)floor) continue;
+
+            if (hasSearch)
+            {
+                bool match = regex is not null
+                    ? regex.IsMatch(line.Text)
+                    : line.Text.Contains(LogSearchText, StringComparison.OrdinalIgnoreCase);
+                if (!match) continue;
+            }
+            FilteredLogLines.Add(new LogLineEntry(line.Text, line.Color));
         }
     }
 
-    partial void OnLogSearchTextChanged(string value) => OnPropertyChanged(nameof(FilteredLog));
-    partial void OnLogContentChanged(string value) => OnPropertyChanged(nameof(FilteredLog));
+    // Re-run the filter whenever any of its inputs change.
+    partial void OnLogSearchTextChanged(string value) => RebuildFilteredLog();
+    partial void OnLogContentChanged(string value) => RebuildFilteredLog();
+    partial void OnIsRegexSearchChanged(bool value) => RebuildFilteredLog();
+    partial void OnMinSeverityChanged(string value) => RebuildFilteredLog();
 
     [RelayCommand]
     private void EnableAllMods()
@@ -412,4 +473,27 @@ public partial class GameContentPageViewModel : PageViewModelBase
         }
         finally { IsCheckingModUpdates = false; }
     }
+}
+
+/// <summary>
+/// A single line of the log viewer bound to the colored <c>ItemsControl</c>. Carries the
+/// raw text and the severity-derived hex color so the XAML <c>DataTemplate</c> can render
+/// each line with the right <c>Foreground</c> without re-classifying in the view.
+/// </summary>
+public sealed class LogLineEntry : ObservableObject
+{
+    public LogLineEntry(string text, string color)
+    {
+        _text = text;
+        _color = color;
+    }
+
+    private readonly string _text;
+    private readonly string _color;
+
+    /// <summary>The raw log line text.</summary>
+    public string Text => _text;
+
+    /// <summary>Hex color for this line (severity-derived, e.g. "#ef5350" for errors).</summary>
+    public string Color => _color;
 }
