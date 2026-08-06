@@ -3,7 +3,7 @@
 A cross-platform **Minecraft launcher** built in **C# / Avalonia UI 11 + .NET 8**, aiming to
 match HMCL and PCL while adding **first-class AI features**.
 
-> **158 commits, 450 tests, 0 warnings, 31 languages.** A real, functional launcher.
+> **159 commits, 455 tests, 0 warnings, 31 languages.** A real, functional launcher.
 
 ## What works right now
 
@@ -31,6 +31,7 @@ match HMCL and PCL while adding **first-class AI features**.
 - **World grid:** saves rendered as icon cards (level.dat LevelName + icon.png preview),
   one-click timestamped backup, export/delete + difficulty & gamerule reader (keepInventory,
   doDaylightCycle, etc. parsed from level.dat) + world seed reader (shareable, copy-to-clipboard)
+  + advancement/achievement progress reader (done/total + percent from advancements/*.json)
 - **World backup/restore UI:** backups panel lists every timestamped zip (newest first),
   restore overwrites the live folder exactly with a live progress bar + cancel, delete a backup
 - **Screenshot grid:** thumbnail cards + multi-select + batch export to a desktop zip +
