@@ -5,14 +5,14 @@
 
     <Application.Resources>
         <ResourceDictionary>
-            <!-- Shared design tokens (dark theme) -->
-            <SolidColorBrush x:Key="SurfaceBrush" Color="#0a0a0e"/>
-            <SolidColorBrush x:Key="SurfaceAltBrush" Color="#1a1a1e"/>
-            <SolidColorBrush x:Key="PanelBrush" Color="#1f1f25"/>
-            <SolidColorBrush x:Key="PanelAltBrush" Color="#25252b"/>
-            <SolidColorBrush x:Key="TextPrimaryBrush" Color="#e0e0e0"/>
-            <SolidColorBrush x:Key="TextSecondaryBrush" Color="#aaa"/>
-            <SolidColorBrush x:Key="TextMutedBrush" Color="#666"/>
+            <!-- Shared design tokens (dark theme, translucent for Mica backdrop) -->
+            <SolidColorBrush x:Key="SurfaceBrush" Color="#E80A0A0E"/>
+            <SolidColorBrush x:Key="SurfaceAltBrush" Color="#D81A1A1E"/>
+            <SolidColorBrush x:Key="PanelBrush" Color="#CC1F1F25"/>
+            <SolidColorBrush x:Key="PanelAltBrush" Color="#CC25252B"/>
+            <SolidColorBrush x:Key="TextPrimaryBrush" Color="#E8E0E0E0"/>
+            <SolidColorBrush x:Key="TextSecondaryBrush" Color="#B0AAAAAA"/>
+            <SolidColorBrush x:Key="TextMutedBrush" Color="#90666666"/>
             <SolidColorBrush x:Key="AccentBrush" Color="#4fc3f7"/>
             <SolidColorBrush x:Key="SuccessBrush" Color="#4caf50"/>
             <SolidColorBrush x:Key="DangerBrush" Color="#f44336"/>

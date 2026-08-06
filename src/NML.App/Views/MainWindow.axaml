@@ -14,7 +14,8 @@
         FlowDirection="{Binding WindowFlowDirection}"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
-        ExtendClientAreaTitleBarHeightHint="-1">
+        ExtendClientAreaTitleBarHeightHint="-1"
+        Background="Transparent">
 
     <!-- Outer grid: background image layer + main content -->
     <Grid>

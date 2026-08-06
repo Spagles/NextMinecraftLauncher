@@ -4,43 +4,85 @@
              x:Class="NML.App.Views.Pages.HomePage">
     <ScrollViewer Padding="24">
         <Grid>
-        <StackPanel Spacing="18" MaxWidth="640">
-            <TextBlock Text="{loc:Loc 'home.instances'}" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
+        <StackPanel Spacing="18" MaxWidth="680" HorizontalAlignment="Stretch">
 
-            <ListBox ItemsSource="{Binding Instances}" SelectedItem="{Binding SelectedInstance}"
-                     MinHeight="100" MaxHeight="240" Background="{DynamicResource PanelBrush}" Foreground="{DynamicResource TextPrimaryBrush}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Margin="4,2">
-                            <TextBlock Text="{Binding Name}" Foreground="White"/>
-                            <TextBlock Text="{Binding VersionId}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+            <!-- ===== HERO LAUNCH BAR (PCL/HMCL style) ===== -->
+            <Border Background="{DynamicResource PanelBrush}" CornerRadius="12" Padding="20,16">
+                <StackPanel Spacing="12">
+                    <!-- Selected instance info -->
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="{Binding SelectedInstance.DisplayName, FallbackValue='No instance selected'}"
+                                   FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{Binding SelectedInstance.VersionId, StringFormat='Version {0}', FallbackValue='Select an instance below'}"
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                    <!-- Big Hero launch button -->
+                    <Button Content="{loc:Loc 'home.launch'}" Command="{Binding LaunchCommand}"
+                            IsEnabled="{Binding !IsBusy}"
+                            FontSize="17" FontWeight="Bold"
+                            Background="{DynamicResource SuccessBrush}" Foreground="White"
+                            CornerRadius="8" Padding="0,16"
+                            HorizontalAlignment="Stretch" Margin="0,4"/>
+                    <!-- Offline username + refresh -->
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBox Text="{Binding OfflineUsername}" Watermark="{loc:Loc 'home.offline_username'}" MinWidth="160" FontSize="12"/>
+                        <Button Content="{loc:Loc 'home.refresh'}" Command="{Binding RefreshVersionsCommand}" Classes="small"/>
+                    </StackPanel>
+                    <!-- Status line -->
+                    <TextBlock Text="{Binding Status, StringFormat='{loc:Loc}'}" Foreground="{DynamicResource AccentBrush}" FontSize="11"
+                               IsVisible="{Binding Status, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                </StackPanel>
+            </Border>
 
-            <StackPanel Orientation="Horizontal" Spacing="8">
-                <TextBlock Text="Sort:" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"/>
-                <ComboBox ItemsSource="{Binding SortModes}" SelectedItem="{Binding SortMode}" MinWidth="100" FontSize="11"/>
+            <!-- ===== INSTANCE LIST ===== -->
+            <StackPanel Spacing="6">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="{loc:Loc 'home.instances'}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                    <Button Content="⭐" Command="{Binding ToggleFavoriteCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"
+                            IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                    <Button Content="➕" Command="{Binding OpenNewInstanceWizardCommand}" Classes="small"/>
+                    <Button Content="📋" Command="{Binding CloneInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"
+                            IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                    <Button Content="📦" Command="{Binding ExportInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"
+                            IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                    <Button Content="🗑" Command="{Binding RemoveInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small danger"
+                            IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                    <ComboBox ItemsSource="{Binding SortModes}" SelectedItem="{Binding SortMode}" MinWidth="90" FontSize="11"/>
+                </StackPanel>
+                <!-- Instance cards -->
+                <ListBox ItemsSource="{Binding Instances}" SelectedItem="{Binding SelectedInstance}"
+                         MinHeight="80" MaxHeight="240" Background="Transparent" BorderThickness="0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="{DynamicResource PanelBrush}" CornerRadius="8" Padding="12,8" Margin="0,2">
+                                <StackPanel Spacing="2">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <TextBlock Text="⭐" FontSize="10" IsVisible="{Binding IsFavorite}"/>
+                                        <TextBlock Text="{Binding Name}" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="SemiBold" FontSize="13"/>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding VersionId}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </StackPanel>
 
-            <!-- Per-instance actions + batch operations -->
-            <StackPanel Orientation="Horizontal" Spacing="4">
-                <Button Content="⭐ Favorite" Command="{Binding ToggleFavoriteCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"
-                        IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}"/>
-                <Button Content="➕ New" Command="{Binding OpenNewInstanceWizardCommand}" Classes="small"/>
-                <Button Content="📋 Clone" Command="{Binding CloneInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"
-                        IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}"/>
-                <Button Content="📦 Export" Command="{Binding ExportInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"
-                        IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}"/>
-                <Button Content="🗑 Remove" Command="{Binding RemoveInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small danger"
-                        IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}"/>
-                <Button Content="{loc:Loc 'home.export_all'}" Command="{Binding ExportAllInstancesCommand}" Classes="small"/>
-                <Button Content="{loc:Loc 'home.delete_all'}" Command="{Binding DeleteAllInstancesCommand}" Classes="small"/>
-            </StackPanel>
+            <!-- ===== MODPACK IMPORT ===== -->
+            <Border Background="{DynamicResource PanelBrush}" CornerRadius="8" Padding="12,10">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="{loc:Loc 'modpack.import.title'}" Foreground="{DynamicResource AccentBrush}" FontSize="12" FontWeight="SemiBold"/>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBox Text="{Binding ImportModpackPath}" Watermark="{loc:Loc 'modpack.import.path_hint'}" MinWidth="320" FontSize="11" FontFamily="Cascadia Code,Consolas,monospace"/>
+                        <Button Content="{loc:Loc 'modpack.import.button'}" Command="{Binding ImportModpackCommand}"
+                                Background="{DynamicResource SuccessBrush}" Foreground="White" Padding="12,4" FontSize="11"/>
+                    </StackPanel>
+                    <TextBlock Text="{loc:Loc 'modpack.import.hint'}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10" FontStyle="Italic" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
 
-            <!-- Deep modpack export: pick optional contents (mods/config always bundled) -->
-            <Border Background="{DynamicResource PanelBrush}" CornerRadius="6" Padding="10" Margin="0,4">
+            <!-- ===== DEEP EXPORT ===== -->
+            <Border Background="{DynamicResource PanelBrush}" CornerRadius="8" Padding="12,10">
                 <StackPanel Spacing="6">
                     <TextBlock Text="{loc:Loc 'modpack.deep_title'}" Foreground="{DynamicResource AccentBrush}" FontSize="12" FontWeight="SemiBold"/>
                     <WrapPanel>
@@ -52,167 +94,115 @@
                     <Button Content="{loc:Loc 'modpack.deep_export'}" Command="{Binding ExportDeepInstanceCommand}"
                             CommandParameter="{Binding SelectedInstance}"
                             IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}"
-                            Background="{DynamicResource AccentBrush}" Foreground="White" Padding="14,5" HorizontalAlignment="Left"/>
-                    <TextBlock Text="{loc:Loc 'modpack.deep_hint'}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10" FontStyle="Italic"/>
+                            Background="{DynamicResource AccentBrush}" Foreground="White" Padding="12,4" HorizontalAlignment="Left"/>
                 </StackPanel>
             </Border>
 
-            <!-- Multi-source modpack import: paste a .mrpack / CurseForge / instance-bundle path → detect → install -->
-            <Border Background="{DynamicResource PanelBrush}" CornerRadius="6" Padding="10" Margin="0,4">
-                <StackPanel Spacing="6">
-                    <TextBlock Text="{loc:Loc 'modpack.import.title'}" Foreground="{DynamicResource AccentBrush}" FontSize="12" FontWeight="SemiBold"/>
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <TextBox Text="{Binding ImportModpackPath}" Watermark="{loc:Loc 'modpack.import.path_hint'}" MinWidth="380" FontSize="11" FontFamily="Cascadia Code,Consolas,monospace"/>
-                        <Button Content="{loc:Loc 'modpack.import.button'}" Command="{Binding ImportModpackCommand}"
-                                Background="#388e3c" Foreground="White" Padding="14,5"/>
-                    </StackPanel>
-                    <TextBlock Text="{loc:Loc 'modpack.import.hint'}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10" FontStyle="Italic" TextWrapping="Wrap"/>
-                </StackPanel>
-            </Border>
-
-            <!-- One-click AI crash diagnosis: locate the newest crash report + latest.log tail and submit to the AI -->
-            <Button Content="{loc:Loc 'crash.submit.button'}" Command="{Binding SubmitCrashToAiCommand}"
-                    Classes="small" Background="#ab47bc" Foreground="White" Padding="14,5" HorizontalAlignment="Left"
-                    IsEnabled="{Binding !IsBusy}"/>
-
-            <!-- Share code -->
-            <StackPanel Spacing="4">
-                <StackPanel Orientation="Horizontal" Spacing="6">
-                    <Button Content="🔗 Share" Command="{Binding ShareInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"
-                            IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}"/>
-                    <TextBox Text="{Binding ShareCode}" Watermark="NML#..." MinWidth="300" FontFamily="Cascadia Code,Consolas,monospace" FontSize="11" IsReadOnly="True"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Spacing="6">
-                    <Button Content="📥 Import code" Command="{Binding ImportFromShareCodeCommand}" CommandParameter="{Binding ShareCode}" Classes="small"/>
-                </StackPanel>
-            </StackPanel>
-
-            <StackPanel Spacing="6">
-                <TextBlock Text="{loc:Loc 'home.offline_username'}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13"/>
-                <TextBox Text="{Binding OfflineUsername}" MinWidth="240"/>
-            </StackPanel>
-
-            <!-- Memory allocation slider -->
-            <StackPanel Spacing="6">
-                <StackPanel Orientation="Horizontal" Spacing="8">
-                    <TextBlock Text="{loc:Loc 'home.memory'}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" VerticalAlignment="Center"/>
-                    <TextBlock Text="{Binding SelectedMaxMemory}" Foreground="{DynamicResource AccentBrush}" FontSize="13" VerticalAlignment="Center"/>
-                    <TextBlock Text="MB" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"/>
-                </StackPanel>
-                <Slider Minimum="512" Maximum="{Binding SliderMax}" Value="{Binding SelectedMaxMemory}"
-                        TickFrequency="512" IsSnapToTickEnabled="True" MinWidth="400"/>
-                <TextBlock Text="{loc:Loc 'home.memory_recommended'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
-            </StackPanel>
-
-            <!-- Advanced launch options -->
-            <StackPanel Spacing="6">
-                <TextBlock Text="{loc:Loc 'home.advanced'}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13"/>
-                <StackPanel Orientation="Horizontal" Spacing="8">
-                    <TextBlock Text="{loc:Loc 'home.window_size'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"/>
-                    <TextBox Text="{Binding SelectedWindowWidth}" MinWidth="60" FontSize="11"/>
-                    <TextBlock Text="×" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
-                    <TextBox Text="{Binding SelectedWindowHeight}" MinWidth="60" FontSize="11"/>
-                </StackPanel>
-                <TextBlock Text="{loc:Loc 'home.jvm_args'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
-                <StackPanel Orientation="Horizontal" Spacing="8">
-                    <TextBox Text="{Binding CustomJvmArgs}" Watermark="-XX:+UseG1GC -Dfml.ignoreInvalidMinecraftCertificates=true" MinWidth="400" FontSize="11" FontFamily="Cascadia Code,Consolas,monospace"/>
-                    <Button Content="{loc:Loc 'home.auto_tune'}" Command="{Binding ApplyJvmTuningCommand}" Classes="small" ToolTip.Tip="{loc:Loc 'home.auto_tune_hint'}"/>
-                </StackPanel>
-                <TextBlock Text="{loc:Loc 'home.game_args'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
-                <TextBox Text="{Binding CustomGameArgs}" Watermark="--fullscreen" MinWidth="500" FontSize="11" FontFamily="Cascadia Code,Consolas,monospace"/>
-                <!-- Persist the per-instance launch options edited above back to instances.json.
-                     Without this the edits were lost on restart (the panel mutated the model in
-                     memory but never saved it). The button is enabled only when there are unsaved
-                     changes (IsInstanceOptionsDirty). -->
-                <!-- Version isolation toggle for the selected instance (own .minecraft vs shared) -->
-                <StackPanel Spacing="2" Margin="0,2,0,0">
-                    <CheckBox Content="{loc:Loc 'isolation.edit_label'}" IsChecked="{Binding SelectedInstanceIsIsolated}"
-                              Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11"/>
-                    <TextBlock Text="{loc:Loc 'isolation.edit_hint'}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10" FontStyle="Italic" TextWrapping="Wrap"/>
-                    <!-- One-click migration: copy saves/mods/configs to the opposite isolation mode,
-                         then flip the flag — the non-destructive counterpart to the bare toggle. -->
-                    <Button Content="{loc:Loc 'migration.button'}" Command="{Binding MigrateIsolationCommand}"
-                            Background="{DynamicResource AccentBrush}" Foreground="White" Padding="12,4" HorizontalAlignment="Left"
-                            Margin="0,2,0,0" FontSize="11"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,2,0,0">
-                    <Button Content="{loc:Loc 'instance.save'}" Command="{Binding SaveInstanceOptionsCommand}"
-                            IsEnabled="{Binding IsInstanceOptionsDirty}"
-                            Background="{DynamicResource AccentBrush}" Foreground="White" Padding="14,5"/>
-                    <TextBlock Text="{loc:Loc 'instance.unsaved'}" Foreground="#ffb74d" FontSize="11"
-                               VerticalAlignment="Center" IsVisible="{Binding IsInstanceOptionsDirty}"/>
-                    <TextBlock Text="{loc:Loc 'instance.saved'}" Foreground="#81c784" FontSize="11"
-                               VerticalAlignment="Center" IsVisible="{Binding !IsInstanceOptionsDirty}"/>
-                </StackPanel>
-            </StackPanel>
-
-            <!-- Instance disk usage (shown when available) -->
-            <TextBlock Text="{Binding DiskUsageDisplay}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"
-                       IsVisible="{Binding DiskUsageDisplay, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
-
-            <Button Content="{loc:Loc 'home.launch'}" Command="{Binding LaunchCommand}"
-                    IsEnabled="{Binding !IsBusy}"
-                    FontSize="15" FontWeight="Bold" Background="#4caf50" Foreground="White"
-                    HorizontalAlignment="Stretch" Padding="0,14"/>
-
-            <!-- Live game console -->
-            <StackPanel Spacing="4" IsVisible="{Binding IsBusy}">
-                <TextBlock Text="{loc:Loc 'home.console'}" Foreground="{DynamicResource AccentBrush}" FontSize="13" FontWeight="SemiBold"/>
-                <Border Background="{DynamicResource PanelBrush}" CornerRadius="4" Padding="8" MaxHeight="300">
-                    <ScrollViewer>
-                        <SelectableTextBlock Text="{Binding ConsoleOutput}" Foreground="{DynamicResource TextPrimaryBrush}"
-                                             FontFamily="Cascadia Code,Consolas,monospace" FontSize="11"
-                                             TextWrapping="NoWrap"/>
-                    </ScrollViewer>
-                </Border>
-            </StackPanel>
-        </StackPanel>
-
-        <!-- New Instance Wizard Dialog -->
-        <Border IsVisible="{Binding ShowNewInstanceWizard}" Background="#00000099"
-                HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="40">
-            <Border Background="{DynamicResource PanelBrush}" CornerRadius="12" Padding="32" MaxWidth="480" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <StackPanel Spacing="16">
-                    <TextBlock Text="➕ New Instance" FontSize="18" FontWeight="SemiBold" Foreground="White"/>
-
-                    <StackPanel Spacing="6">
-                        <TextBlock Text="Instance name" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13"/>
-                        <TextBox Text="{Binding NewInstanceName}" MinWidth="360"/>
-                    </StackPanel>
-
-                    <StackPanel Spacing="6">
-                        <TextBlock Text="Minecraft version (e.g. 1.20.1)" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13"/>
-                        <TextBox Text="{Binding NewInstanceVersion}" MinWidth="360"/>
-                    </StackPanel>
-
-                    <StackPanel Spacing="6">
-                        <TextBlock Text="Modloader" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13"/>
-                        <ComboBox ItemsSource="{Binding ModloaderChoices}" SelectedItem="{Binding NewInstanceModloader}" MinWidth="360"/>
-                    </StackPanel>
-
-                    <StackPanel Spacing="6">
-                        <TextBlock Text="Memory (MB)" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13"/>
-                        <Slider Minimum="1024" Maximum="32768" Value="{Binding NewInstanceMemory}"
-                                TickFrequency="512" IsSnapToTickEnabled="True" MinWidth="360"/>
-                        <TextBlock Text="{Binding NewInstanceMemory}" Foreground="{DynamicResource AccentBrush}" FontSize="12"/>
-                    </StackPanel>
-
-                    <!-- Version isolation toggle: own .minecraft (default) vs shared common root -->
+            <!-- ===== ADVANCED OPTIONS (collapsible) ===== -->
+            <Expander Header="{loc:Loc 'home.advanced'}" IsExpanded="False" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13">
+                <StackPanel Spacing="8" Margin="0,8,0,0">
+                    <!-- Memory -->
                     <StackPanel Spacing="4">
+                        <TextBlock Text="{loc:Loc 'home.memory'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Slider Minimum="512" Maximum="{Binding SliderMax}" Value="{Binding SelectedMaxMemory}"
+                                    MinWidth="300" TickFrequency="512"/>
+                            <TextBlock Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11" VerticalAlignment="Center">
+                                <Run Text="{Binding SelectedMaxMemory}"/> <Run Text=" MB"/>
+                            </TextBlock>
+                            <Button Content="{loc:Loc 'home.auto_tune'}" Command="{Binding ApplyJvmTuningCommand}" Classes="small" ToolTip.Tip="{loc:Loc 'home.auto_tune_hint'}"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <!-- Window size -->
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="{loc:Loc 'home.window_size'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding SelectedWindowWidth}" MinWidth="60" FontSize="11"/>
+                        <TextBlock Text="×" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding SelectedWindowHeight}" MinWidth="60" FontSize="11"/>
+                    </StackPanel>
+                    <!-- Version isolation -->
+                    <StackPanel Spacing="2">
+                        <CheckBox Content="{loc:Loc 'isolation.edit_label'}" IsChecked="{Binding SelectedInstanceIsIsolated}"
+                                  Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11"/>
+                        <TextBlock Text="{loc:Loc 'isolation.edit_hint'}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10" FontStyle="Italic" TextWrapping="Wrap"/>
+                        <Button Content="{loc:Loc 'migration.button'}" Command="{Binding MigrateIsolationCommand}"
+                                Background="{DynamicResource AccentBrush}" Foreground="White" Padding="10,3" HorizontalAlignment="Left"
+                                Margin="0,2,0,0" FontSize="11"/>
+                    </StackPanel>
+                    <!-- JVM args -->
+                    <TextBlock Text="{loc:Loc 'home.jvm_args'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBox Text="{Binding CustomJvmArgs}" Watermark="-XX:+UseG1GC" MinWidth="380" FontSize="11" FontFamily="Cascadia Code,Consolas,monospace"/>
+                        <Button Content="{loc:Loc 'home.auto_tune'}" Command="{Binding ApplyJvmTuningCommand}" Classes="small" ToolTip.Tip="{loc:Loc 'home.auto_tune_hint'}"/>
+                    </StackPanel>
+                    <!-- Game args -->
+                    <TextBlock Text="{loc:Loc 'home.game_args'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                    <TextBox Text="{Binding CustomGameArgs}" Watermark="--fullscreen" MinWidth="480" FontSize="11" FontFamily="Cascadia Code,Consolas,monospace"/>
+                    <!-- Save button -->
+                    <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,2,0,0">
+                        <Button Content="{loc:Loc 'instance.save'}" Command="{Binding SaveInstanceOptionsCommand}"
+                                IsEnabled="{Binding IsInstanceOptionsDirty}"
+                                Background="{DynamicResource AccentBrush}" Foreground="White" Padding="12,4"/>
+                        <TextBlock Text="{loc:Loc 'instance.unsaved'}" Foreground="#ffb74d" FontSize="11"
+                                   VerticalAlignment="Center" IsVisible="{Binding IsInstanceOptionsDirty}"/>
+                        <TextBlock Text="{loc:Loc 'instance.saved'}" Foreground="#81c784" FontSize="11"
+                                   VerticalAlignment="Center" IsVisible="{Binding !IsInstanceOptionsDirty}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Expander>
+
+            <!-- ===== DISK USAGE + CRASH DIAG ===== -->
+            <StackPanel Spacing="6">
+                <TextBlock Text="{Binding DiskUsageDisplay}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"
+                           IsVisible="{Binding DiskUsageDisplay, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                <Button Content="{loc:Loc 'crash.submit.button'}" Command="{Binding SubmitCrashToAiCommand}"
+                        Classes="small" Background="#ab47bc" Foreground="White" Padding="12,4" HorizontalAlignment="Left"
+                        IsEnabled="{Binding !IsBusy}"/>
+            </StackPanel>
+
+            <!-- ===== LIVE CONSOLE ===== -->
+            <Border Background="{DynamicResource SurfaceAltBrush}" CornerRadius="8" Padding="10"
+                    IsVisible="{Binding IsBusy}" MaxHeight="280">
+                <ScrollViewer x:Name="ConsoleScroll">
+                    <TextBlock Text="{Binding ConsoleOutput}" Foreground="{DynamicResource TextSecondaryBrush}"
+                               FontFamily="Cascadia Code,Consolas,monospace" FontSize="10" TextWrapping="NoWrap"/>
+                </ScrollViewer>
+            </Border>
+
+            <!-- ===== NEW INSTANCE WIZARD MODAL ===== -->
+            <Border Background="#00000099" IsVisible="{Binding ShowNewInstanceWizard}"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">
+                <Border Background="{DynamicResource PanelBrush}" CornerRadius="12" Padding="24" MaxWidth="480"
+                        HorizontalAlignment="Center" VerticalAlignment="Center" Margin="40">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="➕ New Instance" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="18" FontWeight="Bold"/>
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="{loc:Loc 'home.instances'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                            <TextBox Text="{Binding NewInstanceName}" Watermark="Instance name" MinWidth="300"/>
+                        </StackPanel>
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="Version" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                            <ComboBox ItemsSource="{Binding AvailableVersions}" SelectedItem="{Binding NewInstanceVersion}"
+                                      MinWidth="300" MaxDropDownHeight="300"/>
+                        </StackPanel>
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="Memory (MB)" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                            <Slider Minimum="1024" Maximum="32768" Value="{Binding NewInstanceMemory}"
+                                    TickFrequency="512" IsSnapToTickEnabled="True" MinWidth="360"/>
+                            <TextBlock Text="{Binding NewInstanceMemory}" Foreground="{DynamicResource AccentBrush}" FontSize="12"/>
+                        </StackPanel>
                         <CheckBox Content="{loc:Loc 'isolation.wizard_label'}" IsChecked="{Binding NewInstanceIsIsolated}"
                                   Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12"/>
-                        <TextBlock Text="{loc:Loc 'isolation.hint'}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10" FontStyle="Italic" TextWrapping="Wrap"/>
+                        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" Margin="0,8,0,0">
+                            <Button Content="Cancel" Command="{Binding CancelNewInstanceWizardCommand}" Classes="small"/>
+                            <Button Content="Create &amp; Install" Command="{Binding CreateNewInstanceCommand}"
+                                    Background="{DynamicResource SuccessBrush}" Foreground="White" Padding="14,5"/>
+                        </StackPanel>
                     </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" Margin="0,8,0,0">
-                        <Button Content="Cancel" Command="{Binding CancelNewInstanceWizardCommand}" Classes="small"/>
-                        <Button Content="Create &amp; Install" Command="{Binding CreateNewInstanceCommand}"
-                                IsEnabled="{Binding !IsBusy}"
-                                Background="#4caf50" Foreground="White" Padding="16,6"/>
-                    </StackPanel>
-                </StackPanel>
+                </Border>
             </Border>
-        </Border>
+
+        </StackPanel>
         </Grid>
     </ScrollViewer>
 </UserControl>
