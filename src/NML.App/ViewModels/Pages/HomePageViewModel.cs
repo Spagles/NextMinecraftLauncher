@@ -48,6 +48,12 @@ public partial class HomePageViewModel : PageViewModelBase
     [ObservableProperty] private bool _isBusy;
     [ObservableProperty] private int _installProgressPercent;
 
+    // --- New instance wizard ---
+    [ObservableProperty] private bool _showNewInstanceWizard;
+    [ObservableProperty] private string _newInstanceName = string.Empty;
+    [ObservableProperty] private string _newInstanceVersion = string.Empty;
+    [ObservableProperty] private int _newInstanceMemory = 4096;
+
     /// <summary>Live game console output (stdout+stderr), shown in the console panel.</summary>
     [ObservableProperty] private string _consoleOutput = string.Empty;
 
@@ -375,6 +381,69 @@ public partial class HomePageViewModel : PageViewModelBase
             SelectedInstance = Instances.FirstOrDefault();
         Status = $"accounts.remove,{instance.Name}";
     }
+
+    /// <summary>Open the new-instance wizard dialog.</summary>
+    [RelayCommand]
+    private void OpenNewInstanceWizard()
+    {
+        NewInstanceName = $"Minecraft {DateTimeOffset.UtcNow:yyyyMMdd}";
+        NewInstanceVersion = string.Empty;
+        NewInstanceMemory = 4096;
+        ShowNewInstanceWizard = true;
+    }
+
+    /// <summary>Create a new instance from the wizard form, then install + launch it.</summary>
+    [RelayCommand]
+    private async Task CreateNewInstanceAsync()
+    {
+        if (string.IsNullOrWhiteSpace(NewInstanceName) || string.IsNullOrWhiteSpace(NewInstanceVersion))
+        {
+            Status = "home.select_first";
+            return;
+        }
+
+        ShowNewInstanceWizard = false;
+        string name = NewInstanceName.Trim();
+        string versionId = NewInstanceVersion.Trim();
+
+        // Deduplicate name.
+        var existing = _instances.LoadAll();
+        int suffix = 1;
+        while (existing.Any(i => string.Equals(i.Name, name, StringComparison.OrdinalIgnoreCase)))
+            name = $"{NewInstanceName.Trim()} ({suffix++})";
+
+        var instance = new Instance
+        {
+            Name = name,
+            VersionId = versionId,
+            MaxMemoryMb = NewInstanceMemory,
+            MinMemoryMb = Math.Min(1024, NewInstanceMemory / 2),
+        };
+
+        var mc = new MinecraftDirectory(_instances.GameDirFor(name));
+        Directory.CreateDirectory(mc.Root);
+
+        IsBusy = true;
+        Status = $"home.installing,{versionId}";
+        try
+        {
+            await _vanillaInstaller.InstallAsync(versionId, mc);
+            _instances.Add(instance);
+            Instances.Add(instance);
+            SelectedInstance = instance;
+            Status = $"home.installed,{versionId}";
+        }
+        catch (Exception ex)
+        {
+            Status = $"home.install_failed,{ex.Message}";
+            _logger.LogError(ex, "New instance creation failed.");
+        }
+        finally { IsBusy = false; }
+    }
+
+    /// <summary>Cancel the new-instance wizard.</summary>
+    [RelayCommand]
+    private void CancelNewInstanceWizard() => ShowNewInstanceWizard = false;
 
     /// <summary>Delete ALL instances (with no confirmation in the MVP — use carefully).</summary>
     [RelayCommand]

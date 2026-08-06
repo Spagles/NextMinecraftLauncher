@@ -3,6 +3,7 @@
              xmlns:loc="using:NML.App.Localization"
              x:Class="NML.App.Views.Pages.HomePage">
     <ScrollViewer Padding="24">
+        <Grid>
         <StackPanel Spacing="18" MaxWidth="640">
             <TextBlock Text="{loc:Loc 'home.instances'}" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
 
@@ -20,6 +21,7 @@
 
             <!-- Per-instance actions + batch operations -->
             <StackPanel Orientation="Horizontal" Spacing="4">
+                <Button Content="➕ New" Command="{Binding OpenNewInstanceWizardCommand}" Classes="small"/>
                 <Button Content="📋 Clone" Command="{Binding CloneInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"
                         IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}"/>
                 <Button Content="📦 Export" Command="{Binding ExportInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"
@@ -94,5 +96,39 @@
                 </Border>
             </StackPanel>
         </StackPanel>
+
+        <!-- New Instance Wizard Dialog -->
+        <Border IsVisible="{Binding ShowNewInstanceWizard}" Background="#00000099"
+                HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="40">
+            <Border Background="#1f1f25" CornerRadius="12" Padding="32" MaxWidth="480" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel Spacing="16">
+                    <TextBlock Text="➕ New Instance" FontSize="18" FontWeight="SemiBold" Foreground="White"/>
+
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Instance name" Foreground="#ccc" FontSize="13"/>
+                        <TextBox Text="{Binding NewInstanceName}" MinWidth="360"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Minecraft version (e.g. 1.20.1)" Foreground="#ccc" FontSize="13"/>
+                        <TextBox Text="{Binding NewInstanceVersion}" MinWidth="360"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Memory (MB)" Foreground="#ccc" FontSize="13"/>
+                        <Slider Minimum="1024" Maximum="32768" Value="{Binding NewInstanceMemory}"
+                                TickFrequency="512" IsSnapToTickEnabled="True" MinWidth="360"/>
+                        <TextBlock Text="{Binding NewInstanceMemory}" Foreground="#4fc3f7" FontSize="12"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" Margin="0,8,0,0">
+                        <Button Content="Cancel" Command="{Binding CancelNewInstanceWizardCommand}" Classes="small"/>
+                        <Button Content="Create &amp; Install" Command="{Binding CreateNewInstanceCommand}"
+                                Background="#4caf50" Foreground="White" Padding="16,6"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Border>
+        </Grid>
     </ScrollViewer>
 </UserControl>
