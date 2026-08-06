@@ -13,8 +13,8 @@
             </StackPanel>
         </Border>
 
-        <!-- Conversation -->
-        <ScrollViewer Padding="24,16">
+        <!-- Conversation (auto-scrolls to bottom on new messages) -->
+        <ScrollViewer x:Name="ChatScroll" Padding="24,16">
             <ItemsControl ItemsSource="{Binding Conversation}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
