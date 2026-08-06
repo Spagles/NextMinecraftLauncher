@@ -280,6 +280,8 @@
   "isolation.edit_label": "Versjonsisolering (egen .minecraft for denne instansen)",
   "isolation.hint": "Isolerte instanser har egne verd/modder/konfig. Av = felles .minecraft.",
   "isolation.edit_hint": "Veksling flytter ingen filer — migrer verd/modder manuelt.",
+  "config.saved": "Konfig lagret",
+  "config.structured_hint": "Redigerer key=value-par — kommentarer og seksjoner bevares ved lagring.",
   "common.cancel": "Avbryt",
   "common.confirm": "OK",
   "common.close": "Lukk",

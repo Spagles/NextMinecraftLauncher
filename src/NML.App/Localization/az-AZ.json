@@ -280,6 +280,8 @@
   "isolation.edit_label": "Versiya təcridi (bu instansiya üçün öz .minecraft)",
   "isolation.hint": "Təcrid olunmuş instansiyalar öz dünya/mod/konfiqurasiyalarını saxlayır. Bağlı = ümumi .minecraft.",
   "isolation.edit_hint": "Dəyişdirmə faylları köçürmür — dünya/modları əllə köçürün.",
+  "config.saved": "Konfiqurasiya saxlanıldı",
+  "config.structured_hint": "key=value cütləri redaktə olunur — saxlayanda şərhlər və bölmələr qorunur.",
   "common.cancel": "İptal",
   "common.confirm": "Tamam",
   "common.close": "Kapat",

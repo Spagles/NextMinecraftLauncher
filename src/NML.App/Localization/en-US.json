@@ -302,6 +302,9 @@
   "isolation.hint": "Isolated instances keep their own saves, mods and configs separate. Turn off to share the common .minecraft with other instances.",
   "isolation.edit_hint": "Toggling does not move existing files — migrate saves/mods manually if switching modes.",
 
+  "config.saved": "Config saved",
+  "config.structured_hint": "Editing key=value pairs — comments and sections are preserved on save.",
+
   "common.cancel": "Cancel",
   "common.confirm": "OK",
   "common.close": "Close",

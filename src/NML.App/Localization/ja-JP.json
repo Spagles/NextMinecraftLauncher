@@ -280,6 +280,8 @@
   "isolation.edit_label": "バージョン隔離（このインスタンスは専用 .minecraft）",
   "isolation.hint": "隔離インスタンスは独自のセーブ・MOD・設定を保持します。オフにすると他と共通の .minecraft を使います。",
   "isolation.edit_hint": "切替で既存ファイルは移動しません — モード変更時は手動で移行してください。",
+  "config.saved": "設定を保存しました",
+  "config.structured_hint": "key=value ペアを編集中 — 保存時にコメントとセクションは保持されます。",
   "common.cancel": "キャンセル",
   "common.confirm": "OK",
   "common.close": "閉じる",

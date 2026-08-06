@@ -239,10 +239,32 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <!-- Editable text area + save button -->
+
+                    <!-- Structured per-row editor: renders key=value pairs as labeled inputs,
+                         preserving comments/section headers as grayed-out text. For .cfg/.ini/.properties only. -->
+                    <Border Background="#1a1a1e" CornerRadius="4" Padding="8"
+                            IsVisible="{Binding IsStructuredConfig}" MaxHeight="420">
+                        <ScrollViewer>
+                            <StackPanel Spacing="3">
+                                <ItemsControl ItemsSource="{Binding ConfigEntries}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <!-- Editable key=value row -->
+                                            <Grid ColumnDefinitions="220,*,Auto" IsVisible="{Binding IsEditable}" Margin="0,1">
+                                                <TextBlock Grid.Column="0" Text="{Binding Key}" Foreground="#4fc3f7" FontFamily="Cascadia Code,Consolas,monospace" FontSize="11" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                <TextBox Grid.Column="1" Text="{Binding Value}" FontFamily="Cascadia Code,Consolas,monospace" FontSize="11"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+
+                    <!-- Plain-text editor (TOML/JSON/unrecognized) — shown when not structured. -->
                     <TextBox Text="{Binding ConfigContent}" AcceptsReturn="True" FontFamily="Cascadia Code,Consolas,monospace"
                              FontSize="11" MinHeight="200" MaxHeight="400" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                             TextWrapping="NoWrap"/>
+                             TextWrapping="NoWrap" IsVisible="{Binding !IsStructuredConfig}"/>
                     <Button Content="{loc:Loc 'common.save'}" Command="{Binding SaveConfigCommand}" Classes="small" HorizontalAlignment="Left"/>
                 </StackPanel>
             </StackPanel>

@@ -280,6 +280,8 @@
   "isolation.edit_label": "Versionsisolation (eigenes .minecraft für diese Instanz)",
   "isolation.hint": "Isolierte Instanzen verwalten eigene Welten/Mods/Configs. Aus = gemeinsames .minecraft.",
   "isolation.edit_hint": "Umschalten verschiebt keine Dateien — Welten/Mods manuell migrieren.",
+  "config.saved": "Konfig gespeichert",
+  "config.structured_hint": "Bearbeite key=value-Paare — Kommentare und Abschnitte bleiben beim Speichern erhalten.",
   "common.cancel": "Abbrechen",
   "common.confirm": "OK",
   "common.close": "Schließen",

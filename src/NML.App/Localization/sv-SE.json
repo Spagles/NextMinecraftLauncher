@@ -280,6 +280,8 @@
   "isolation.edit_label": "Versionsisolering (egen .minecraft för denna instans)",
   "isolation.hint": "Isolerade instanser har egna världar/moddar/konfig. Av = gemensam .minecraft.",
   "isolation.edit_hint": "Växling flyttar inga filer — migrera världar/moddar manuellt.",
+  "config.saved": "Konfig sparad",
+  "config.structured_hint": "Redigerar key=value-par — kommentarer och sektioner bevaras vid sparning.",
   "common.cancel": "Avbryt",
   "common.confirm": "OK",
   "common.close": "Stäng",

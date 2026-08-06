@@ -280,6 +280,8 @@
   "isolation.edit_label": "Verzióizoláció (saját .minecraft ehhez a példányhoz)",
   "isolation.hint": "Az izolált példányok saját világokat/modokat/konfigot tartanak. Kikapcsolva közös .minecraft.",
   "isolation.edit_hint": "A váltás nem mozgat fájlokat — világokat/modokat manuálisan migrálj.",
+  "config.saved": "Konfig mentve",
+  "config.structured_hint": "key=value párok szerkesztése — mentéskor a megjegyzések és szakaszok megőrződnek.",
   "common.cancel": "Mégse",
   "common.confirm": "OK",
   "common.close": "Bezárás",

@@ -280,6 +280,8 @@
   "isolation.edit_label": "Aïllament de versions (.minecraft propi per a aquesta instància)",
   "isolation.hint": "Les instàncies aïllades guarden els seus propis mons/mods/configs. Desactiva per compartir el .minecraft comú.",
   "isolation.edit_hint": "Commutar no mou fitxers — migra mons/mods manualment.",
+  "config.saved": "Config desada",
+  "config.structured_hint": "Editant parelles key=value — comentaris i seccions es preserven en desar.",
   "common.cancel": "Cancel·la",
   "common.confirm": "D'acord",
   "common.close": "Tanca",

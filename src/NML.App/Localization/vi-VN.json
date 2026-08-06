@@ -280,6 +280,8 @@
   "isolation.edit_label": "Cô lập phiên bản (.minecraft riêng cho phiên bản này)",
   "isolation.hint": "Bản cô lập giữ save/mod/config riêng. Tắt để dùng chung .minecraft.",
   "isolation.edit_hint": "Bật/tắt không di chuyển tệp — di chuyển save/mod thủ công.",
+  "config.saved": "Đã lưu cấu hình",
+  "config.structured_hint": "Đang sửa cặp key=value — chú thích và mục được giữ khi lưu.",
   "common.cancel": "Hủy",
   "common.confirm": "OK",
   "common.close": "Đóng",

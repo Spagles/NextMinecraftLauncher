@@ -280,6 +280,8 @@
   "isolation.edit_label": "Izolace verzí (vlastní .minecraft pro tuto instanci)",
   "isolation.hint": "Izolované instance mají vlastní světy/mody/konfig. Vypněte pro sdílený .minecraft.",
   "isolation.edit_hint": "Přepínač nepřesouvá soubory — migrujte světy/mody ručně.",
+  "config.saved": "Konfig uložen",
+  "config.structured_hint": "Úprava párů key=value — komentáře a sekce se při uložení zachovají.",
   "common.cancel": "Zrušit",
   "common.confirm": "OK",
   "common.close": "Zavřít",

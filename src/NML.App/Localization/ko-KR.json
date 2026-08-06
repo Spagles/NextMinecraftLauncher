@@ -280,6 +280,8 @@
   "isolation.edit_label": "버전 격리 (이 인스턴스 전용 .minecraft)",
   "isolation.hint": "격리 인스턴스는 자체 세이브/모드/설정을 유지합니다. 끄면 공용 .minecraft를 공유합니다.",
   "isolation.edit_hint": "토글해도 기존 파일은 이동하지 않습니다 — 모드 변경 시 수동 마이그레이션하세요.",
+  "config.saved": "설정 저장됨",
+  "config.structured_hint": "key=value 쌍 편집 중 — 저장 시 주석과 섹션이 보존됩니다.",
   "common.cancel": "취소",
   "common.confirm": "확인",
   "common.close": "닫기",

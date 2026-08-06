@@ -7,6 +7,7 @@ using NML.App.Services;
 using NML.Core;
 using NML.Core.Instances;
 using NML.Core.Logging;
+using NML.Core.Mods;
 using NML.Core.Modloaders;
 
 namespace NML.App.ViewModels.Pages;
@@ -117,8 +118,19 @@ public partial class GameContentPageViewModel : PageViewModelBase
     public bool AllScreenshotsSelected =>
         ScreenshotCards.Count > 0 && ScreenshotCards.All(c => c.IsSelected);
 
-    /// <summary>Currently-edited config file content.</summary>
+    /// <summary>Currently-edited config file content (plain-text blob; used when not structured).</summary>
     [ObservableProperty] private string _configContent = string.Empty;
+
+    /// <summary>Name of the currently-selected config file (shown in the editor header).</summary>
+    [ObservableProperty] private string _selectedConfigName = string.Empty;
+
+    /// <summary>True when the selected file is a structured key=value dialect the per-row editor
+    /// can render; false (plain-text blob) for TOML/JSON/etc.</summary>
+    [ObservableProperty] private bool _isStructuredConfig;
+
+    /// <summary>Per-row structured config entries bound to the per-row editor.</summary>
+    public ObservableCollection<ConfigEntryRow> ConfigEntries { get; } = new();
+
     /// <summary>Path of the currently-selected config file.</summary>
     private GameFile? _selectedConfigFile;
 
@@ -552,8 +564,20 @@ public partial class GameContentPageViewModel : PageViewModelBase
             Instance? inst = GetActiveInstance();
             if (inst is null) return;
             _selectedConfigFile = file;
+            SelectedConfigName = file.Name;
             var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
-            ConfigContent = browser.ReadConfigFile(file.Path);
+            string content = browser.ReadConfigFile(file.Path);
+            ConfigContent = content;
+
+            // Parse into structured rows when the file is a recognized key=value dialect; the UI
+            // swaps to the per-row editor. Non-structured files (TOML/JSON) keep the plain blob.
+            ConfigEntries.Clear();
+            IsStructuredConfig = ConfigFileParser.IsStructured(file.Name);
+            if (IsStructuredConfig)
+            {
+                foreach (var e in ConfigFileParser.Parse(content, file.Name))
+                    ConfigEntries.Add(new ConfigEntryRow(e));
+            }
         }
         catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
     }
@@ -567,8 +591,13 @@ public partial class GameContentPageViewModel : PageViewModelBase
             Instance? inst = GetActiveInstance();
             if (inst is null) return;
             var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
-            browser.WriteConfigFile(_selectedConfigFile.Path, ConfigContent);
-            Status = "common.save";
+            // When the per-row editor is active, serialize the (possibly edited) rows back; the
+            // plain-text editor otherwise writes ConfigContent verbatim.
+            string toWrite = IsStructuredConfig
+                ? ConfigFileParser.Serialize(ConfigEntries.Select(r => r.ToEntry()).ToList())
+                : ConfigContent;
+            browser.WriteConfigFile(_selectedConfigFile.Path, toWrite);
+            Status = "config.saved";
         }
         catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
     }
@@ -774,4 +803,46 @@ public sealed class BackupEntry : ObservableObject
         < 1024 * 1024 => $"{SizeBytes / 1024.0:F1} KB",
         _ => $"{SizeBytes / (1024.0 * 1024):F1} MB",
     };
+}
+
+/// <summary>
+/// A UI-bindable wrapper around a parsed <see cref="ConfigEntry"/>. Key/Value are editable in the
+/// per-row config editor; the Kind drives how the row renders (editable input vs. comment/section
+/// display), and <see cref="ToEntry"/> reconstructs the source entry for serialization.
+/// </summary>
+public sealed class ConfigEntryRow : ObservableObject
+{
+    public ConfigEntryRow(ConfigEntry entry)
+    {
+        _kind = entry.Kind;
+        _key = entry.Key;
+        _value = entry.Value;
+        _rawLine = entry.RawLine;
+    }
+
+    private readonly ConfigEntryKind _kind;
+    private string _key;
+    private string _value;
+    private readonly string _rawLine;
+
+    public ConfigEntryKind Kind => _kind;
+    public string RawLine => _rawLine;
+
+    /// <summary>Key for a KeyValue entry; section name for a Section entry.</summary>
+    public string Key { get => _key; set => SetProperty(ref _key, value); }
+
+    /// <summary>Value for a KeyValue entry (edited by the per-row text box).</summary>
+    public string Value { get => _value; set => SetProperty(ref _value, value); }
+
+    /// <summary>True when the row is an editable key=value pair (drives the input-template choice).</summary>
+    public bool IsEditable => _kind == ConfigEntryKind.KeyValue;
+
+    /// <summary>True when the row is a comment or blank (rendered as grayed-out text).</summary>
+    public bool IsComment => _kind == ConfigEntryKind.Comment || _kind == ConfigEntryKind.Blank;
+
+    /// <summary>True when the row is a [section] header.</summary>
+    public bool IsSection => _kind == ConfigEntryKind.Section;
+
+    /// <summary>Reconstruct the source <see cref="ConfigEntry"/> (with edited Key/Value) for serialize.</summary>
+    public ConfigEntry ToEntry() => new(_kind, _key, _value, _rawLine);
 }

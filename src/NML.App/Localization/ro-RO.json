@@ -280,6 +280,8 @@
   "isolation.edit_label": "Izolare versiuni (.minecraft propriu pentru această instanță)",
   "isolation.hint": "Instanțele izolate păstrează propriile lumi/moduri/config. Dezactivați pentru .minecraft comun.",
   "isolation.edit_hint": "Comutarea nu mută fișiere — migrează lumi/moduri manual.",
+  "config.saved": "Config salvată",
+  "config.structured_hint": "Editare perechi key=value — comentariile și secțiunile se păstrează la salvare.",
   "common.cancel": "Anulează",
   "common.confirm": "OK",
   "common.close": "Închide",

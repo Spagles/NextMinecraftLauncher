@@ -280,6 +280,8 @@
   "isolation.edit_label": "Ізоляція версій (власний .minecraft для цього екземпляра)",
   "isolation.hint": "Ізольовані екземпляри зберігають власні світи/моди/конфіг. Вимкніть для спільного .minecraft.",
   "isolation.edit_hint": "Перемикання не переміщує файли — мігруйте світи/моди вручну.",
+  "config.saved": "Конфіг збережено",
+  "config.structured_hint": "Редагування пар key=value — коментарі та секції зберігаються.",
   "common.cancel": "Скасувати",
   "common.confirm": "OK",
   "common.close": "Закрити",

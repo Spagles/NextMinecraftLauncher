@@ -280,6 +280,8 @@
   "isolation.edit_label": "Sürüm izolasyonu (bu örnek için özel .minecraft)",
   "isolation.hint": "Yalıtılmış örnekler kendi dünyalarını/modlarını/ayarlarını tutar. Kapatınca ortak .minecraft paylaşılır.",
   "isolation.edit_hint": "Değiştirmek dosyaları taşımaz — mod değiştirince elle taşıyın.",
+  "config.saved": "Yapılandırma kaydedildi",
+  "config.structured_hint": "key=value çiftleri düzenleniyor — kaydederken yorumlar ve bölümler korunur.",
   "common.cancel": "İptal",
   "common.confirm": "Tamam",
   "common.close": "Kapat",

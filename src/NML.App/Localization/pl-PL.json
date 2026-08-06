@@ -280,6 +280,8 @@
   "isolation.edit_label": "Izolacja wersji (własny .minecraft dla tej instancji)",
   "isolation.hint": "Odizolowane instancje trzymają własne światy/mody/konfigi. Wyłącz, by współdzielić .minecraft.",
   "isolation.edit_hint": "Przełączanie nie przenosi plików — migruj światy/mody ręcznie.",
+  "config.saved": "Zapisano konfigurację",
+  "config.structured_hint": "Edycja par key=value — komentarze i sekcje są zachowywane przy zapisie.",
   "common.cancel": "Anuluj",
   "common.confirm": "OK",
   "common.close": "Zamknij",

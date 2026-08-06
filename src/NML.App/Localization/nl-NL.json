@@ -280,6 +280,8 @@
   "isolation.edit_label": "Versie-isolatie (eigen .minecraft voor deze instantie)",
   "isolation.hint": "Geïsoleerde instanties bewaren eigen saves/mods/configs. Uit = gemeenschappelijke .minecraft.",
   "isolation.edit_hint": "Schakelen verplaatst geen bestanden — migreer saves/mods handmatig.",
+  "config.saved": "Config opgeslagen",
+  "config.structured_hint": "Bewerken van key=value-paren — opmerkingen en secties blijven bij opslaan.",
   "common.cancel": "Annuleren",
   "common.confirm": "OK",
   "common.close": "Sluiten",

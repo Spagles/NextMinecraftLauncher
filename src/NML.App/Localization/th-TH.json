@@ -280,6 +280,8 @@
   "isolation.edit_label": "แยกเวอร์ชัน (.minecraft ของตัวเองสำหรับอินสแตนซ์นี้)",
   "isolation.hint": "อินสแตนซ์แยกจะเก็บเซฟ/ม็อด/คอนฟิกของตัวเอง ปิดเพื่อใช้ .minecraft ร่วม",
   "isolation.edit_hint": "สลับไม่ย้ายไฟล์ — ย้ายเซฟ/ม็อดด้วยตนเองเมื่อเปลี่ยนโหมด",
+  "config.saved": "บันทึกการตั้งค่าแล้ว",
+  "config.structured_hint": "กำลังแก้ไขคู่ key=value — บันทึกเก็บความคิดเห็นและส่วนไว้",
   "common.cancel": "ยกเลิก",
   "common.confirm": "ตกลง",
   "common.close": "ปิด",

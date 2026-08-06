@@ -280,6 +280,8 @@
   "isolation.edit_label": "Isolamento versione (.minecraft dedicato per questa istanza)",
   "isolation.hint": "Le istanze isolate mantengono mondi/mod/config separati. Disattiva per condividere il .minecraft comune.",
   "isolation.edit_hint": "L'interruttore non sposta i file — migra mondi/mod manualmente.",
+  "config.saved": "Config salvata",
+  "config.structured_hint": "Modifica coppie key=value — commenti e sezioni preservati al salvataggio.",
   "common.cancel": "Annulla",
   "common.confirm": "OK",
   "common.close": "Chiudi",

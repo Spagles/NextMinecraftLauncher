@@ -280,6 +280,8 @@
   "isolation.edit_label": "Изоляция версий (этот экземпляр — свой .minecraft)",
   "isolation.hint": "Изолированные экземпляры хранят свои миры/моды/настройки отдельно. Выкл — общий .minecraft.",
   "isolation.edit_hint": "Переключение не перемещает файлы — переносите миры/моды вручную.",
+  "config.saved": "Конфиг сохранён",
+  "config.structured_hint": "Редактируются пары key=value — комментарии и секции сохраняются.",
   "common.cancel": "Отмена",
   "common.confirm": "ОК",
   "common.close": "Закрыть",

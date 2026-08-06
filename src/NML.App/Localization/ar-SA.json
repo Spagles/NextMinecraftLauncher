@@ -280,6 +280,8 @@
   "isolation.edit_label": "عزل الإصدارات (.minecraft خاص لهذه النسخة)",
   "isolation.hint": "النسخ المعزولة تحتفظ بعوالم/مودات/إعدادات خاصة. عطّله لمشاركة .minecraft المشترك.",
   "isolation.edit_hint": "التبديل لا ينقل الملفات — انقل العوالم/المودات يدوياً.",
+  "config.saved": "تم حفظ الإعداد",
+  "config.structured_hint": "تحرير أزواج key=value — تُحفظ التعليقات والأقسام عند الحفظ.",
   "common.cancel": "إلغاء",
   "common.confirm": "موافق",
   "common.close": "إغلاق",

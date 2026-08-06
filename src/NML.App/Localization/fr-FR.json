@@ -280,6 +280,8 @@
   "isolation.edit_label": "Isolation des versions (.minecraft dédié pour cette instance)",
   "isolation.hint": "Les instances isolées gardent leurs propres mondes/mods/configs. Désactivez pour partager le .minecraft commun.",
   "isolation.edit_hint": "Basculer ne déplace pas les fichiers — migrez les mondes/mods manuellement.",
+  "config.saved": "Config enregistrée",
+  "config.structured_hint": "Édition des paires key=value — commentaires et sections préservés à l'enregistrement.",
   "common.cancel": "Annuler",
   "common.confirm": "OK",
   "common.close": "Fermer",

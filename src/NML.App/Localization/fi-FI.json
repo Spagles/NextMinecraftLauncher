@@ -280,6 +280,8 @@
   "isolation.edit_label": "Versioeristys (oman .minecraft tälle instanssille)",
   "isolation.hint": "Eristetyt instanssit pitävät omat maailmansa/modinsa/asetuksensa. Poista käytöstä yhteiseen .minecraftiin.",
   "isolation.edit_hint": "Vaihto ei siirrä tiedostoja — siirrä maailmat/modit manuaalisesti.",
+  "config.saved": "Konfig tallennettu",
+  "config.structured_hint": "Muokataan key=value-pareja — kommentit ja osiot säilytetään tallennettaessa.",
   "common.cancel": "Peruuta",
   "common.confirm": "OK",
   "common.close": "Sulje",

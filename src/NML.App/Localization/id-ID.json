@@ -280,6 +280,8 @@
   "isolation.edit_label": "Isolasi versi (.minecraft sendiri untuk instansi ini)",
   "isolation.hint": "Instansi terisolasi menyimpan save/mod/config sendiri. Matikan untuk berbagi .minecraft umum.",
   "isolation.edit_hint": "Mengaktifkan tidak memindahkan file — migrasikan save/mod manual.",
+  "config.saved": "Konfig disimpan",
+  "config.structured_hint": "Menyunting pasangan key=value — komentar dan bagian dipertahankan saat simpan.",
   "common.cancel": "Batal",
   "common.confirm": "OK",
   "common.close": "Tutup",

@@ -280,6 +280,8 @@
   "isolation.edit_label": "בידוד גרסאות (.minecraft משלו למופע זה)",
   "isolation.hint": "מופעים מבודדים שומרים עולמות/מודים/הגדרות משלהם. כבה כדי לשתף .minecraft משותף.",
   "isolation.edit_hint": "החלפה לא מעבירה קבצים — העבר עולמות/מודים ידנית.",
+  "config.saved": "הקונפיג נשמר",
+  "config.structured_hint": "עריכת זוגות key=value — הערות וסעיפים נשמרים בשמירה.",
   "common.cancel": "ביטול",
   "common.confirm": "אישור",
   "common.close": "סגור",

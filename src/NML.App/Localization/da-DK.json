@@ -280,6 +280,8 @@
   "isolation.edit_label": "Versionsisolering (egen .minecraft for denne instans)",
   "isolation.hint": "Isolerede instanser har egne verdener/mods/konfig. Fra = fælles .minecraft.",
   "isolation.edit_hint": "Skift flytter ikke filer — migrer verdener/mods manuelt.",
+  "config.saved": "Konfig gemt",
+  "config.structured_hint": "Redigerer key=value-par — kommentarer og sektioner bevares ved gemning.",
   "common.cancel": "Annuller",
   "common.confirm": "OK",
   "common.close": "Luk",

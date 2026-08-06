@@ -280,6 +280,8 @@
   "isolation.edit_label": "Weergawe-isolasie (eie .minecraft vir hierdie geval)",
   "isolation.hint": "Geïsoleerde gevalle hou eie wêreldes/mods/konfigs. Skakel af vir gemeenskaplike .minecraft.",
   "isolation.edit_hint": "Wissel verskuif nie lêers — migreer wêreldes/mods handmatig.",
+  "config.saved": "Config gestoor",
+  "config.structured_hint": "Redigeer key=value-pare — kommentare en afdelings word by stoor behou.",
   "common.cancel": "Kanselleer",
   "common.confirm": "OK",
   "common.close": "Maak toe",

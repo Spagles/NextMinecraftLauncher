@@ -3,7 +3,7 @@
 A cross-platform **Minecraft launcher** built in **C# / Avalonia UI 11 + .NET 8**, aiming to
 match HMCL and PCL while adding **first-class AI features**.
 
-> **135 commits, 252 tests, 0 warnings, 31 languages.** A real, functional launcher.
+> **136 commits, 269 tests, 0 warnings, 31 languages.** A real, functional launcher.
 
 ## What works right now
 
@@ -30,6 +30,8 @@ match HMCL and PCL while adding **first-class AI features**.
   restore overwrites the live folder exactly, delete a stale backup
 - **Screenshot grid:** thumbnail cards + multi-select + batch export to a desktop zip +
   copy-path-to-clipboard
+- **Structured mod-config editor:** parses Forge .cfg / .ini / .properties into editable
+  key=value rows (comments + section headers preserved on save); TOML/JSON fall back to plain text
 - **Live theme preview:** a settings card reflecting the active theme + accent the instant either
   changes (title bar, primary/secondary buttons, sample body text, invalid-hex fallback)
 - **Modpack support:** Modrinth .mrpack + CurseForge manifest import with mod resolution
@@ -70,7 +72,7 @@ match HMCL and PCL while adding **first-class AI features**.
   silent multi-account token refresh (MSA refresh-token lifecycle, 5-min proactive margin)
 
 ### Internationalization
-- **31 languages, 289 keys each (8,959 total translated keys):** 中文, English, 日本語, 한국어,
+- **31 languages, 291 keys each (9,021 total translated keys):** 中文, English, 日本語, 한국어,
   Русский, Français, Español, Deutsch, Português, Italiano, العربية, Türkçe, हिन्दी, ไทย,
   Tiếng Việt, Bahasa Indonesia, Polski, Українська, Nederlands, Svenska, Čeština,
   Norsk, Suomi, Dansk, Magyar, Română, Azərbaycan, Afrikaans, עברית, Català, Қазақша

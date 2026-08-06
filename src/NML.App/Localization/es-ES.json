@@ -280,6 +280,8 @@
   "isolation.edit_label": "Aislamiento de versiones (.minecraft propio para esta instancia)",
   "isolation.hint": "Las instancias aisladas guardan sus propios mundos/mods/configs. Desactiva para compartir el .minecraft común.",
   "isolation.edit_hint": "Alternar no mueve los archivos — migra mundos/mods manualmente.",
+  "config.saved": "Configuración guardada",
+  "config.structured_hint": "Editando pares key=value — comentarios y secciones se preservan al guardar.",
   "common.cancel": "Cancelar",
   "common.confirm": "OK",
   "common.close": "Cerrar",
