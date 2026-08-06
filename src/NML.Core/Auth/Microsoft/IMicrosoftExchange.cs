@@ -18,6 +18,10 @@ public interface IMicrosoftExchange
     Task<MsaTokenResponse> RefreshMsaTokenAsync(
         string clientId, string refreshToken, string scope, CancellationToken ct = default);
 
+    /// <summary>Step 2c: exchange an authorization code (from browser redirect) for an MSA token.</summary>
+    Task<MsaTokenResponse> ExchangeAuthCodeForMsaTokenAsync(
+        string clientId, string authCode, string redirectUri, string scope, CancellationToken ct = default);
+
     /// <summary>Step 3: MSA token → Xbox Live user token.</summary>
     Task<XblTokenResponse> ExchangeMsaForXblAsync(string msaAccessToken, CancellationToken ct = default);
 

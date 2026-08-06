@@ -13,8 +13,8 @@ namespace NML.App.Services;
 /// </summary>
 public sealed class HttpMicrosoftExchange : IMicrosoftExchange
 {
-    private const string DeviceCodeUrl = "https://login.microsoftonline.com/consumers/oauth2/v2.0/devicecode";
-    private const string TokenUrl = "https://login.microsoftonline.com/consumers/oauth2/v2.0/token";
+    private const string DeviceCodeUrl = "https://login.live.com/oauth20_devicecode.srf";
+    private const string TokenUrl = "https://login.live.com/oauth20_token.srf";
     private const string XblUrl = "https://user.auth.xboxlive.com/user/authenticate";
     private const string XstsUrl = "https://xsts.auth.xboxlive.com/xsts/authorize";
     private const string MinecraftLoginUrl = "https://api.minecraftservices.com/authentication/login_with_xbox";
@@ -83,6 +83,25 @@ public sealed class HttpMicrosoftExchange : IMicrosoftExchange
                ?? throw new InvalidDataException("MSA refresh response was null.");
     }
 
+    public async Task<MsaTokenResponse> ExchangeAuthCodeForMsaTokenAsync(
+        string clientId, string authCode, string redirectUri, string scope, CancellationToken ct = default)
+    {
+        var body = new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["client_id"] = clientId,
+            ["code"] = authCode,
+            ["grant_type"] = "authorization_code",
+            ["redirect_uri"] = redirectUri,
+            ["scope"] = scope,
+        });
+        using var resp = await _http.PostAsync(TokenUrl, body, ct);
+        string json = await resp.Content.ReadAsStringAsync(ct);
+        if (!resp.IsSuccessStatusCode)
+            throw new InvalidOperationException($"MSA token exchange failed: {json}");
+        return JsonSerializer.Deserialize<MsaTokenResponse>(json)
+               ?? throw new InvalidDataException("MSA auth-code exchange response was null.");
+    }
+
     public async Task<XblTokenResponse> ExchangeMsaForXblAsync(string msaAccessToken, CancellationToken ct = default)
     {
         var body = new
@@ -91,7 +110,7 @@ public sealed class HttpMicrosoftExchange : IMicrosoftExchange
             {
                 AuthMethod = "RPS",
                 SiteName = "user.auth.xboxlive.com",
-                RpsTicket = "t=" + msaAccessToken,
+                RpsTicket = "d=" + msaAccessToken,
             },
             RelyingParty = "http://auth.xboxlive.com",
             TokenType = "JWT",

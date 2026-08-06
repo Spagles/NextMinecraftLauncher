@@ -15,8 +15,13 @@ public sealed class MicrosoftAuthProvider : IAuthProvider
     /// </summary>
     public const string ClientId = "00000000402b5328";
 
-    /// <summary>The OAuth scope for the modern v2.0 device-code flow (XboxLive.signin + offline_access for refresh).</summary>
-    public const string Scope = "XboxLive.signin offline_access";
+    /// <summary>The OAuth scope for the legacy MSA flow (pairs with login.live.com endpoints).</summary>
+    public const string Scope = "service::user.auth.xboxlive.com::MBI_SSL";
+
+    /// <summary>The legacy authorize URL (browser-based flow — the only working approach for this client_id).</summary>
+    public const string AuthorizeUrl = "https://login.live.com/oauth20_authorize.srf";
+    public const string TokenExchangeUrl = "https://login.live.com/oauth20_token.srf";
+    public const string RedirectUri = "https://login.live.com/oauth20_desktop.srf";
 
     private readonly IMicrosoftExchange _exchange;
     private readonly ILogger<MicrosoftAuthProvider> _logger;
@@ -30,50 +35,28 @@ public sealed class MicrosoftAuthProvider : IAuthProvider
     public string Type => "msa";
 
     /// <summary>
-    /// Begin the device-code flow. Returns the <see cref="DeviceCodeResponse"/> to display;
-    /// the caller then invokes <see cref="PollForCompletionAsync"/> to await the user.
+    /// Build the browser authorization URL for the legacy MSA flow. The caller opens this in the
+    /// system browser; after sign-in the browser redirects to the redirect_uri with ?code=XXX.
     /// </summary>
-    public async Task<DeviceCodeResponse> BeginLoginAsync(CancellationToken ct = default)
+    public string GetAuthorizeUrl()
     {
-        _logger.LogInformation("Requesting Microsoft device code…");
-        return await _exchange.RequestDeviceCodeAsync(ClientId, Scope, ct);
+        return $"{AuthorizeUrl}?client_id={ClientId}&response_type=code" +
+               $"&redirect_uri={Uri.EscapeDataString(RedirectUri)}" +
+               $"&scope={Uri.EscapeDataString(Scope)}" +
+               $"&prompt=login";
     }
 
     /// <summary>
-    /// Poll the device-code endpoint until the user completes sign-in (or the flow expires).
-    /// <paramref name="onProgress"/> is invoked on every poll iteration (for UI spinners).
+    /// Complete the login flow: exchange the auth code (from the browser redirect) for an MSA
+    /// token, then proceed through XBL → XSTS → Minecraft → profile. Returns the final Account.
     /// </summary>
-    public async Task<Account> PollForCompletionAsync(
-        DeviceCodeResponse deviceCode,
-        Func<DeviceCodeResponse, bool>? onProgress = null,
-        CancellationToken ct = default)
+    public async Task<Account> CompleteLoginWithCodeAsync(string authCode, CancellationToken ct = default)
     {
-        int intervalMs = Math.Max(2, deviceCode.Interval) * 1000;
-        DateTime deadline = DateTimeOffset.UtcNow.AddSeconds(deviceCode.ExpiresIn).UtcDateTime;
+        _logger.LogInformation("Exchanging auth code for MSA token…");
+        MsaTokenResponse msa = await _exchange.ExchangeAuthCodeForMsaTokenAsync(
+            ClientId, authCode, RedirectUri, Scope, ct);
 
-        MsaTokenResponse msa;
-        while (true)
-        {
-            ct.ThrowIfCancellationRequested();
-            onProgress?.Invoke(deviceCode);
-
-            if (DateTimeOffset.UtcNow.UtcDateTime >= deadline)
-                throw new TimeoutException("Microsoft device-code login expired.");
-
-            try
-            {
-                msa = await _exchange.PollForMsaTokenAsync(ClientId, deviceCode.DeviceCode, Scope, ct);
-                _logger.LogInformation("Microsoft account sign-in confirmed.");
-                break;
-            }
-            catch (AuthorizationPendingException)
-            {
-                await Task.Delay(intervalMs, ct);
-            }
-        }
-
-        // MSA → Xbox Live → XSTS → Minecraft → profile.
-        _logger.LogDebug("Exchanging MSA → Xbox Live token…");
+        _logger.LogInformation("MSA token obtained, exchanging → Xbox Live…");
         XblTokenResponse xbl = await _exchange.ExchangeMsaForXblAsync(msa.AccessToken, ct);
 
         _logger.LogDebug("Exchanging XBL → XSTS token…");

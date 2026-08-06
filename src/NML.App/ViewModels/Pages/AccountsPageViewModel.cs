@@ -144,27 +144,56 @@ public partial class AccountsPageViewModel : PageViewModelBase
         Status = $"home.installed,{acc.Username}";
     }
 
-    [RelayCommand]
+    /// <summary>Path where the user pastes the auth code from the browser redirect.</summary>
+    [ObservableProperty] private string _msAuthCode = string.Empty;
+
     private async Task AddMicrosoftAccountAsync()
     {
-        IsBusy = true;
-        ShowDeviceCode = false;
+        await Task.CompletedTask; // browser open is synchronous, but keep the async signature for the command
+        // Browser-based auth: open the system browser, user signs in, pastes the redirect URL/code.
+        string authUrl = _microsoft.GetAuthorizeUrl();
+        DeviceCodeMessage = authUrl;
+        ShowDeviceCode = true;
         Status = "accounts.ms_polling";
+
+        // Open the system browser for the user to sign in.
         try
         {
-            DeviceCodeResponse dc = await _microsoft.BeginLoginAsync();
-            DeviceCodeMessage = $"{dc.VerificationUri}  —  {dc.UserCode}";
-            ShowDeviceCode = true;
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(authUrl)
+            {
+                UseShellExecute = true,
+            });
+        }
+        catch { /* user can copy the URL manually */ }
+    }
 
-            // Poll until the user finishes sign-in (or the flow expires).
-            Account acc = await _microsoft.PollForCompletionAsync(dc);
+    /// <summary>Complete the MS login after the user pastes the auth code from the browser redirect.</summary>
+    [RelayCommand]
+    private async Task CompleteMsLoginAsync()
+    {
+        string code = MsAuthCode?.Trim() ?? string.Empty;
+        if (string.IsNullOrEmpty(code)) { Status = "accounts.ms_failed,No auth code"; return; }
+
+        // The user may paste the full redirect URL or just the code parameter.
+        // Extract the code from "https://login.live.com/oauth20_desktop.srf?code=XXX"
+        if (code.Contains("code=", StringComparison.OrdinalIgnoreCase))
+        {
+            var uri = new System.Uri(code.Contains('?') ? code : code);
+            var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+            code = query["code"] ?? code;
+        }
+
+        IsBusy = true;
+        try
+        {
+            Account acc = await _microsoft.CompleteLoginWithCodeAsync(code);
             Accounts.Add(acc);
             _accountStore.Save(Accounts.ToList());
             if (ActiveAccount is null) Activate(acc);
             ShowDeviceCode = false;
+            MsAuthCode = string.Empty;
             Status = $"accounts.ms_success,{acc.Username}";
         }
-        catch (TimeoutException) { Status = "accounts.ms_expired"; }
         catch (Exception ex)
         {
             Status = $"accounts.ms_failed,{ex.Message}";

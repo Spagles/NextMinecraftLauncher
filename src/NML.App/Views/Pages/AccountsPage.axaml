@@ -38,11 +38,16 @@
                         IsEnabled="{Binding !IsBusy}" Background="#388e3c" Foreground="White" Padding="14,6"/>
             </StackPanel>
 
-            <!-- Device code hint -->
+            <!-- Browser auth flow: show URL + code input -->
             <Border Background="{DynamicResource SurfaceAltBrush}" Padding="12" CornerRadius="4" IsVisible="{Binding ShowDeviceCode}">
-                <StackPanel Spacing="4">
-                    <TextBlock Text="{Binding DeviceCodeMessage}" Foreground="{DynamicResource AccentBrush}" FontSize="13"/>
-                    <TextBlock Text="{loc:Loc 'accounts.ms_polling'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                <StackPanel Spacing="6">
+                    <TextBlock Text="1. Browser opened. Sign in with your Microsoft account." Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12"/>
+                    <TextBlock Text="2. After login, copy the URL from the browser address bar (or just the code)." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                    <SelectableTextBlock Text="{Binding DeviceCodeMessage}" Foreground="{DynamicResource AccentBrush}" FontSize="11" TextWrapping="Wrap"/>
+                    <TextBlock Text="3. Paste the redirect URL or code here:" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                    <TextBox Text="{Binding MsAuthCode}" Watermark="https://login.live.com/oauth20_desktop.srf?code=..." MinWidth="400" FontSize="11"/>
+                    <Button Content="Complete Login" Command="{Binding CompleteMsLoginCommand}"
+                            IsEnabled="{Binding !IsBusy}" Background="#4caf50" Foreground="White" Padding="14,5"/>
                 </StackPanel>
             </Border>
 

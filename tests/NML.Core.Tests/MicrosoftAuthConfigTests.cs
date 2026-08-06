@@ -8,18 +8,17 @@ namespace NML.Core.Tests;
 public class MicrosoftAuthConfigTests
 {
     [Fact]
-    public void Scope_Uses_Modern_XboxLive_Signin()
+    public void Scope_Uses_Legacy_MBI_SSL()
     {
-        // The modern v2.0 scope must be "XboxLive.signin offline_access" (not the legacy
-        // "service::user.auth.xboxlive.com::MBI_SSL").
-        MicrosoftAuthProvider.Scope.Should().Be("XboxLive.signin offline_access");
+        // The legacy client_id 00000000402b5328 requires the legacy scope.
+        MicrosoftAuthProvider.Scope.Should().Be("service::user.auth.xboxlive.com::MBI_SSL");
     }
 
     [Fact]
-    public void Scope_Includes_Offline_Access_For_Refresh()
+    public void Scope_Supports_XboxLive_Auth()
     {
-        // Without offline_access, no refresh token is returned and silent re-login is impossible.
-        MicrosoftAuthProvider.Scope.Should().Contain("offline_access");
+        // The scope must grant access to Xbox Live for the MSA → XBL exchange.
+        MicrosoftAuthProvider.Scope.Should().Contain("xboxlive.com");
     }
 
     [Fact]
