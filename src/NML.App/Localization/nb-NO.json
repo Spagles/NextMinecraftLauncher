@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "Kunne ikke oppdatere noen modder",
   "mods.upgrade.no_check": "Sjekk oppdateringer først",
   "mods.upgrade.none": "Ingen oppdaterbare modder funnet",
+  "migration.button": "🔀 Migrer innhold til den andre isolasjonsmodusen",
+  "migration.done": "Migrerte {0} fil(er)",
   "common.cancel": "Avbryt",
   "common.confirm": "OK",
   "common.close": "Lukk",

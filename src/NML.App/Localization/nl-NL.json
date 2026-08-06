@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "Geen mod kon worden bijgewerkt",
   "mods.upgrade.no_check": "Controleer eerst op updates",
   "mods.upgrade.none": "Geen bij te werken mods gevonden",
+  "migration.button": "🔀 Migreer inhoud naar de andere isolatiemodus",
+  "migration.done": "{0} bestand(en) gemigreerd",
   "common.cancel": "Annuleren",
   "common.confirm": "OK",
   "common.close": "Sluiten",

@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "Tidak ada mod yang bisa dimutakhirkan",
   "mods.upgrade.no_check": "Periksa pembaruan dulu",
   "mods.upgrade.none": "Tidak ada mod yang dapat dimutakhirkan",
+  "migration.button": "🔀 Migrasi konten ke mode isolasi lainnya",
+  "migration.done": "{0} berkas dimigrasi",
   "common.cancel": "Batal",
   "common.confirm": "OK",
   "common.close": "Tutup",

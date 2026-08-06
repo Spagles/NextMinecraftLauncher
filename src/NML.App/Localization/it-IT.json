@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "Nessun mod aggiornato",
   "mods.upgrade.no_check": "Controlla prima gli aggiornamenti",
   "mods.upgrade.none": "Nessun mod aggiornabile trovato",
+  "migration.button": "🔀 Migra i contenuti all'altra modalità di isolamento",
+  "migration.done": "{0} file migrati",
   "common.cancel": "Annulla",
   "common.confirm": "OK",
   "common.close": "Chiudi",

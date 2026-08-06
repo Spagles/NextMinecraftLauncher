@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "Heç bir mod yenilənə bilmədi",
   "mods.upgrade.no_check": "Əvvəlcə yeniləmələri yoxlayın",
   "mods.upgrade.none": "Yenilənə bilən mod tapılmadı",
+  "migration.button": "🔀 Məzmunu digər təcrid rejiminə köçür",
+  "migration.done": "{0} fayl köçürüldü",
   "common.cancel": "İptal",
   "common.confirm": "Tamam",
   "common.close": "Kapat",

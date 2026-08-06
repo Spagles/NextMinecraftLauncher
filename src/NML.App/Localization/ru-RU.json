@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "Ни один мод обновить не удалось",
   "mods.upgrade.no_check": "Сначала проверьте обновления",
   "mods.upgrade.none": "Обновляемых модов не найдено",
+  "migration.button": "🔀 Перенести данные в другой режим изоляции",
+  "migration.done": "Перенесено файлов: {0}",
   "common.cancel": "Отмена",
   "common.confirm": "ОК",
   "common.close": "Закрыть",

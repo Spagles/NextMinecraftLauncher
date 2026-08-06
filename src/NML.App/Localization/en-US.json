@@ -320,6 +320,9 @@
   "mods.upgrade.no_check": "Check for updates first",
   "mods.upgrade.none": "No upgradable mods found",
 
+  "migration.button": "🔀 Migrate content to the other isolation mode",
+  "migration.done": "Migrated {0} file(s)",
+
   "account.refresh.button": "🔄 Refresh tokens",
   "account.refresh.refreshing": "Refreshing expired tokens…",
   "account.refresh.done": "Refreshed {0} account(s)",

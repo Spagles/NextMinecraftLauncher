@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "Niciun mod nu a putut fi actualizat",
   "mods.upgrade.no_check": "Verifică mai întâi actualizările",
   "mods.upgrade.none": "Niciun mod actualizabil găsit",
+  "migration.button": "🔀 Migrează conținutul în celălalt mod de izolare",
+  "migration.done": "Migrat {0} fișier(e)",
   "common.cancel": "Anulează",
   "common.confirm": "OK",
   "common.close": "Închide",

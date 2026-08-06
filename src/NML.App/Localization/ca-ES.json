@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "No s'ha pogut actualitzar cap mod",
   "mods.upgrade.no_check": "Comprova les actualitzacions primer",
   "mods.upgrade.none": "No s'han trobat mods actualitzables",
+  "migration.button": "🔀 Migra el contingut a l'altre mode d'aïllament",
+  "migration.done": "Migrat {0} fitxer(s)",
   "common.cancel": "Cancel·la",
   "common.confirm": "D'acord",
   "common.close": "Tanca",

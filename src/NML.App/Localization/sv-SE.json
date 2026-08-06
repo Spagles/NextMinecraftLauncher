@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "Inga moddar kunde uppdateras",
   "mods.upgrade.no_check": "Kolla uppdateringar först",
   "mods.upgrade.none": "Inga uppdateringsbara moddar hittades",
+  "migration.button": "🔀 Migrera innehåll till det andra isoleringsläget",
+  "migration.done": "Migrerade {0} fil(er)",
   "common.cancel": "Avbryt",
   "common.confirm": "OK",
   "common.close": "Stäng",

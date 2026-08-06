@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "Ешбір мод жаңартылмады",
   "mods.upgrade.no_check": "Алдымен жаңартуларды тексеріңіз",
   "mods.upgrade.none": "Жаңартуға болатын мод табылмады",
+  "migration.button": "🔀 Мазмұнды басқа оқшаулау режиміне көшіру",
+  "migration.done": "{0} файл көшірілді",
   "common.cancel": "Ləğv et",
   "common.confirm": "Tamam",
   "common.close": "Bağla",

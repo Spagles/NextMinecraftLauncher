@@ -3,7 +3,7 @@
 A cross-platform **Minecraft launcher** built in **C# / Avalonia UI 11 + .NET 8**, aiming to
 match HMCL and PCL while adding **first-class AI features**.
 
-> **141 commits, 325 tests, 0 warnings, 31 languages.** A real, functional launcher.
+> **142 commits, 331 tests, 0 warnings, 31 languages.** A real, functional launcher.
 
 ## What works right now
 
@@ -20,9 +20,9 @@ match HMCL and PCL while adding **first-class AI features**.
 - **Authlib-injector:** Full external-login server support — server list persistence UI,
   Yggdrasil login, and `-javaagent` injection at launch time
 - **Instance management:** version-isolated game dirs (toggleable per-instance: own .minecraft vs
-  shared common root), clone (preserves custom args), import/export (zip bundles), share codes
-  (base64), batch export/delete, remove single, per-instance launch options (memory / window /
-  JVM & game args) persisted to instances.json
+  shared common root) with a one-click content migrator, clone (preserves custom args),
+  import/export (zip bundles), share codes (base64), batch export/delete, remove single,
+  per-instance launch options (memory / window / JVM & game args) persisted to instances.json
 - **Deep modpack export:** bundle an instance with optional worlds, screenshots, client
   settings (options.txt/servers.dat) and logs on top of the always-included mods/config —
   cross-platform zip entries (forward-slash) for faithful cross-machine reproduction
@@ -80,7 +80,7 @@ match HMCL and PCL while adding **first-class AI features**.
   silent multi-account token refresh (MSA refresh-token lifecycle, 5-min proactive margin)
 
 ### Internationalization
-- **31 languages, 320 keys each (9,920 total translated keys):** 中文, English, 日本語, 한국어,
+- **31 languages, 322 keys each (9,982 total translated keys):** 中文, English, 日本語, 한국어,
   Русский, Français, Español, Deutsch, Português, Italiano, العربية, Türkçe, हिन्दी, ไทย,
   Tiếng Việt, Bahasa Indonesia, Polski, Українська, Nederlands, Svenska, Čeština,
   Norsk, Suomi, Dansk, Magyar, Română, Azərbaycan, Afrikaans, עברית, Català, Қазақша

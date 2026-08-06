@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "Không nâng cấp được mod nào",
   "mods.upgrade.no_check": "Kiểm tra cập nhật trước",
   "mods.upgrade.none": "Không có mod nào nâng cấp được",
+  "migration.button": "🔀 Di chuyển nội dung sang chế độ cô lập khác",
+  "migration.done": "Đã di chuyển {0} tệp",
   "common.cancel": "Hủy",
   "common.confirm": "OK",
   "common.close": "Đóng",

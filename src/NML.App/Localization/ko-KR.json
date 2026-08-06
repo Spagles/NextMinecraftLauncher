@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "업그레이드된 모드 없음",
   "mods.upgrade.no_check": "먼저 업데이트 확인",
   "mods.upgrade.none": "업그레이드 가능한 모드 없음",
+  "migration.button": "🔀 다른 격리 모드로 콘텐츠 마이그레이션",
+  "migration.done": "{0}개 파일 마이그레이션됨",
   "common.cancel": "취소",
   "common.confirm": "확인",
   "common.close": "닫기",

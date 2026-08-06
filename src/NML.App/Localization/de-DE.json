@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "Kein Mod konnte aktualisiert werden",
   "mods.upgrade.no_check": "Zuerst auf Updates prüfen",
   "mods.upgrade.none": "Keine aktualisierbaren Mods gefunden",
+  "migration.button": "🔀 Inhalte in den anderen Isolationsmodus migrieren",
+  "migration.done": "{0} Datei(en) migriert",
   "common.cancel": "Abbrechen",
   "common.confirm": "OK",
   "common.close": "Schließen",

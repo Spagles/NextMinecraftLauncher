@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "Geen mod kon opgewerk word nie",
   "mods.upgrade.no_check": "Kontroleer eerste opdaterings",
   "mods.upgrade.none": "Geen opwerkbare mods gevind nie",
+  "migration.button": "🔀 Migreer inhoud na die ander isolasiemodus",
+  "migration.done": "{0} lêer(s) gemigreer",
   "common.cancel": "Kanselleer",
   "common.confirm": "OK",
   "common.close": "Maak toe",

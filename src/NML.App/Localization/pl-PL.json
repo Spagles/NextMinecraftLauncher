@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "Nie udało się uaktualnić żadnego modu",
   "mods.upgrade.no_check": "Najpierw sprawdź aktualizacje",
   "mods.upgrade.none": "Brak modów do uaktualnienia",
+  "migration.button": "🔀 Migruj zawartość do innego trybu izolacji",
+  "migration.done": "Przeniesiono {0} plików",
   "common.cancel": "Anuluj",
   "common.confirm": "OK",
   "common.close": "Zamknij",

@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "Nebylo možné aktualizovat žádný mod",
   "mods.upgrade.no_check": "Nejprve zkontrolujte aktualizace",
   "mods.upgrade.none": "Nebyly nalezeny žádné aktualizovatelné mody",
+  "migration.button": "🔀 Migrovat obsah do druhého režimu izolace",
+  "migration.done": "Migrováno {0} souborů",
   "common.cancel": "Zrušit",
   "common.confirm": "OK",
   "common.close": "Zavřít",

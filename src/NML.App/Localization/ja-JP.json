@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "アップグレードできたMODはありません",
   "mods.upgrade.no_check": "先に更新確認をしてください",
   "mods.upgrade.none": "アップグレード可能なMODはありません",
+  "migration.button": "🔀 もう一方の隔離モードへコンテンツを移行",
+  "migration.done": "{0} 個のファイルを移行しました",
   "common.cancel": "キャンセル",
   "common.confirm": "OK",
   "common.close": "閉じる",

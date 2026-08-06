@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "ไม่สามารถอัปเกรดม็อดใดได้",
   "mods.upgrade.no_check": "ตรวจหาอัปเดตก่อน",
   "mods.upgrade.none": "ไม่พบม็อดที่อัปเกรดได้",
+  "migration.button": "🔀 ย้ายเนื้อหาไปยังโหมดแยกอีกแบบ",
+  "migration.done": "ย้าย {0} ไฟล์",
   "common.cancel": "ยกเลิก",
   "common.confirm": "ตกลง",
   "common.close": "ปิด",

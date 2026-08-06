@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "Yhtäkään modia ei voitu päivittää",
   "mods.upgrade.no_check": "Tarkista päivitykset ensin",
   "mods.upgrade.none": "Päivitettäviä modeja ei löytynyt",
+  "migration.button": "🔀 Siirrä sisältö toiseen eristystilaan",
+  "migration.done": "Siirretty {0} tiedostoa",
   "common.cancel": "Peruuta",
   "common.confirm": "OK",
   "common.close": "Sulje",

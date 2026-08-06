@@ -256,6 +256,41 @@ public partial class HomePageViewModel : PageViewModelBase
         catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
     }
 
+    /// <summary>
+    /// Migrate the selected instance's user content (saves, mods, configs, settings) to the
+    /// opposite isolation mode, then flip the flag — the non-destructive counterpart to the bare
+    /// IsIsolated toggle. Computes the source (current mode) + destination (opposite mode), copies
+    /// via InstanceMigrator (files copied not moved, merge-prefers-newer), then switches + saves.
+    /// </summary>
+    [RelayCommand]
+    private async Task MigrateIsolationAsync()
+    {
+        Instance? inst = SelectedInstance;
+        if (inst is null) { Status = "home.select_first"; return; }
+        try
+        {
+            // Capture the current (pre-flip) game dir, then compute the opposite mode's dir.
+            string sourceDir = _instances.GameDirFor(inst);
+            bool targetIsolated = !inst.IsIsolated;
+            // Compute the destination via a flipped instance without mutating the real one
+            // (Instance is a class, not a record, so build a temporary copy).
+            var flipped = new Instance
+            {
+                Name = inst.Name,
+                IsIsolated = targetIsolated,
+            };
+            string destDir = _instances.GameDirFor(flipped);
+
+            var report = await Task.Run(() => InstanceMigrator.Migrate(sourceDir, destDir));
+            // Flip the flag + persist so subsequent launches use the migrated dir.
+            inst.IsIsolated = targetIsolated;
+            SelectedInstanceIsIsolated = targetIsolated;
+            SaveInstanceOptions();
+            Status = $"migration.done,{report.FilesCopied}";
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; _logger.LogError(ex, "Isolation migration failed."); }
+    }
+
     /// <summary>Switching instances clears the dirty flag (the new instance shows its own
     /// persisted state, not the previous one's unsaved edits).</summary>
     partial void OnSelectedInstanceChanged(Instance? value)

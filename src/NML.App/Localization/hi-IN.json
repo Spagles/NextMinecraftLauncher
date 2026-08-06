@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "कोई मॉड अपग्रेड नहीं हुआ",
   "mods.upgrade.no_check": "पहले अपडेट जांचें",
   "mods.upgrade.none": "कोई अपग्रेड करने योग्य मॉड नहीं",
+  "migration.button": "🔀 सामग्री को दूसरे पृथक्करण मोड में माइग्रेट करें",
+  "migration.done": "{0} फ़ाइलें माइग्रेट हुईं",
   "common.cancel": "रद्द करें",
   "common.confirm": "ठीक है",
   "common.close": "बंद करें",

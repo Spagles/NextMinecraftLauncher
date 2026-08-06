@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "Hiçbir mod yükseltilemedi",
   "mods.upgrade.no_check": "Önce güncellemeleri kontrol et",
   "mods.upgrade.none": "Yükseltilebilir mod bulunamadı",
+  "migration.button": "🔀 İçeriği diğer izolasyon moduna taşı",
+  "migration.done": "{0} dosya taşındı",
   "common.cancel": "İptal",
   "common.confirm": "Tamam",
   "common.close": "Kapat",

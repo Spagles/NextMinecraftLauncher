@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "تعذر ترقية أي مود",
   "mods.upgrade.no_check": "تحقق من التحديثات أولاً",
   "mods.upgrade.none": "لا مودات قابلة للترقية",
+  "migration.button": "🔀 ترحيل المحتوى إلى وضع العزل الآخر",
+  "migration.done": "تم ترحيل {0} ملف",
   "common.cancel": "إلغاء",
   "common.confirm": "موافق",
   "common.close": "إغلاق",

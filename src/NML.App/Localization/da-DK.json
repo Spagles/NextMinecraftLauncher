@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "Kunne ikke opdatere nogen mods",
   "mods.upgrade.no_check": "Tjek opdateringer først",
   "mods.upgrade.none": "Ingen opdaterbare mods fundet",
+  "migration.button": "🔀 Migrér indhold til den anden isoleringstilstand",
+  "migration.done": "Migrerede {0} fil(er)",
   "common.cancel": "Annuller",
   "common.confirm": "OK",
   "common.close": "Luk",

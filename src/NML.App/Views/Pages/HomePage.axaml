@@ -122,6 +122,11 @@
                     <CheckBox Content="{loc:Loc 'isolation.edit_label'}" IsChecked="{Binding SelectedInstanceIsIsolated}"
                               Foreground="#c0c0c0" FontSize="11"/>
                     <TextBlock Text="{loc:Loc 'isolation.edit_hint'}" Foreground="#666" FontSize="10" FontStyle="Italic" TextWrapping="Wrap"/>
+                    <!-- One-click migration: copy saves/mods/configs to the opposite isolation mode,
+                         then flip the flag — the non-destructive counterpart to the bare toggle. -->
+                    <Button Content="{loc:Loc 'migration.button'}" Command="{Binding MigrateIsolationCommand}"
+                            Background="#2f5fcc" Foreground="White" Padding="12,4" HorizontalAlignment="Left"
+                            Margin="0,2,0,0" FontSize="11"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,2,0,0">
                     <Button Content="{loc:Loc 'instance.save'}" Command="{Binding SaveInstanceOptionsCommand}"

@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "אף מוד לא שודרג",
   "mods.upgrade.no_check": "בדוק עדכונים קודם",
   "mods.upgrade.none": "לא נמצאו מודים לשדרוג",
+  "migration.button": "🔀 העבר תוכן למצב בידוד השני",
+  "migration.done": "הועברו {0} קבצים",
   "common.cancel": "ביטול",
   "common.confirm": "אישור",
   "common.close": "סגור",

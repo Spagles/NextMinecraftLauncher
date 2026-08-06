@@ -311,6 +311,8 @@
   "mods.upgrade.failed": "没有可升级的模组",
   "mods.upgrade.no_check": "请先检查更新",
   "mods.upgrade.none": "未发现可升级的模组",
+  "migration.button": "🔀 迁移内容到另一种隔离模式",
+  "migration.done": "已迁移 {0} 个文件",
   "common.cancel": "取消",
   "common.confirm": "确认",
   "common.close": "关闭",
