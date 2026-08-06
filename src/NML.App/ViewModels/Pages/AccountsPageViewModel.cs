@@ -173,6 +173,39 @@ public partial class AccountsPageViewModel : PageViewModelBase
         finally { IsBusy = false; }
     }
 
+    /// <summary>
+    /// Silently refresh every Microsoft account whose access token is past/near expiry and has a
+    /// stored refresh token. The multi-account "keep them all live" path — called on startup and
+    /// from a manual button so several MSA accounts stay usable without re-doing device-code.
+    /// Accounts whose refresh fails are left in place so the UI can prompt re-authentication.
+    /// </summary>
+    [RelayCommand]
+    private async Task RefreshAllAccountsAsync()
+    {
+        if (IsBusy) return;
+        IsBusy = true;
+        Status = "account.refresh.refreshing";
+        try
+        {
+            var refreshed = await _accountStore.RefreshIfDueAsync(_microsoft);
+            int changed = refreshed.Count(a => a.AccountType == "msa" && !a.NeedsRefresh);
+            // Swap in the refreshed list (preserves order + selection).
+            Account? active = ActiveAccount;
+            Accounts.Clear();
+            foreach (Account a in refreshed) Accounts.Add(a);
+            ActiveAccount = active is null
+                ? Accounts.FirstOrDefault(a => a.Uuid == _accountStore.GetActiveUuid())
+                : Accounts.FirstOrDefault(a => a.Uuid == active.Uuid) ?? active;
+            Status = changed > 0 ? $"account.refresh.done,{changed}" : "account.refresh.uptodate";
+        }
+        catch (Exception ex)
+        {
+            Status = $"common.error,{ex.Message}";
+            _logger.LogWarning(ex, "Account refresh sweep failed.");
+        }
+        finally { IsBusy = false; }
+    }
+
     [RelayCommand]
     private void Activate(Account account)
     {

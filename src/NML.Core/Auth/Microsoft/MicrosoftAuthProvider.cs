@@ -96,10 +96,16 @@ public sealed class MicrosoftAuthProvider : IAuthProvider
             AccessToken = mc.AccessToken,
             AccountType = "msa",
             Xuid = userHash, // uhs is the closest stable id; full XUID would need a separate call.
+            // Capture the refresh token + expiry so the launcher can silently re-login later
+            // (multi-account workflows: several MSA accounts kept live without re-doing device-code).
+            RefreshToken = msa.RefreshToken,
+            ExpiresAt = DateTimeOffset.UtcNow.AddSeconds(Math.Max(60, msa.ExpiresIn)),
+            MsaClientId = ClientId,
         };
     }
 
-    /// <summary>Silent re-login using a stored MSA refresh token.</summary>
+    /// <summary>Silent re-login using a stored MSA refresh token. Returns a refreshed Account
+    /// carrying a fresh access token, a rotated refresh token, and a new expiry.</summary>
     public async Task<Account> ReLoginAsync(string refreshToken, CancellationToken ct = default)
     {
         _logger.LogInformation("Refreshing Microsoft session…");
@@ -118,6 +124,10 @@ public sealed class MicrosoftAuthProvider : IAuthProvider
             AccessToken = mc.AccessToken,
             AccountType = "msa",
             Xuid = userHash,
+            // MS refresh tokens rotate: persist the new one so future refreshes keep working.
+            RefreshToken = msa.RefreshToken,
+            ExpiresAt = DateTimeOffset.UtcNow.AddSeconds(Math.Max(60, msa.ExpiresIn)),
+            MsaClientId = ClientId,
         };
     }
 }

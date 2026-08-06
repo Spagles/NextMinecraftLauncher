@@ -287,6 +287,11 @@
   "backup.restore": "♻ Restore",
   "backup.restored": "Restored world: {0}",
 
+  "account.refresh.button": "🔄 Refresh tokens",
+  "account.refresh.refreshing": "Refreshing expired tokens…",
+  "account.refresh.done": "Refreshed {0} account(s)",
+  "account.refresh.uptodate": "All tokens are current",
+
   "common.cancel": "Cancel",
   "common.confirm": "OK",
   "common.close": "Close",

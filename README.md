@@ -3,7 +3,7 @@
 A cross-platform **Minecraft launcher** built in **C# / Avalonia UI 11 + .NET 8**, aiming to
 match HMCL and PCL while adding **first-class AI features**.
 
-> **132 commits, 217 tests, 0 warnings, 31 languages.** A real, functional launcher.
+> **133 commits, 222 tests, 0 warnings, 31 languages.** A real, functional launcher.
 
 ## What works right now
 
@@ -63,10 +63,11 @@ match HMCL and PCL while adding **first-class AI features**.
 - **Home page:** instance list, memory allocation slider, JVM auto-tune button,
   custom launch args, **live game console**, instance export/import/clone/share/remove/batch operations
 - **Download center:** full Mojang version manifest with search + type filtering + install progress bar
-- **Accounts:** offline + Microsoft device-code + authlib-injector servers + skin preview
+- **Accounts:** offline + Microsoft device-code + authlib-injector servers + skin preview +
+  silent multi-account token refresh (MSA refresh-token lifecycle, 5-min proactive margin)
 
 ### Internationalization
-- **31 languages, 277 keys each (8,587 total translated keys):** 中文, English, 日本語, 한국어,
+- **31 languages, 281 keys each (8,711 total translated keys):** 中文, English, 日本語, 한국어,
   Русский, Français, Español, Deutsch, Português, Italiano, العربية, Türkçe, हिन्दी, ไทย,
   Tiếng Việt, Bahasa Indonesia, Polski, Українська, Nederlands, Svenska, Čeština,
   Norsk, Suomi, Dansk, Magyar, Română, Azərbaycan, Afrikaans, עברית, Català, Қазақша

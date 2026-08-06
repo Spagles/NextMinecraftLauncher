@@ -32,6 +32,10 @@
                 </StackPanel>
                 <Button Content="{loc:Loc 'accounts.add_microsoft'}" Command="{Binding AddMicrosoftAccountCommand}"
                         IsEnabled="{Binding !IsBusy}" Background="#2f5fcc" Foreground="White" Padding="14,6"/>
+                <!-- Silent multi-account token refresh: refreshes every MSA account whose access
+                     token is past/near expiry, using the stored refresh token. -->
+                <Button Content="{loc:Loc 'account.refresh.button'}" Command="{Binding RefreshAllAccountsCommand}"
+                        IsEnabled="{Binding !IsBusy}" Background="#388e3c" Foreground="White" Padding="14,6"/>
             </StackPanel>
 
             <!-- Device code hint -->

@@ -22,8 +22,36 @@ public sealed record Account
     /// <summary>Xbox Live XUID (Microsoft accounts only; empty for offline).</summary>
     public string Xuid { get; init; } = string.Empty;
 
+    /// <summary>MSA refresh token (Microsoft accounts only). Lets the launcher silently re-login
+    /// instead of replaying the device-code flow on every token expiry. Persisted encrypted.</summary>
+    public string RefreshToken { get; init; } = string.Empty;
+
+    /// <summary>UTC instant the <see cref="AccessToken"/> expires (Microsoft accounts only).
+    /// Offline/legacy accounts leave this at the default (never expires).</summary>
+    public DateTimeOffset? ExpiresAt { get; init; }
+
+    /// <summary>The OAuth client id used to obtain this token (so the refresh path knows which
+    /// client to call). Microsoft accounts only; empty for offline.</summary>
+    public string MsaClientId { get; init; } = string.Empty;
+
     /// <summary>Display type for the UI.</summary>
     public bool IsOffline => AccountType == "legacy";
+
+    /// <summary>
+    /// True when this account's access token is past (or near) expiry and should be refreshed
+    /// before launch. Offline accounts never need a refresh. A 5-minute safety margin is applied
+    /// so a token expiring mid-session is renewed proactively. Pure + testable.
+    /// </summary>
+    public bool NeedsRefresh =>
+        !IsOffline
+        && ExpiresAt.HasValue
+        && DateTimeOffset.UtcNow > ExpiresAt.Value.AddMinutes(-5);
+
+    /// <summary>True when the account has the data required to attempt a silent refresh
+    /// (a refresh token + the client id that issued it).</summary>
+    public bool CanRefreshSilently => !IsOffline
+        && !string.IsNullOrWhiteSpace(RefreshToken)
+        && !string.IsNullOrWhiteSpace(MsaClientId);
 }
 
 public interface IAuthProvider
