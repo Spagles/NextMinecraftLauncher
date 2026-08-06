@@ -3,7 +3,7 @@
 A cross-platform **Minecraft launcher** built in **C# / Avalonia UI 11 + .NET 8**, aiming to
 match HMCL and PCL while adding **first-class AI features**.
 
-> **127 commits, 178 tests, 0 warnings, 31 languages.** A real, functional launcher.
+> **128 commits, 181 tests, 0 warnings, 31 languages.** A real, functional launcher.
 
 ## What works right now
 
@@ -15,8 +15,9 @@ match HMCL and PCL while adding **first-class AI features**.
 - **5 modloaders:** Fabric, Quilt, Forge (with processor execution + type coverage), NeoForge, OptiFine
 - **Authlib-injector:** Full external-login server support — server list persistence UI,
   Yggdrasil login, and `-javaagent` injection at launch time
-- **Instance management:** version-isolated game dirs, clone, import/export (zip bundles), share
-  codes (base64), batch export/delete, remove single
+- **Instance management:** version-isolated game dirs, clone (preserves custom args),
+  import/export (zip bundles), share codes (base64), batch export/delete, remove single,
+  per-instance launch options (memory / window / JVM & game args) persisted to instances.json
 - **World grid:** saves rendered as icon cards (level.dat LevelName + icon.png preview),
   one-click timestamped backup, export/delete
 - **Modpack support:** Modrinth .mrpack + CurseForge manifest import with mod resolution
@@ -56,7 +57,7 @@ match HMCL and PCL while adding **first-class AI features**.
 - **Accounts:** offline + Microsoft device-code + authlib-injector servers + skin preview
 
 ### Internationalization
-- **31 languages, 249 keys each (7,719 total translated keys):** 中文, English, 日本語, 한국어,
+- **31 languages, 252 keys each (7,812 total translated keys):** 中文, English, 日本語, 한국어,
   Русский, Français, Español, Deutsch, Português, Italiano, العربية, Türkçe, हिन्दी, ไทย,
   Tiếng Việt, Bahasa Indonesia, Polski, Українська, Nederlands, Svenska, Čeština,
   Norsk, Suomi, Dansk, Magyar, Română, Azərbaycan, Afrikaans, עברית, Català, Қазақша

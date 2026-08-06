@@ -151,6 +151,7 @@ public partial class HomePageViewModel : PageViewModelBase
             {
                 SelectedInstance.MaxMemoryMb = value;
                 OnPropertyChanged();
+                MarkOptionsDirty();
             }
         }
     }
@@ -165,6 +166,7 @@ public partial class HomePageViewModel : PageViewModelBase
             {
                 SelectedInstance.CustomJvmArgs = value;
                 OnPropertyChanged();
+                MarkOptionsDirty();
             }
         }
     }
@@ -179,6 +181,7 @@ public partial class HomePageViewModel : PageViewModelBase
             {
                 SelectedInstance.CustomGameArgs = value;
                 OnPropertyChanged();
+                MarkOptionsDirty();
             }
         }
     }
@@ -187,15 +190,52 @@ public partial class HomePageViewModel : PageViewModelBase
     public int SelectedWindowWidth
     {
         get => SelectedInstance?.WindowWidth ?? 854;
-        set { if (SelectedInstance is not null) { SelectedInstance.WindowWidth = value; OnPropertyChanged(); } }
+        set { if (SelectedInstance is not null) { SelectedInstance.WindowWidth = value; OnPropertyChanged(); MarkOptionsDirty(); } }
     }
 
     /// <summary>Two-way bindable window height for the selected instance.</summary>
     public int SelectedWindowHeight
     {
         get => SelectedInstance?.WindowHeight ?? 480;
-        set { if (SelectedInstance is not null) { SelectedInstance.WindowHeight = value; OnPropertyChanged(); } }
+        set { if (SelectedInstance is not null) { SelectedInstance.WindowHeight = value; OnPropertyChanged(); MarkOptionsDirty(); } }
     }
+
+    /// <summary>True when the selected instance's launch options have unsaved edits
+    /// (drives the Save button's enabled state + a "modified" indicator).</summary>
+    [ObservableProperty] private bool _isInstanceOptionsDirty;
+
+    /// <summary>Mark the current instance's options as edited-but-not-yet-persisted.</summary>
+    private void MarkOptionsDirty()
+    {
+        if (!IsInstanceOptionsDirty) IsInstanceOptionsDirty = true;
+    }
+
+    /// <summary>
+    /// Persist the selected instance's edited launch options (memory, window size, JVM/game
+    /// args) back to <c>instances.json</c>. Without this the in-memory edits would be lost on
+    /// restart — the original launch-options panel mutated the model but never saved it.
+    /// </summary>
+    [RelayCommand]
+    private void SaveInstanceOptions()
+    {
+        if (SelectedInstance is null) return;
+        try
+        {
+            // Re-read the persisted list so we don't clobber concurrent changes (e.g. a new
+            // instance added elsewhere), then replace the matching entry and save.
+            var all = _instances.LoadAll();
+            int idx = all.FindIndex(i => string.Equals(i.Name, SelectedInstance.Name, StringComparison.OrdinalIgnoreCase));
+            if (idx >= 0) all[idx] = SelectedInstance;
+            _instances.SaveAll(all);
+            IsInstanceOptionsDirty = false;
+            Status = "instance.saved";
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    /// <summary>Switching instances clears the dirty flag (the new instance shows its own
+    /// persisted state, not the previous one's unsaved edits).</summary>
+    partial void OnSelectedInstanceChanged(Instance? value) => IsInstanceOptionsDirty = false;
 
     public HomePageViewModel(
         VersionManifestService manifest,

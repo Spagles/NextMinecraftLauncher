@@ -254,6 +254,10 @@
   "world.quick_backup": "⚡ Backup",
   "world.backup_done": "Backed up to {0}",
 
+  "instance.save": "💾 Save launch options",
+  "instance.saved": "Launch options saved",
+  "instance.unsaved": "Unsaved changes",
+
   "common.cancel": "Cancel",
   "common.confirm": "OK",
   "common.close": "Close",

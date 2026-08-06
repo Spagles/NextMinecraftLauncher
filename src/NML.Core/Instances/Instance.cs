@@ -88,6 +88,8 @@ public sealed class InstanceStore
             MaxMemoryMb = source.MaxMemoryMb,
             WindowWidth = source.WindowWidth,
             WindowHeight = source.WindowHeight,
+            CustomJvmArgs = source.CustomJvmArgs,
+            CustomGameArgs = source.CustomGameArgs,
             Java = source.Java,
         };
 
