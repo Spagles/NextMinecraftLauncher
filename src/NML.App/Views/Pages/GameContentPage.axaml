@@ -195,6 +195,36 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
+
+                    <!-- Timeline browse: screenshots grouped by date (Today / Yesterday / yyyy-MM-dd) -->
+                    <ItemsControl ItemsSource="{Binding ScreenshotGroups}" Margin="0,8,0,0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Spacing="4" Margin="0,8,0,0">
+                                    <TextBlock Text="{Binding Header}" Foreground="#4fc3f7" FontSize="13" FontWeight="SemiBold"/>
+                                    <WrapPanel Orientation="Horizontal">
+                                        <ItemsControl ItemsSource="{Binding Items}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Horizontal"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="#1f1f25" CornerRadius="4" Padding="4" Margin="0,0,6,6">
+                                                        <StackPanel Spacing="2">
+                                                            <TextBlock Text="{Binding Name}" Foreground="#ccc" FontSize="10"
+                                                                       TextTrimming="CharacterEllipsis" MaxWidth="140"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </StackPanel>
 
                 <TextBlock Text="{loc:Loc 'content.empty'}" Foreground="#888" FontSize="12" Margin="0,12"

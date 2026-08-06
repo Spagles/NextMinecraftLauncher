@@ -108,6 +108,9 @@ public partial class GameContentPageViewModel : PageViewModelBase
     /// <summary>Screenshot cards shown in the screenshots grid (thumbnail + select + actions).</summary>
     public ObservableCollection<ScreenshotCardEntry> ScreenshotCards { get; } = new();
 
+    /// <summary>Screenshots grouped by date for the timeline browse (newest-group first).</summary>
+    public ObservableCollection<ScreenshotTimelineGroup> ScreenshotGroups { get; } = new();
+
     /// <summary>World backups shown in the saves-tab backups panel (restore / delete per row).</summary>
     public ObservableCollection<BackupEntry> Backups { get; } = new();
 
@@ -264,6 +267,7 @@ public partial class GameContentPageViewModel : PageViewModelBase
         Items.Clear();
         WorldCards.Clear();
         ScreenshotCards.Clear();
+        ScreenshotGroups.Clear();
         Backups.Clear();
         try
         {
@@ -306,6 +310,10 @@ public partial class GameContentPageViewModel : PageViewModelBase
                             LastModified = f.LastModified,
                         });
                     }
+                    // Also populate the timeline groups (newest-group-first date sections).
+                    foreach (var g in ScreenshotTimelineGrouper.Group(
+                        ScreenshotCards.Select(c => (c.Name, c.LastModified))))
+                        ScreenshotGroups.Add(g);
                     break;
                 case "resourcepacks":
                     foreach (GameFile f in browser.ListResourcePacks()) Items.Add(f);
