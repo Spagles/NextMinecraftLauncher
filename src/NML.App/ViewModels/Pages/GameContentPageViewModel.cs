@@ -450,6 +450,19 @@ public partial class GameContentPageViewModel : PageViewModelBase
         catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
     }
 
+    /// <summary>Open the world's seed in an online previewer (Chunk Base biome map).</summary>
+    [RelayCommand]
+    private void OpenSeedOnline(WorldCardEntry card)
+    {
+        if (!long.TryParse(card.SeedDisplay, out long seed)) return;
+        try
+        {
+            string url = NML.Core.Game.SeedUrlBuilder.Build(NML.Core.Game.SeedUrlBuilder.Service.ChunkBase, seed)!;
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
+        }
+        catch { /* non-fatal */ }
+    }
+
     /// <summary>One-click export from a grid world card.</summary>
     [RelayCommand]
     private void ExportWorldCard(WorldCardEntry card) => ExportWorld(card.ToGameSave());

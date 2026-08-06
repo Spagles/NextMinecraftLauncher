@@ -110,6 +110,9 @@
                                                                   FontFamily="Cascadia Code,Consolas,monospace" VerticalAlignment="Center"/>
                                             <Button Content="📋" Command="{Binding #Root.DataContext.CopySeedCommand}"
                                                     CommandParameter="{Binding}" Padding="4,2" FontSize="9"/>
+                                            <Button Content="🗺" Command="{Binding #Root.DataContext.OpenSeedOnlineCommand}"
+                                                    CommandParameter="{Binding}" Padding="4,2" FontSize="9"
+                                                    ToolTip.Tip="View seed online (Chunk Base biome map)"/>
                                         </StackPanel>
                                         <!-- One-click backup is the primary action; export/delete as secondary -->
                                         <Button Content="{loc:Loc 'world.quick_backup'}" Classes="small"
