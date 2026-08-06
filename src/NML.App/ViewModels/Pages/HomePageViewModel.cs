@@ -379,7 +379,7 @@ public partial class HomePageViewModel : PageViewModelBase
         try
         {
             Instance imported = _instanceTransfer.Import(zipPath);
-            Instances.Add(imported);
+            Instances.Add(imported); ApplySort();
             SelectedInstance = imported;
             Status = $"home.installed,{imported.Name}";
         }
@@ -494,7 +494,7 @@ public partial class HomePageViewModel : PageViewModelBase
                 instance.VersionId = modloaderProfileId;
 
             _instances.Add(instance);
-            Instances.Add(instance);
+            Instances.Add(instance); ApplySort();
             SelectedInstance = instance;
             Status = $"home.installed,{instance.VersionId}";
         }
@@ -572,7 +572,7 @@ public partial class HomePageViewModel : PageViewModelBase
         try
         {
             Instance clone = _instances.Clone(instance, $"{instance.Name} (copy)");
-            Instances.Add(clone);
+            Instances.Add(clone); ApplySort();
             SelectedInstance = clone;
             Status = $"home.installed,{clone.Name}";
         }
