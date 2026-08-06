@@ -23,6 +23,9 @@ public sealed class GameContentBrowser
                 Path = full,
                 SizeBytes = DirSize(full),
                 LastModified = fi.LastWriteTimeUtc,
+                // Enrich: the in-world display name (falls back to folder name) + preview icon.
+                DisplayName = WorldMetadataReader.ReadLevelName(full) ?? name,
+                PreviewIconPath = WorldMetadataReader.ReadIconPath(full),
             };
         });
     }
@@ -305,6 +308,14 @@ public sealed class GameSave
     public string Path { get; init; } = string.Empty;
     public long SizeBytes { get; init; }
     public DateTimeOffset LastModified { get; init; }
+
+    /// <summary>The in-world display name read from <c>level.dat</c>'s LevelName tag.
+    /// Falls back to the folder <see cref="Name"/> when level.dat is missing/unreadable.</summary>
+    public string DisplayName { get; init; } = string.Empty;
+
+    /// <summary>Absolute path to <c>icon.png</c> beside the level.dat, or null when the world
+    /// has no custom icon (the UI shows a generated placeholder in that case).</summary>
+    public string? PreviewIconPath { get; init; }
 }
 
 public sealed class GameFile

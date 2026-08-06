@@ -238,6 +238,8 @@
   "log.level_info": "Info",
   "log.level_warn": "Warn",
   "log.level_error": "Error",
+  "world.quick_backup": "⚡ Záloha",
+  "world.backup_done": "Zálohováno do {0}",
   "common.cancel": "Zrušit",
   "common.confirm": "OK",
   "common.close": "Zavřít",

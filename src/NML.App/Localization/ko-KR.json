@@ -238,6 +238,8 @@
   "log.level_info": "Info",
   "log.level_warn": "Warn",
   "log.level_error": "Error",
+  "world.quick_backup": "⚡ 백업",
+  "world.backup_done": "{0}에 백업됨",
   "common.cancel": "취소",
   "common.confirm": "확인",
   "common.close": "닫기",

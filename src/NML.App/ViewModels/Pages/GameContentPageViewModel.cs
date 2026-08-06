@@ -69,8 +69,9 @@ public partial class GameContentPageViewModel : PageViewModelBase
     /// <summary>True when the configs tab is active (shows the config editor).</summary>
     public bool IsConfigsTab => Tab == "configs";
 
-    /// <summary>True when the main file-list should be shown (not logs or configs tab).</summary>
-    public bool IsFileListVisible => !IsLogsTab && !IsConfigsTab;
+    /// <summary>True when the main flat file-list should be shown (not logs, configs, or saves —
+    /// saves render their own icon grid instead).</summary>
+    public bool IsFileListVisible => !IsLogsTab && !IsConfigsTab && !IsSavesTab;
 
     [ObservableProperty] private string _logContent = string.Empty;
     [ObservableProperty] private string _logSearchText = string.Empty;
@@ -99,6 +100,9 @@ public partial class GameContentPageViewModel : PageViewModelBase
 
     /// <summary>Filtered + classified lines bound to the colored ItemsControl.</summary>
     public ObservableCollection<LogLineEntry> FilteredLogLines { get; } = new();
+
+    /// <summary>World cards shown in the saves grid (icon + name + last played + actions).</summary>
+    public ObservableCollection<WorldCardEntry> WorldCards { get; } = new();
 
     /// <summary>Currently-edited config file content.</summary>
     [ObservableProperty] private string _configContent = string.Empty;
@@ -224,12 +228,25 @@ public partial class GameContentPageViewModel : PageViewModelBase
         var browser = new GameContentBrowser(new MinecraftDirectory(root));
 
         Items.Clear();
+        WorldCards.Clear();
         try
         {
             switch (Tab)
             {
                 case "saves":
-                    foreach (GameSave s in browser.ListSaves()) Items.Add(s);
+                    foreach (GameSave s in browser.ListSaves())
+                    {
+                        Items.Add(s);
+                        WorldCards.Add(new WorldCardEntry
+                        {
+                            Name = s.Name,
+                            DisplayName = s.DisplayName,
+                            Path = s.Path,
+                            SizeBytes = s.SizeBytes,
+                            LastModified = s.LastModified,
+                            PreviewIconPath = s.PreviewIconPath,
+                        });
+                    }
                     break;
                 case "screenshots":
                     foreach (GameFile f in browser.ListScreenshots()) Items.Add(f);
@@ -277,10 +294,22 @@ public partial class GameContentPageViewModel : PageViewModelBase
             if (inst is null) return;
             var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
             string zip = browser.BackupWorld(save.Path);
-            Status = $"home.installed,{zip}";
+            Status = $"world.backup_done,{Path.GetFileName(zip)}";
         }
         catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
     }
+
+    /// <summary>One-click backup from a grid world card (converts the card back to a GameSave).</summary>
+    [RelayCommand]
+    private void BackupWorldCard(WorldCardEntry card) => BackupWorld(card.ToGameSave());
+
+    /// <summary>One-click export from a grid world card.</summary>
+    [RelayCommand]
+    private void ExportWorldCard(WorldCardEntry card) => ExportWorld(card.ToGameSave());
+
+    /// <summary>One-click delete from a grid world card (refreshes the grid afterward).</summary>
+    [RelayCommand]
+    private void DeleteWorldCard(WorldCardEntry card) => DeleteWorld(card.ToGameSave());
 
     [RelayCommand]
     private void ExportWorld(GameSave save)
@@ -496,4 +525,54 @@ public sealed class LogLineEntry : ObservableObject
 
     /// <summary>Hex color for this line (severity-derived, e.g. "#ef5350" for errors).</summary>
     public string Color => _color;
+}
+
+/// <summary>
+/// A world save rendered as a grid card: preview icon (or null → UI placeholder), in-world
+/// display name, human-readable size + last-played, and the original path/name so the existing
+/// backup/export/delete commands (which expect a <see cref="GameSave"/>) can be reused via
+/// <see cref="ToGameSave"/>.
+/// </summary>
+public sealed class WorldCardEntry : ObservableObject
+{
+    /// <summary>Folder name on disk (the raw save directory name).</summary>
+    public string Name { get; set; } = string.Empty;
+
+    /// <summary>In-world display name from level.dat (falls back to <see cref="Name"/>).</summary>
+    public string DisplayName { get; set; } = string.Empty;
+
+    /// <summary>Absolute path to the save folder.</summary>
+    public string Path { get; set; } = string.Empty;
+
+    public long SizeBytes { get; set; }
+    public DateTimeOffset LastModified { get; set; }
+
+    /// <summary>Absolute path to icon.png, or null when the world has no custom icon.</summary>
+    public string? PreviewIconPath { get; set; }
+
+    /// <summary>True when the world has a custom preview icon (drives the Image/placeholder swap).</summary>
+    public bool HasIcon => !string.IsNullOrEmpty(PreviewIconPath);
+
+    /// <summary>Human-readable size, e.g. "12.3 MB".</summary>
+    public string SizeDisplay => SizeBytes switch
+    {
+        < 1024 => $"{SizeBytes} B",
+        < 1024 * 1024 => $"{SizeBytes / 1024.0:F1} KB",
+        < 1024L * 1024 * 1024 => $"{SizeBytes / (1024.0 * 1024):F1} MB",
+        _ => $"{SizeBytes / (1024.0 * 1024 * 1024):F2} GB",
+    };
+
+    /// <summary>Localized-friendly last-played timestamp.</summary>
+    public string LastPlayedDisplay => LastModified.LocalDateTime.ToString("yyyy-MM-dd HH:mm");
+
+    /// <summary>Reconstruct the equivalent <see cref="GameSave"/> so the shared world commands work.</summary>
+    public GameSave ToGameSave() => new()
+    {
+        Name = Name,
+        Path = Path,
+        SizeBytes = SizeBytes,
+        LastModified = LastModified,
+        DisplayName = DisplayName,
+        PreviewIconPath = PreviewIconPath,
+    };
 }

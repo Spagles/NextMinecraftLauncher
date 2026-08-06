@@ -238,6 +238,8 @@
   "log.level_info": "Info",
   "log.level_warn": "Warn",
   "log.level_error": "Error",
+  "world.quick_backup": "⚡ Yedekle",
+  "world.backup_done": "{0} konumuna yedeklendi",
   "common.cancel": "İptal",
   "common.confirm": "Tamam",
   "common.close": "Kapat",

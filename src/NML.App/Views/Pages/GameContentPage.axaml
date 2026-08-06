@@ -57,6 +57,56 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+
+                <!-- World grid (visible on the saves tab): icon + name + last played + one-click backup -->
+                <WrapPanel IsVisible="{Binding IsSavesTab}" Orientation="Horizontal">
+                    <ItemsControl ItemsSource="{Binding WorldCards}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#1f1f25" CornerRadius="6" Padding="10" Margin="0,0,10,10" Width="220">
+                                    <StackPanel Spacing="6">
+                                        <!-- Preview icon, or placeholder when the world has none -->
+                                        <Grid HorizontalAlignment="Center">
+                                            <Image Source="{Binding PreviewIconPath}" Width="96" Height="96"
+                                                   IsVisible="{Binding HasIcon}"/>
+                                            <Border Background="#2a2a30" CornerRadius="6" Width="96" Height="96"
+                                                    IsVisible="{Binding !HasIcon}">
+                                                <TextBlock Text="🌍" FontSize="40" HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"/>
+                                            </Border>
+                                        </Grid>
+                                        <TextBlock Text="{Binding DisplayName}" Foreground="White" FontWeight="SemiBold"
+                                                   FontSize="13" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{Binding LastPlayedDisplay}" Foreground="#888" FontSize="10"
+                                                   HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding SizeDisplay}" Foreground="#888" FontSize="10"
+                                                   HorizontalAlignment="Center"/>
+                                        <!-- One-click backup is the primary action; export/delete as secondary -->
+                                        <Button Content="{loc:Loc 'world.quick_backup'}" Classes="small"
+                                                Command="{Binding #Root.DataContext.BackupWorldCardCommand}"
+                                                CommandParameter="{Binding}"
+                                                Background="#388e3c" Foreground="White" HorizontalAlignment="Stretch"
+                                                Margin="0,2"/>
+                                        <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                                            <Button Content="{loc:Loc 'content.export'}" Classes="small"
+                                                    Command="{Binding #Root.DataContext.ExportWorldCardCommand}"
+                                                    CommandParameter="{Binding}"/>
+                                            <Button Content="{loc:Loc 'content.delete'}" Classes="small danger"
+                                                    Command="{Binding #Root.DataContext.DeleteWorldCardCommand}"
+                                                    CommandParameter="{Binding}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </WrapPanel>
+
                 <TextBlock Text="{loc:Loc 'content.empty'}" Foreground="#888" FontSize="12" Margin="0,12"
                            IsVisible="{Binding IsEmpty}"/>
 

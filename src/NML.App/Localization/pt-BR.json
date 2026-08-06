@@ -238,6 +238,8 @@
   "log.level_info": "Info",
   "log.level_warn": "Warn",
   "log.level_error": "Error",
+  "world.quick_backup": "⚡ Backup",
+  "world.backup_done": "Backup em {0}",
   "common.cancel": "Cancelar",
   "common.confirm": "OK",
   "common.close": "Fechar",

@@ -238,6 +238,8 @@
   "log.level_info": "Info",
   "log.level_warn": "Warn",
   "log.level_error": "Error",
+  "world.quick_backup": "⚡ Sikkerhedskopi",
+  "world.backup_done": "Sikkerhedskopieret til {0}",
   "common.cancel": "Annuller",
   "common.confirm": "OK",
   "common.close": "Luk",

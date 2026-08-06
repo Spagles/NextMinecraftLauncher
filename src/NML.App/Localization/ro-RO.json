@@ -238,6 +238,8 @@
   "log.level_info": "Info",
   "log.level_warn": "Warn",
   "log.level_error": "Error",
+  "world.quick_backup": "⚡ Copie de rezervă",
+  "world.backup_done": "Salvat în {0}",
   "common.cancel": "Anulează",
   "common.confirm": "OK",
   "common.close": "Închide",

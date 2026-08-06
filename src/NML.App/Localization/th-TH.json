@@ -238,6 +238,8 @@
   "log.level_info": "Info",
   "log.level_warn": "Warn",
   "log.level_error": "Error",
+  "world.quick_backup": "⚡ สำรองข้อมูล",
+  "world.backup_done": "สำรองไปยัง {0}",
   "common.cancel": "ยกเลิก",
   "common.confirm": "ตกลง",
   "common.close": "ปิด",

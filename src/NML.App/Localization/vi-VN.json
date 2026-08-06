@@ -238,6 +238,8 @@
   "log.level_info": "Info",
   "log.level_warn": "Warn",
   "log.level_error": "Error",
+  "world.quick_backup": "⚡ Sao lưu",
+  "world.backup_done": "Đã sao lưu vào {0}",
   "common.cancel": "Hủy",
   "common.confirm": "OK",
   "common.close": "Đóng",

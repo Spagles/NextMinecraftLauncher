@@ -238,6 +238,8 @@
   "log.level_info": "Info",
   "log.level_warn": "Warn",
   "log.level_error": "Error",
+  "world.quick_backup": "⚡ 备份",
+  "world.backup_done": "已备份到 {0}",
   "common.cancel": "取消",
   "common.confirm": "确认",
   "common.close": "关闭",
