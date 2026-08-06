@@ -3,7 +3,7 @@
 A cross-platform **Minecraft launcher** built in **C# / Avalonia UI 11 + .NET 8**, aiming to
 match HMCL and PCL while adding **first-class AI features**.
 
-> **122 commits, 148 tests, 0 warnings, 30 languages.** A real, functional launcher.
+> **124 commits, 148 tests, 0 warnings, 31 languages.** A real, functional launcher.
 
 ## What works right now
 
@@ -51,10 +51,10 @@ match HMCL and PCL while adding **first-class AI features**.
 - **Accounts:** offline + Microsoft device-code + authlib-injector servers + skin preview
 
 ### Internationalization
-- **30 languages, 217 keys each (6,510 total translated keys):** 中文, English, 日本語, 한국어,
+- **31 languages, 217 keys each (6,727 total translated keys):** 中文, English, 日本語, 한국어,
   Русский, Français, Español, Deutsch, Português, Italiano, العربية, Türkçe, हिन्दी, ไทย,
   Tiếng Việt, Bahasa Indonesia, Polski, Українська, Nederlands, Svenska, Čeština,
-  Norsk, Suomi, Dansk, Magyar, Română, Azərbaycan, Afrikaans, עברית, Català
+  Norsk, Suomi, Dansk, Magyar, Română, Azərbaycan, Afrikaans, עברית, Català, Қазақша
 - Live language switching via `{loc:Loc}` XAML extension, persisted across restarts
 - RTL support (Arabic, Hebrew) via automatic FlowDirection binding
 
