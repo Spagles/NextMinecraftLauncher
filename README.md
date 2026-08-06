@@ -3,7 +3,7 @@
 A cross-platform **Minecraft launcher** built in **C# / Avalonia UI 11 + .NET 8**, aiming to
 match HMCL and PCL while adding **first-class AI features**.
 
-> **148 commits, 368 tests, 0 warnings, 31 languages.** A real, functional launcher.
+> **149 commits, 368 tests, 0 warnings, 31 languages.** A real, functional launcher.
 
 ## What works right now
 
@@ -45,7 +45,7 @@ match HMCL and PCL while adding **first-class AI features**.
 - **Multiplayer server list:** saves favorites (servers.json) + live Server-List-Ping
   (MOTD, player count, latency, favicon), add/remove/reorder, one-click connect
   (`--server/--port` game args), portable import/export to a .zip (merge-de-duped by host:port),
-  QR-code share URI (mc://connect?host=...&port=...)
+  QR-code share URI (mc://connect?host=...&port=...) rendered as a scannable QR bitmap (QRCoder)
 
 ### AI Features (NML.AICore)
 - **Provider-agnostic streaming chat** (`IChatClient`): OpenAI-compatible SSE, Anthropic Messages API,

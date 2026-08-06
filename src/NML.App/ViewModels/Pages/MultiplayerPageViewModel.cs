@@ -43,6 +43,13 @@ public partial class MultiplayerPageViewModel : PageViewModelBase
     [ObservableProperty] private string _qrCodeUri = string.Empty;
     /// <summary>True when a QR URI is visible (drives the QR text-block visibility).</summary>
     [ObservableProperty] private bool _showQrCode;
+    /// <summary>The rendered QR-code bitmap (bound to an Image), or null when none generated.</summary>
+    private Avalonia.Media.Imaging.Bitmap? _qrBitmap;
+    public Avalonia.Media.Imaging.Bitmap? QrBitmap
+    {
+        get => _qrBitmap;
+        set => SetProperty(ref _qrBitmap, value);
+    }
 
     /// <summary>True while a ping sweep of all servers is running.</summary>
     [ObservableProperty] private bool _isPingingAll;
@@ -265,6 +272,23 @@ public partial class MultiplayerPageViewModel : PageViewModelBase
         if (SelectedRow is null) return;
         QrCodeUri = ServerQrCodeUri.Build(SelectedRow.Entry.Name, SelectedRow.Entry.Host, SelectedRow.Entry.Port);
         ShowQrCode = true;
+
+        // Generate a scannable QR-code bitmap from the URI via QRCoder (cross-platform, no System.Drawing).
+        try
+        {
+            using var qrGen = new QRCoder.QRCodeGenerator();
+            var qrData = qrGen.CreateQrCode(QrCodeUri, QRCoder.QRCodeGenerator.ECCLevel.M);
+            var pngQr = new QRCoder.PngByteQRCode(qrData);
+            byte[] pngBytes = pngQr.GetGraphic(8);
+            using var ms = new System.IO.MemoryStream(pngBytes);
+            QrBitmap = new Avalonia.Media.Imaging.Bitmap(ms);
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogWarning(ex, "QR image generation failed; falling back to text-only.");
+            QrBitmap = null;
+        }
+
         // Also copy to clipboard so the user can paste into any QR generator.
         try
         {

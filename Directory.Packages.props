@@ -1,5 +1,4 @@
 <Project>
-
   <PropertyGroup>
     <AvaloniaVersion>11.3.18</AvaloniaVersion>
     <MvvmVersion>8.4.0</MvvmVersion>
@@ -9,7 +8,6 @@
     <MeAiVersion>9.0.0-preview.9.24507.7</MeAiVersion>
     <MeLoggingAbstractionsVersion>9.0.0-rc.2.24473.5</MeLoggingAbstractionsVersion>
   </PropertyGroup>
-
   <ItemGroup>
     <!-- Avalonia UI 12 (cross-platform desktop now, mobile later) -->
     <PackageVersion Include="Avalonia" Version="$(AvaloniaVersion)" />
@@ -17,10 +15,8 @@
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
     <PackageVersion Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)" />
     <PackageVersion Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
-
     <!-- MVVM -->
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="$(MvvmVersion)" />
-
     <!-- Dependency injection + hosting -->
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
@@ -31,16 +27,14 @@
     <PackageVersion Include="Microsoft.Extensions.Http.Polly" Version="8.0.8" />
     <PackageVersion Include="Microsoft.Extensions.Options" Version="8.0.2" />
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
-
     <!-- AI: provider-agnostic abstraction (works with OpenAI, Azure, local) -->
     <PackageVersion Include="Microsoft.Extensions.AI" Version="$(MeAiVersion)" />
     <PackageVersion Include="Microsoft.Extensions.AI.Abstractions" Version="$(MeAiVersion)" />
     <PackageVersion Include="Microsoft.Extensions.AI.OpenAI" Version="$(MeAiVersion)" />
     <PackageVersion Include="OpenAI" Version="2.2.0-beta.3" />
-
+    <PackageVersion Include="QRCoder" Version="1.6.0" />
     <!-- Secret storage -->
     <PackageVersion Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
-
     <!-- Testing -->
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
     <PackageVersion Include="xunit" Version="2.9.2" />
@@ -49,5 +43,4 @@
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />
   </ItemGroup>
-
 </Project>
