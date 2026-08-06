@@ -269,6 +269,8 @@
   "backup.restore": "♻ Восстановить",
   "backup.restored": "Мир восстановлен: {0}",
   "java.check.incompatible": "Java {0} слишком старая для этой версии (нужна Java {1}+). Выберите более новую версию.",
+  "seed.copied": "Сид скопирован в буфер: {0}",
+  "cmd.copied": "Команда скопирована в буфер",
   "account.refresh.button": "🔄 Обновить токены",
   "account.refresh.refreshing": "Обновление истёкших токенов…",
   "account.refresh.done": "Обновлено аккаунтов: {0}",

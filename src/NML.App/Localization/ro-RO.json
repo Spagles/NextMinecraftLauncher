@@ -269,6 +269,8 @@
   "backup.restore": "♻ Restaurează",
   "backup.restored": "Lume restaurată: {0}",
   "java.check.incompatible": "Java {0} este prea veche pentru această versiune (necesită Java {1}+). Alegeți un runtime mai nou.",
+  "seed.copied": "Seed copiat în clipboard: {0}",
+  "cmd.copied": "Comandă copiată în clipboard",
   "account.refresh.button": "🔄 Reîmprospătează tokenuri",
   "account.refresh.refreshing": "Reîmprospătez tokenurile expirate…",
   "account.refresh.done": "Reîmprospătat {0} cont(uri)",

@@ -269,6 +269,8 @@
   "backup.restore": "♻ 恢复",
   "backup.restored": "已恢复世界：{0}",
   "java.check.incompatible": "Java {0} 对此版本过旧（需要 Java {1}+）。请选择更新的运行时。",
+  "seed.copied": "种子已复制到剪贴板：{0}",
+  "cmd.copied": "命令已复制到剪贴板",
   "account.refresh.button": "🔄 刷新令牌",
   "account.refresh.refreshing": "正在刷新过期令牌…",
   "account.refresh.done": "已刷新 {0} 个账号",

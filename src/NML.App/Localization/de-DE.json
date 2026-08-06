@@ -269,6 +269,8 @@
   "backup.restore": "♻ Wiederherstellen",
   "backup.restored": "Welt wiederhergestellt: {0}",
   "java.check.incompatible": "Java {0} ist zu alt für diese Version (Java {1}+ erforderlich). Wähle eine neuere Runtime.",
+  "seed.copied": "Seed in Zwischenablage kopiert: {0}",
+  "cmd.copied": "Befehl in Zwischenablage kopiert",
   "account.refresh.button": "🔄 Tokens aktualisieren",
   "account.refresh.refreshing": "Abgelaufene Tokens werden aktualisiert…",
   "account.refresh.done": "{0} Konto(en) aktualisiert",

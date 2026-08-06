@@ -269,6 +269,8 @@
   "backup.restore": "♻ Khôi phục",
   "backup.restored": "Đã khôi phục thế giới: {0}",
   "java.check.incompatible": "Java {0} quá cũ cho phiên bản này (cần Java {1}+). Chọn runtime mới hơn.",
+  "seed.copied": "Đã sao chép seed vào clipboard: {0}",
+  "cmd.copied": "Đã sao chép lệnh vào clipboard",
   "account.refresh.button": "🔄 Làm mới token",
   "account.refresh.refreshing": "Đang làm mới token hết hạn…",
   "account.refresh.done": "Đã làm mới {0} tài khoản",

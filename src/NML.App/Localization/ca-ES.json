@@ -269,6 +269,8 @@
   "backup.restore": "♻ Restaura",
   "backup.restored": "Món restaurat: {0}",
   "java.check.incompatible": "Java {0} és massa antic per a aquesta versió (requereix Java {1}+). Tria un runtime més nou.",
+  "seed.copied": "Seed copiada al porta-retalls: {0}",
+  "cmd.copied": "Comanda copiada al porta-retalls",
   "account.refresh.button": "🔄 Refresca els tokens",
   "account.refresh.refreshing": "Refrescant tokens caducats…",
   "account.refresh.done": "Refrescat(s) {0} compte(s)",

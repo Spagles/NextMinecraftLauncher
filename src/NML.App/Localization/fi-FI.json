@@ -269,6 +269,8 @@
   "backup.restore": "♻ Palauta",
   "backup.restored": "Maailma palautettu: {0}",
   "java.check.incompatible": "Java {0} on liian vanha tälle versiolle (vaatii Java {1}+). Valitse uudempi runtime.",
+  "seed.copied": "Seed kopioitu leikepöydälle: {0}",
+  "cmd.copied": "Komento kopioitu leikepöydälle",
   "account.refresh.button": "🔄 Päivitä tokenit",
   "account.refresh.refreshing": "Päivitetään vanhentuneita tokeneita…",
   "account.refresh.done": "Päivitetty {0} tiliä",

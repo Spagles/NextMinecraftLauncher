@@ -269,6 +269,8 @@
   "backup.restore": "♻ שחזר",
   "backup.restored": "העולם שוחזר: {0}",
   "java.check.incompatible": "Java {0} ישן מדי לגרסה זו (דורש Java {1}+). בחר סביבת הרצה חדשה יותר.",
+  "seed.copied": "הזרע הועתק ללוח: {0}",
+  "cmd.copied": "הפקודה הועתקה ללוח",
   "account.refresh.button": "🔄 רענן אסימונים",
   "account.refresh.refreshing": "מרענן אסימונים שפג תוקפם…",
   "account.refresh.done": "רעננו {0} חשבונות",

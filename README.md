@@ -3,7 +3,7 @@
 A cross-platform **Minecraft launcher** built in **C# / Avalonia UI 11 + .NET 8**, aiming to
 match HMCL and PCL while adding **first-class AI features**.
 
-> **166 commits, 469 tests, 0 warnings, 31 languages.** A real, functional launcher.
+> **167 commits, 469 tests, 0 warnings, 31 languages.** A real, functional launcher.
 
 ## What works right now
 
@@ -92,7 +92,7 @@ match HMCL and PCL while adding **first-class AI features**.
   silent multi-account token refresh (MSA refresh-token lifecycle, 5-min proactive margin)
 
 ### Internationalization
-- **31 languages, 337 keys each (10,447 total translated keys):** 中文, English, 日本語, 한국어,
+- **31 languages, 339 keys each (10,509 total translated keys):** 中文, English, 日本語, 한국어,
   Русский, Français, Español, Deutsch, Português, Italiano, العربية, Türkçe, हिन्दी, ไทย,
   Tiếng Việt, Bahasa Indonesia, Polski, Українська, Nederlands, Svenska, Čeština,
   Norsk, Suomi, Dansk, Magyar, Română, Azərbaycan, Afrikaans, עברית, Català, Қазақша

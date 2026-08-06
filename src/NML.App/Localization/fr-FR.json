@@ -269,6 +269,8 @@
   "backup.restore": "♻ Restaurer",
   "backup.restored": "Monde restauré : {0}",
   "java.check.incompatible": "Java {0} est trop ancien pour cette version (Java {1}+ requis). Choisissez un runtime plus récent.",
+  "seed.copied": "Seed copiée dans le presse-papiers : {0}",
+  "cmd.copied": "Commande copiée dans le presse-papiers",
   "account.refresh.button": "🔄 Rafraîchir les jetons",
   "account.refresh.refreshing": "Rafraîchissement des jetons expirés…",
   "account.refresh.done": "{0} compte(s) rafraîchi(s)",

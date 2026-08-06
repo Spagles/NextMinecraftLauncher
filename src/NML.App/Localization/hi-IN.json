@@ -269,6 +269,8 @@
   "backup.restore": "♻ पुनर्स्थापित करें",
   "backup.restored": "दुनिया पुनर्स्थापित: {0}",
   "java.check.incompatible": "इस संस्करण के लिए Java {0} बहुत पुराना है (Java {1}+ चाहिए)। एक नया रनटाइम चुनें।",
+  "seed.copied": "सीड क्लिपबोर्ड पर कॉपी हुआ: {0}",
+  "cmd.copied": "कमांड क्लिपबोर्ड पर कॉपी हुआ",
   "account.refresh.button": "🔄 टोकन ताज़ा करें",
   "account.refresh.refreshing": "समाप्त टोकन ताज़ा हो रहे हैं…",
   "account.refresh.done": "{0} खाते ताज़ा किए गए",

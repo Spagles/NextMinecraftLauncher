@@ -341,6 +341,9 @@
   "server.qr.label": "QR share URI (scan or copy):",
   "server.qr.generated": "QR URI generated + copied to clipboard",
 
+  "seed.copied": "Seed copied to clipboard: {0}",
+  "cmd.copied": "Command copied to clipboard",
+
   "account.refresh.button": "🔄 Refresh tokens",
   "account.refresh.refreshing": "Refreshing expired tokens…",
   "account.refresh.done": "Refreshed {0} account(s)",

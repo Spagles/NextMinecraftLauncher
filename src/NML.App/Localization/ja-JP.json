@@ -269,6 +269,8 @@
   "backup.restore": "♻ 復元",
   "backup.restored": "ワールドを復元しました：{0}",
   "java.check.incompatible": "Java {0} はこのバージョンには古すぎます（Java {1}+ が必要）。新しいランタイムを選択してください。",
+  "seed.copied": "シードをクリップボードにコピーしました：{0}",
+  "cmd.copied": "コマンドをクリップボードにコピーしました",
   "account.refresh.button": "🔄 トークン更新",
   "account.refresh.refreshing": "期限切れトークンを更新中…",
   "account.refresh.done": "{0} 件のアカウントを更新しました",

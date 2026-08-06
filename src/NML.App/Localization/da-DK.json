@@ -269,6 +269,8 @@
   "backup.restore": "♻ Gendan",
   "backup.restored": "Verden gendannet: {0}",
   "java.check.incompatible": "Java {0} er for gammel til denne version (kræver Java {1}+). Vælg en nyere runtime.",
+  "seed.copied": "Seed kopieret til udklipsholder: {0}",
+  "cmd.copied": "Kommando kopieret til udklipsholder",
   "account.refresh.button": "🔄 Opdater tokens",
   "account.refresh.refreshing": "Opdaterer udløbne tokens…",
   "account.refresh.done": "Opdaterede {0} konto(er)",

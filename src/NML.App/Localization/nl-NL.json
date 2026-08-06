@@ -269,6 +269,8 @@
   "backup.restore": "♻ Herstellen",
   "backup.restored": "Wereld hersteld: {0}",
   "java.check.incompatible": "Java {0} is te oud voor deze versie (Java {1}+ vereist). Kies een nieuwere runtime.",
+  "seed.copied": "Seed naar klembord gekopieerd: {0}",
+  "cmd.copied": "Commando naar klembord gekopieerd",
   "account.refresh.button": "🔄 Tokens vernieuwen",
   "account.refresh.refreshing": "Verlopen tokens vernieuwen…",
   "account.refresh.done": "{0} account(s) vernieuwd",
