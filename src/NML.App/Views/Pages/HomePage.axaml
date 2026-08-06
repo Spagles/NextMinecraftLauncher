@@ -19,6 +19,11 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="Sort:" Foreground="#888" FontSize="11" VerticalAlignment="Center"/>
+                <ComboBox ItemsSource="{Binding SortModes}" SelectedItem="{Binding SortMode}" MinWidth="100" FontSize="11"/>
+            </StackPanel>
+
             <!-- Per-instance actions + batch operations -->
             <StackPanel Orientation="Horizontal" Spacing="4">
                 <Button Content="➕ New" Command="{Binding OpenNewInstanceWizardCommand}" Classes="small"/>

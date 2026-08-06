@@ -44,6 +44,28 @@ public partial class HomePageViewModel : PageViewModelBase
     private readonly Core.Modloaders.NeoForgeInstaller? _neoForgeInstaller;
     private readonly ILogger<HomePageViewModel> _logger;
 
+    /// <summary>Available sort modes for the instance list.</summary>
+    public IReadOnlyList<string> SortModes { get; } = new[] { "Name", "Version", "Created" };
+
+    [ObservableProperty] private string _sortMode = "Name";
+
+    partial void OnSortModeChanged(string value) => ApplySort();
+
+    /// <summary>Re-sort the Instances collection by the current SortMode.</summary>
+    private void ApplySort()
+    {
+        var sorted = SortMode switch
+        {
+            "Version" => Instances.OrderBy(i => i.VersionId).ThenBy(i => i.Name).ToList(),
+            "Created" => Instances.OrderByDescending(i => i.CreatedAt).ToList(),
+            _ => Instances.OrderBy(i => i.Name).ToList(),
+        };
+
+        if (sorted.SequenceEqual(Instances)) return;
+        Instances.Clear();
+        foreach (var inst in sorted) Instances.Add(inst);
+    }
+
     public ObservableCollection<Instance> Instances { get; } = new();
 
     [ObservableProperty] private Instance? _selectedInstance;
