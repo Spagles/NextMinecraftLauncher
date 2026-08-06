@@ -3,7 +3,7 @@
 A cross-platform **Minecraft launcher** built in **C# / Avalonia UI 11 + .NET 8**, aiming to
 match HMCL and PCL while adding **first-class AI features**.
 
-> **51 commits, 148 tests passing, 5 languages.** This is a real, functional launcher — not a shell.
+> **80 commits, 148 tests, 0 warnings, 9 languages.** A real, functional launcher.
 
 ## What works right now
 
@@ -13,15 +13,16 @@ match HMCL and PCL while adding **first-class AI features**.
   Microsoft device-code auth, Java runtime detection + Mojang JRT auto-download, command builder +
   process launcher with **live game console output**
 - **5 modloaders:** Fabric, Quilt, Forge (with processor execution + type coverage), NeoForge, OptiFine
-- **Authlib-injector:** Full external-login server support (HMCL's signature feature) — server list
-  persistence UI, Yggdrasil login, and `-javaagent` injection at launch time
+- **Authlib-injector:** Full external-login server support — server list persistence UI,
+  Yggdrasil login, and `-javaagent` injection at launch time
 - **Instance management:** version-isolated game dirs, clone, import/export (zip bundles), share
-  codes (base64), batch export/delete
+  codes (base64), batch export/delete, remove single
+- **Modpack support:** Modrinth .mrpack + CurseForge manifest import with mod resolution
 
 ### AI Features (NML.AICore)
 - **Provider-agnostic streaming chat** (`IChatClient`): OpenAI-compatible SSE, Anthropic Messages API,
   local models (Ollama/LM Studio) — zero-cost default with BYOK for cloud
-- **API keys encrypted** with Windows DPAPI (never in settings.json)
+- **API keys encrypted** with Windows DPAPI (never in settings.json or accounts.json)
 - **Crash diagnosis:** parses crash logs → focused LLM prompt → structured JSON diagnosis
 - **Natural-language config:** function-calling tools (set_memory/version/modloader/java/resolution)
 - **Mod recommendation:** retrieval-augmented (real catalog candidates → LLM ranks; hallucinated IDs dropped)
@@ -30,35 +31,38 @@ match HMCL and PCL while adding **first-class AI features**.
 - **Dual-source search:** Modrinth (no key) + CurseForge (with key) via unified `IModCatalog`
 - **Mod download/install** directly into the instance's mods/
 - **Mod update detection** + **conflict detection** (duplicate IDs, mixed loaders) +
-  **dependency checking** (missing deps, breaks conflicts via fabric.mod.json)
-- **Batch enable/disable** all mods at once
+  **dependency checking** (missing deps, breaks conflicts via fabric.mod.json) +
+  **batch enable/disable** all mods
 
 ### Launcher UI (NML.App)
 - **7 pages** with sidebar navigation + smooth page transitions (PageSlide):
   Home / Download / Accounts / Mods / AI Assistant / Game Content / Settings
 - **Custom frameless title bar** (PCL-style) with min/max/close
-- **Theme system:** dark/light/system + **accent color picker** (7 presets)
-- **Custom background image** (PCL-style wallpaper)
-- **Splash screen** with fade-in/out boot animation
+- **Theme system:** dark/light/system + **accent color picker** (7 presets) + **custom background image**
+- **Splash screen** with fade-in/out boot animation (crash-safe)
 - **Skin management:** 3D rotatable textured skin preview (drag to rotate, flip toggle),
   skin upload (Mojang API), community skin library (MineSkin)
 - **Game content management:** saves (backup/export/import/delete), screenshots (open/delete),
   resource packs (delete + pack.png thumbnails), mods (toggle/batch/config editor),
-  launch log viewer, config file editor
+  launch log viewer + search, config file editor
 - **Home page:** instance list, memory allocation slider, JVM auto-tune button,
-  custom launch args, **live game console**, instance export/import/clone/share/batch operations
-- **Download center:** full Mojang version manifest with search + type filtering
+  custom launch args, **live game console**, instance export/import/clone/share/remove/batch operations
+- **Download center:** full Mojang version manifest with search + type filtering + install progress bar
 - **Accounts:** offline + Microsoft device-code + authlib-injector servers + skin preview
 
 ### Internationalization
-- **5 languages, 210+ keys each:** 中文, English, 日本語, 한국어, Русский
-- Live language switching via `{loc:Loc}` XAML extension
-- All sidebar labels, page headers, and UI strings react to language changes instantly
+- **9 languages, 217 keys each:** 中文, English, 日本語, 한국어, Русский, Français, Español, Deutsch, Português
+- Live language switching via `{loc:Loc}` XAML extension, persisted across restarts
+
+### Security
+- **Access tokens** (Microsoft + authlib-injector) encrypted via DPAPI — never plaintext on disk
+- **AI API keys** encrypted via DPAPI — never in settings.json
+- **No secrets** in git or build artifacts
 
 ### Other
 - **JVM auto-tuning:** recommends GC strategy (ZGC/G1GC+Aikar) based on CPU cores + RAM
-- **Auto-update check:** queries GitHub Releases API, semantic version comparison
-- **Self-contained exe:** 93MB single-file Windows build available
+- **Auto-update check:** queries GitHub Releases API, semantic version comparison, clickable release link
+- **Self-contained exe:** available via `dotnet publish`
 
 ## Architecture
 
@@ -81,21 +85,6 @@ dotnet build NextMinecraftLauncher.sln -c Release
 dotnet test  NextMinecraftLauncher.sln -c Release
 dotnet run   --project src/NML.App -c Release
 ```
-
-## Roadmap
-
-| Done | Feature |
-|---|---|
-| ✅ | Cross-platform engine + 5 modloaders + authlib-injector |
-| ✅ | AI assistant (crash diagnosis, NL config, mod recommendation) |
-| ✅ | 7-page UI with theme system, splash screen, background image |
-| ✅ | 5 languages (zh/en/ja/ko/ru), 210+ keys each |
-| ✅ | Mod management (download/update/conflict/dependency/batch toggle) |
-| ✅ | Game content management (saves/screenshots/packs/logs/configs) |
-| ✅ | Instance management (clone/import/export/share/batch) |
-| ✅ | Skin management (3D preview/upload/community library) |
-| ⏳ | Mobile remote-management client |
-| ⏳ | Per-modloader per-version compatibility matrix |
 
 ## License
 
