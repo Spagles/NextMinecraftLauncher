@@ -8,11 +8,11 @@
             <!-- Header -->
             <StackPanel Spacing="2">
                 <TextBlock Text="{loc:Loc 'server.title'}" Foreground="White" FontSize="22" FontWeight="SemiBold"/>
-                <TextBlock Text="{loc:Loc 'server.subtitle'}" Foreground="#888" FontSize="12"/>
+                <TextBlock Text="{loc:Loc 'server.subtitle'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"/>
             </StackPanel>
 
             <!-- Add server -->
-            <Border Background="#1f1f25" CornerRadius="8" Padding="14,12">
+            <Border Background="{DynamicResource PanelBrush}" CornerRadius="8" Padding="14,12">
                 <StackPanel Spacing="8">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <TextBox Text="{Binding NewServerName}" Watermark="{loc:Loc 'server.name'}" MinWidth="160"/>
@@ -20,7 +20,7 @@
                         <Button Content="{loc:Loc 'server.add'}" Command="{Binding AddCommand}"
                                 IsEnabled="{Binding CanAdd}" Background="#2f5fcc" Foreground="White" Padding="14,6"/>
                     </StackPanel>
-                    <TextBlock Text="{loc:Loc 'server.address_hint'}" Foreground="#666" FontSize="11" FontStyle="Italic"/>
+                    <TextBlock Text="{loc:Loc 'server.address_hint'}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" FontStyle="Italic"/>
                 </StackPanel>
             </Border>
 
@@ -29,7 +29,7 @@
                 <Button Content="{loc:Loc 'server.ping_all'}" Command="{Binding PingAllCommand}"
                         IsEnabled="{Binding !IsPingingAll}" Background="#388e3c" Foreground="White" Padding="14,6"/>
                 <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsPingingAll}" Width="120" Height="4"/>
-                <TextBlock Text="{Binding Status, StringFormat='{loc:Loc}'}" Foreground="#888" FontSize="11"
+                <TextBlock Text="{Binding Status, StringFormat='{loc:Loc}'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"
                            VerticalAlignment="Center" Margin="8,0,0,0"/>
             </StackPanel>
 
@@ -47,7 +47,7 @@
             <ItemsControl ItemsSource="{Binding Rows}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Background="#1a1a20" CornerRadius="6" Padding="12,10" Margin="0,0,0,8"
+                        <Border Background="{DynamicResource PanelBrush}" CornerRadius="6" Padding="12,10" Margin="0,0,0,8"
                                 PointerPressed="Row_PointerPressed">
                             <Grid ColumnDefinitions="48,*,Auto">
                                 <!-- Favicon / status dot -->
@@ -68,19 +68,19 @@
                                 <!-- Name + MOTD -->
                                 <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center" Margin="10,0">
                                     <TextBlock Text="{Binding Entry.Name}" Foreground="White" FontWeight="SemiBold" FontSize="14"/>
-                                    <TextBlock Text="{Binding Motd}" Foreground="#aaa" FontSize="11"
+                                    <TextBlock Text="{Binding Motd}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"
                                                TextWrapping="NoWrap" MaxLines="2"/>
                                     <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,2,0,0">
-                                        <TextBlock Text="{Binding PlayerCount}" Foreground="#4fc3f7" FontSize="11"/>
-                                        <TextBlock Text="{Binding VersionName}" Foreground="#888" FontSize="11"/>
-                                        <TextBlock Text="{Binding LatencyText}" Foreground="#888" FontSize="11"/>
+                                        <TextBlock Text="{Binding PlayerCount}" Foreground="{DynamicResource AccentBrush}" FontSize="11"/>
+                                        <TextBlock Text="{Binding VersionName}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                                        <TextBlock Text="{Binding LatencyText}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
                                     </StackPanel>
                                 </StackPanel>
 
                                 <!-- Per-row actions -->
                                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
                                     <TextBlock Text="{Binding StatusText, StringFormat='{loc:Loc}'}"
-                                               Foreground="#888" FontSize="10" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                               Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10" VerticalAlignment="Center" Margin="0,0,8,0"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -89,15 +89,15 @@
             </ItemsControl>
 
             <!-- Empty state -->
-            <Border Background="#1a1a20" CornerRadius="6" Padding="20" IsVisible="{Binding Rows.Count, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=0}">
-                <TextBlock Text="{loc:Loc 'server.empty'}" Foreground="#666" FontSize="13" HorizontalAlignment="Center"/>
+            <Border Background="{DynamicResource PanelBrush}" CornerRadius="6" Padding="20" IsVisible="{Binding Rows.Count, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=0}">
+                <TextBlock Text="{loc:Loc 'server.empty'}" Foreground="{DynamicResource TextMutedBrush}" FontSize="13" HorizontalAlignment="Center"/>
             </Border>
 
             <!-- Selected-row actions -->
-            <Border Background="#1f1f25" CornerRadius="8" Padding="14,12" IsVisible="{Binding HasSelection}">
+            <Border Background="{DynamicResource PanelBrush}" CornerRadius="8" Padding="14,12" IsVisible="{Binding HasSelection}">
                 <StackPanel Spacing="8">
                     <TextBlock Text="{Binding SelectedRow.Entry.Host, StringFormat='{loc:Loc}'}"
-                               Foreground="#4fc3f7" FontSize="12"/>
+                               Foreground="{DynamicResource AccentBrush}" FontSize="12"/>
                     <WrapPanel>
                         <Button Content="⬆" Command="{Binding MoveUpCommand}" Margin="0,0,6,0" ToolTip.Tip="{loc:Loc 'server.move_up'}"/>
                         <Button Content="⬇" Command="{Binding MoveDownCommand}" Margin="0,0,6,0" ToolTip.Tip="{loc:Loc 'server.move_down'}"/>
@@ -110,12 +110,12 @@
                                 Background="#c62828" Foreground="White" Padding="14,6"/>
                     </WrapPanel>
                     <!-- QR-shareable URI + scannable QR image (visible after Share QR is clicked) -->
-                    <Border Background="#1a1a20" CornerRadius="4" Padding="10" IsVisible="{Binding ShowQrCode}" Margin="0,4,0,0">
+                    <Border Background="{DynamicResource PanelBrush}" CornerRadius="4" Padding="10" IsVisible="{Binding ShowQrCode}" Margin="0,4,0,0">
                         <StackPanel Spacing="6">
                             <Image Source="{Binding QrBitmap}" Width="200" Height="200" HorizontalAlignment="Left"
                                    IsVisible="{Binding QrBitmap, Converter={x:Static ObjectConverters.IsNotNull}}"/>
-                            <TextBlock Text="{loc:Loc 'server.qr.label'}" Foreground="#4fc3f7" FontSize="11"/>
-                            <SelectableTextBlock Text="{Binding QrCodeUri}" Foreground="#ccc" FontFamily="Cascadia Code,Consolas,monospace"
+                            <TextBlock Text="{loc:Loc 'server.qr.label'}" Foreground="{DynamicResource AccentBrush}" FontSize="11"/>
+                            <SelectableTextBlock Text="{Binding QrCodeUri}" Foreground="{DynamicResource TextPrimaryBrush}" FontFamily="Cascadia Code,Consolas,monospace"
                                                  FontSize="11" TextWrapping="Wrap"/>
                         </StackPanel>
                     </Border>

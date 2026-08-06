@@ -6,7 +6,7 @@
     <ScrollViewer Padding="24">
         <StackPanel Spacing="16" MaxWidth="640">
             <!-- Active account skin preview -->
-            <Border Background="#1f1f25" CornerRadius="8" Padding="16" IsVisible="{Binding HasActiveAccount}">
+            <Border Background="{DynamicResource PanelBrush}" CornerRadius="8" Padding="16" IsVisible="{Binding HasActiveAccount}">
                 <StackPanel Orientation="Horizontal" Spacing="16">
                     <!-- Draggable 3D skin cube preview (drag to rotate, flip button mirrors) -->
                     <StackPanel Spacing="4">
@@ -18,8 +18,8 @@
                     <StackPanel VerticalAlignment="Center" Spacing="4">
                         <TextBlock Text="{Binding ActiveAccount.Username}" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
                         <Image Source="{Binding ActiveAvatarUrl}" Width="32" Height="32"/>
-                        <TextBlock Text="{Binding ActiveAccount.Uuid}" Foreground="#888" FontSize="10"/>
-                        <TextBlock Text="{loc:Loc 'skins.rotate_hint'}" Foreground="#666" FontSize="10" FontStyle="Italic"/>
+                        <TextBlock Text="{Binding ActiveAccount.Uuid}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10"/>
+                        <TextBlock Text="{loc:Loc 'skins.rotate_hint'}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10" FontStyle="Italic"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
@@ -39,17 +39,17 @@
             </StackPanel>
 
             <!-- Device code hint -->
-            <Border Background="#2a2a30" Padding="12" CornerRadius="4" IsVisible="{Binding ShowDeviceCode}">
+            <Border Background="{DynamicResource SurfaceAltBrush}" Padding="12" CornerRadius="4" IsVisible="{Binding ShowDeviceCode}">
                 <StackPanel Spacing="4">
-                    <TextBlock Text="{Binding DeviceCodeMessage}" Foreground="#4fc3f7" FontSize="13"/>
-                    <TextBlock Text="{loc:Loc 'accounts.ms_polling'}" Foreground="#888" FontSize="11"/>
+                    <TextBlock Text="{Binding DeviceCodeMessage}" Foreground="{DynamicResource AccentBrush}" FontSize="13"/>
+                    <TextBlock Text="{loc:Loc 'accounts.ms_polling'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
                 </StackPanel>
             </Border>
 
             <!-- authlib-injector (external login) server management -->
-            <Border Background="#1f1f25" CornerRadius="4" Padding="14,12" Margin="0,4">
+            <Border Background="{DynamicResource PanelBrush}" CornerRadius="4" Padding="14,12" Margin="0,4">
                 <StackPanel Spacing="8">
-                    <TextBlock Text="{loc:Loc 'accounts.authlib_servers'}" Foreground="#4fc3f7" FontSize="13" FontWeight="SemiBold"/>
+                    <TextBlock Text="{loc:Loc 'accounts.authlib_servers'}" Foreground="{DynamicResource AccentBrush}" FontSize="13" FontWeight="SemiBold"/>
 
                     <!-- Add a new server -->
                     <StackPanel Orientation="Horizontal" Spacing="6">
@@ -62,11 +62,11 @@
                     <ItemsControl ItemsSource="{Binding AuthlibServers}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Background="#2a2a30" CornerRadius="4" Padding="10,8" Margin="0,2">
+                                <Border Background="{DynamicResource SurfaceAltBrush}" CornerRadius="4" Padding="10,8" Margin="0,2">
                                     <Grid ColumnDefinitions="*,Auto">
                                         <StackPanel Grid.Column="0">
                                             <TextBlock Text="{Binding Name}" Foreground="White"/>
-                                            <TextBlock Text="{Binding ApiUrl}" FontSize="10" Foreground="#888"/>
+                                            <TextBlock Text="{Binding ApiUrl}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}"/>
                                         </StackPanel>
                                         <Button Grid.Column="1" Content="{loc:Loc 'accounts.authlib_delete_server'}" Classes="small danger"
                                                 Command="{Binding #Root.DataContext.RemoveAuthlibServerCommand}" CommandParameter="{Binding}"/>
@@ -75,7 +75,7 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <TextBlock Text="{loc:Loc 'accounts.authlib_no_servers'}" Foreground="#888" FontSize="11"
+                    <TextBlock Text="{loc:Loc 'accounts.authlib_no_servers'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"
                                IsVisible="{Binding !HasAuthlibServers}"/>
 
                     <!-- Login via selected server -->
@@ -92,9 +92,9 @@
             </Border>
 
             <!-- Skin upload -->
-            <Border Background="#1f1f25" CornerRadius="4" Padding="14,12" IsVisible="{Binding HasActiveAccount}">
+            <Border Background="{DynamicResource PanelBrush}" CornerRadius="4" Padding="14,12" IsVisible="{Binding HasActiveAccount}">
                 <StackPanel Spacing="8">
-                    <TextBlock Text="{loc:Loc 'skins.upload_title'}" Foreground="#4fc3f7" FontSize="13" FontWeight="SemiBold"/>
+                    <TextBlock Text="{loc:Loc 'skins.upload_title'}" Foreground="{DynamicResource AccentBrush}" FontSize="13" FontWeight="SemiBold"/>
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <ComboBox SelectedIndex="0" MinWidth="140">
                             <ComboBoxItem Content="{loc:Loc 'skins.model_classic'}"/>
@@ -109,9 +109,9 @@
             </Border>
 
             <!-- Community skin library -->
-            <Border Background="#1f1f25" CornerRadius="4" Padding="14,12">
+            <Border Background="{DynamicResource PanelBrush}" CornerRadius="4" Padding="14,12">
                 <StackPanel Spacing="8">
-                    <TextBlock Text="{loc:Loc 'skins.community_title'}" Foreground="#4fc3f7" FontSize="13" FontWeight="SemiBold"/>
+                    <TextBlock Text="{loc:Loc 'skins.community_title'}" Foreground="{DynamicResource AccentBrush}" FontSize="13" FontWeight="SemiBold"/>
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <TextBox Text="{Binding CommunitySearchText}" Watermark="{loc:Loc 'skins.community_search_placeholder'}" MinWidth="220"/>
                         <Button Content="{loc:Loc 'skins.community_search'}" Command="{Binding SearchCommunityCommand}" Classes="small"/>
@@ -120,12 +120,12 @@
                     <ItemsControl ItemsSource="{Binding CommunitySkins}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Background="#2a2a30" CornerRadius="4" Padding="8" Margin="0,2">
+                                <Border Background="{DynamicResource SurfaceAltBrush}" CornerRadius="4" Padding="8" Margin="0,2">
                                     <Grid ColumnDefinitions="40,*,Auto">
                                         <Image Grid.Column="0" Source="{Binding PreviewUrl}" Width="32" Height="32"/>
                                         <StackPanel Grid.Column="1" Margin="8,0" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Name}" Foreground="White" FontSize="12"/>
-                                            <TextBlock Text="{Binding Model}" Foreground="#888" FontSize="10"/>
+                                            <TextBlock Text="{Binding Model}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10"/>
                                         </StackPanel>
                                         <Button Grid.Column="2" Content="{loc:Loc 'skins.community_install'}" Classes="small"
                                                 Command="{Binding #Root.DataContext.InstallCommunitySkinCommand}" CommandParameter="{Binding}"/>
@@ -134,7 +134,7 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <TextBlock Text="{loc:Loc 'skins.community_empty'}" Foreground="#888" FontSize="11"
+                    <TextBlock Text="{loc:Loc 'skins.community_empty'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"
                                IsVisible="{Binding !HasCommunitySkins}"/>
                 </StackPanel>
             </Border>
@@ -143,11 +143,11 @@
             <ItemsControl ItemsSource="{Binding Accounts}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Background="#1f1f25" CornerRadius="4" Padding="14,10" Margin="0,2">
+                        <Border Background="{DynamicResource PanelBrush}" CornerRadius="4" Padding="14,10" Margin="0,2">
                             <Grid ColumnDefinitions="*,Auto,Auto">
                                 <StackPanel Grid.Column="0">
                                     <TextBlock Text="{Binding Username}" Foreground="White"/>
-                                    <TextBlock Text="{Binding Uuid}" FontSize="10" Foreground="#888"/>
+                                    <TextBlock Text="{Binding Uuid}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}"/>
                                 </StackPanel>
                                 <Button Grid.Column="1" Content="{loc:Loc 'accounts.activate'}" Classes="small" Margin="6,0"
                                         Command="{Binding #Root.DataContext.ActivateCommand}" CommandParameter="{Binding}"/>

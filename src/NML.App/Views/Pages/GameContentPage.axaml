@@ -26,11 +26,11 @@
                 <ItemsControl ItemsSource="{Binding Items}" IsVisible="{Binding IsFileListVisible}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border Background="#1f1f25" CornerRadius="4" Padding="12,8" Margin="0,2">
+                            <Border Background="{DynamicResource PanelBrush}" CornerRadius="4" Padding="12,8" Margin="0,2">
                                 <Grid ColumnDefinitions="*,Auto,Auto,Auto">
                                     <StackPanel Grid.Column="0">
                                         <TextBlock Text="{Binding Name}" Foreground="White" VerticalAlignment="Center"/>
-                                        <TextBlock Text="{Binding SizeBytes, StringFormat=\{0:N0\} B}" Foreground="#888" FontSize="11"/>
+                                        <TextBlock Text="{Binding SizeBytes, StringFormat=\{0:N0\} B}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
                                     </StackPanel>
                                     <Button Grid.Column="1" Content="{loc:Loc 'content.backup'}" Classes="small"
                                             Command="{Binding #Root.DataContext.BackupWorldCommand}"
@@ -72,13 +72,13 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Background="#1f1f25" CornerRadius="6" Padding="10" Margin="0,0,10,10" Width="220">
+                                <Border Background="{DynamicResource PanelBrush}" CornerRadius="6" Padding="10" Margin="0,0,10,10" Width="220">
                                     <StackPanel Spacing="6">
                                         <!-- Preview icon, or placeholder when the world has none -->
                                         <Grid HorizontalAlignment="Center">
                                             <Image Source="{Binding PreviewIconPath}" Width="96" Height="96"
                                                    IsVisible="{Binding HasIcon}"/>
-                                            <Border Background="#2a2a30" CornerRadius="6" Width="96" Height="96"
+                                            <Border Background="{DynamicResource SurfaceAltBrush}" CornerRadius="6" Width="96" Height="96"
                                                     IsVisible="{Binding !HasIcon}">
                                                 <TextBlock Text="🌍" FontSize="40" HorizontalAlignment="Center"
                                                            VerticalAlignment="Center"/>
@@ -86,9 +86,9 @@
                                         </Grid>
                                         <TextBlock Text="{Binding DisplayName}" Foreground="White" FontWeight="SemiBold"
                                                    FontSize="13" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock Text="{Binding LastPlayedDisplay}" Foreground="#888" FontSize="10"
+                                        <TextBlock Text="{Binding LastPlayedDisplay}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10"
                                                    HorizontalAlignment="Center"/>
-                                        <TextBlock Text="{Binding SizeDisplay}" Foreground="#888" FontSize="10"
+                                        <TextBlock Text="{Binding SizeDisplay}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10"
                                                    HorizontalAlignment="Center"/>
                                         <!-- Achievement + play-time + difficulty summary -->
                                         <StackPanel Spacing="1" Margin="0,2">
@@ -98,15 +98,15 @@
                                             <TextBlock Text="{Binding AchievementDisplay}" Foreground="#ffb74d" FontSize="10"
                                                        HorizontalAlignment="Center"
                                                        IsVisible="{Binding AchievementDisplay, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
-                                            <TextBlock Text="{Binding DifficultyDisplay}" Foreground="#888" FontSize="10"
+                                            <TextBlock Text="{Binding DifficultyDisplay}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10"
                                                        HorizontalAlignment="Center"
                                                        IsVisible="{Binding DifficultyDisplay, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
                                         </StackPanel>
                                         <!-- World seed display + copy button -->
                                         <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center"
                                                     IsVisible="{Binding SeedDisplay, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-                                            <TextBlock Text="Seed:" Foreground="#666" FontSize="10" VerticalAlignment="Center"/>
-                                            <SelectableTextBlock Text="{Binding SeedDisplay}" Foreground="#4fc3f7" FontSize="10"
+                                            <TextBlock Text="Seed:" Foreground="{DynamicResource TextMutedBrush}" FontSize="10" VerticalAlignment="Center"/>
+                                            <SelectableTextBlock Text="{Binding SeedDisplay}" Foreground="{DynamicResource AccentBrush}" FontSize="10"
                                                                   FontFamily="Cascadia Code,Consolas,monospace" VerticalAlignment="Center"/>
                                             <Button Content="📋" Command="{Binding #Root.DataContext.CopySeedCommand}"
                                                     CommandParameter="{Binding}" Padding="4,2" FontSize="9"/>
@@ -139,7 +139,7 @@
                                         <ItemsControl ItemsSource="{Binding StatLines}" IsVisible="{Binding ShowDetails}" Margin="0,4">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <TextBlock Text="{Binding}" Foreground="#aaa" FontSize="10" HorizontalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10" HorizontalAlignment="Center"/>
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
@@ -160,19 +160,19 @@
 
                 <!-- Backups panel (visible on the saves tab): list + restore / delete per row -->
                 <StackPanel IsVisible="{Binding IsSavesTab}" Spacing="6" Margin="0,8,0,0">
-                    <TextBlock Text="{loc:Loc 'backup.title'}" Foreground="#4fc3f7" FontSize="13" FontWeight="SemiBold"/>
-                    <TextBlock Text="{loc:Loc 'backup.empty'}" Foreground="#666" FontSize="11" FontStyle="Italic"
+                    <TextBlock Text="{loc:Loc 'backup.title'}" Foreground="{DynamicResource AccentBrush}" FontSize="13" FontWeight="SemiBold"/>
+                    <TextBlock Text="{loc:Loc 'backup.empty'}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" FontStyle="Italic"
                                IsVisible="{Binding Backups.Count, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=0}"/>
                     <ItemsControl ItemsSource="{Binding Backups}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Background="#1a1a20" CornerRadius="4" Padding="10,6" Margin="0,2">
+                                <Border Background="{DynamicResource PanelBrush}" CornerRadius="4" Padding="10,6" Margin="0,2">
                                     <Grid ColumnDefinitions="*,Auto,Auto">
                                         <StackPanel Grid.Column="0" Spacing="1">
                                             <TextBlock Text="{Binding WorldName}" Foreground="White" FontSize="12" FontWeight="SemiBold"/>
                                             <StackPanel Orientation="Horizontal" Spacing="12">
-                                                <TextBlock Text="{Binding DateDisplay}" Foreground="#888" FontSize="10"/>
-                                                <TextBlock Text="{Binding SizeDisplay}" Foreground="#888" FontSize="10"/>
+                                                <TextBlock Text="{Binding DateDisplay}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10"/>
+                                                <TextBlock Text="{Binding SizeDisplay}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10"/>
                                             </StackPanel>
                                         </StackPanel>
                                         <Button Grid.Column="1" Content="{loc:Loc 'backup.restore'}" Classes="small"
@@ -200,12 +200,12 @@
                     <!-- Batch toolbar: select-all toggle + export-selected -->
                     <WrapPanel>
                         <CheckBox Content="{loc:Loc 'screenshot.select_all'}" IsChecked="{Binding AllScreenshotsSelected}"
-                                  Command="{Binding SelectAllScreenshotsCommand}" Foreground="#c0c0c0"/>
+                                  Command="{Binding SelectAllScreenshotsCommand}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                         <Button Content="{loc:Loc 'screenshot.export_selected'}"
                                 Command="{Binding ExportSelectedScreenshotsCommand}"
                                 IsEnabled="{Binding HasScreenshotSelection}"
-                                Background="#2f5fcc" Foreground="White" Padding="14,5" Margin="8,0"/>
-                        <TextBlock Text="{loc:Loc 'screenshot.hint'}" Foreground="#666" FontSize="11"
+                                Background="{DynamicResource AccentBrush}" Foreground="White" Padding="14,5" Margin="8,0"/>
+                        <TextBlock Text="{loc:Loc 'screenshot.hint'}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11"
                                    VerticalAlignment="Center" FontStyle="Italic"/>
                     </WrapPanel>
                     <ItemsControl ItemsSource="{Binding ScreenshotCards}">
@@ -216,7 +216,7 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Background="#1f1f25" CornerRadius="6" Padding="8" Margin="0,0,8,8" Width="220">
+                                <Border Background="{DynamicResource PanelBrush}" CornerRadius="6" Padding="8" Margin="0,0,8,8" Width="220">
                                     <StackPanel Spacing="4">
                                         <!-- Thumbnail bound directly to the on-disk PNG path -->
                                         <Image Source="{Binding Path}" Width="200" Height="112" Stretch="UniformToFill"
@@ -224,7 +224,7 @@
                                         <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}"
                                                   Command="{Binding #Root.DataContext.ToggleScreenshotCommand}"
                                                   CommandParameter="{Binding}" Foreground="White" FontSize="11"/>
-                                        <TextBlock Text="{Binding DateDisplay}" Foreground="#888" FontSize="10"
+                                        <TextBlock Text="{Binding DateDisplay}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10"
                                                    HorizontalAlignment="Center"/>
                                         <WrapPanel HorizontalAlignment="Center">
                                             <Button Content="{loc:Loc 'content.open'}" Classes="small" Margin="0,0,4,0"
@@ -248,7 +248,7 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Spacing="4" Margin="0,8,0,0">
-                                    <TextBlock Text="{Binding Header}" Foreground="#4fc3f7" FontSize="13" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding Header}" Foreground="{DynamicResource AccentBrush}" FontSize="13" FontWeight="SemiBold"/>
                                     <WrapPanel Orientation="Horizontal">
                                         <ItemsControl ItemsSource="{Binding Items}">
                                             <ItemsControl.ItemsPanel>
@@ -258,10 +258,10 @@
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <Border Background="#1f1f25" CornerRadius="4" Padding="4" Margin="0,0,6,6" Width="160">
+                                                    <Border Background="{DynamicResource PanelBrush}" CornerRadius="4" Padding="4" Margin="0,0,6,6" Width="160">
                                                         <StackPanel Spacing="2">
                                                             <Image Source="{Binding Path}" Width="150" Height="84" Stretch="UniformToFill" ClipToBounds="True" HorizontalAlignment="Center"/>
-                                                            <TextBlock Text="{Binding Name}" Foreground="#ccc" FontSize="10"
+                                                            <TextBlock Text="{Binding Name}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="10"
                                                                        TextTrimming="CharacterEllipsis" MaxWidth="150" HorizontalAlignment="Center"/>
                                                         </StackPanel>
                                                     </Border>
@@ -285,24 +285,24 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Background="#1f1f25" CornerRadius="6" Padding="10" Margin="0,0,10,10" Width="240">
+                                <Border Background="{DynamicResource PanelBrush}" CornerRadius="6" Padding="10" Margin="0,0,10,10" Width="240">
                                     <StackPanel Spacing="6">
                                         <Image Source="{Binding IconPath}" Width="64" Height="64"
                                                IsVisible="{Binding HasIcon}" HorizontalAlignment="Center"/>
-                                        <Border Background="#2a2a30" CornerRadius="6" Width="64" Height="64"
+                                        <Border Background="{DynamicResource SurfaceAltBrush}" CornerRadius="6" Width="64" Height="64"
                                                 IsVisible="{Binding !HasIcon}">
                                             <TextBlock Text="📦" FontSize="28" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <TextBlock Text="{Binding Name}" Foreground="White" FontWeight="SemiBold" FontSize="12"
                                                    HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock Text="{Binding Description}" Foreground="#aaa" FontSize="10"
+                                        <TextBlock Text="{Binding Description}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10"
                                                    HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="220"/>
-                                        <TextBlock Text="{Binding FormatDisplay}" Foreground="#666" FontSize="10"
+                                        <TextBlock Text="{Binding FormatDisplay}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10"
                                                    HorizontalAlignment="Center"/>
                                         <Button Content="{Binding ToggleLabel}"
                                                 Command="{Binding #Root.DataContext.ToggleResourcePackCommand}"
                                                 CommandParameter="{Binding}"
-                                                Background="#2f5fcc" Foreground="White" Padding="10,3"
+                                                Background="{DynamicResource AccentBrush}" Foreground="White" Padding="10,3"
                                                 HorizontalAlignment="Center" Margin="0,2,0,0" FontSize="11"/>
                                         <Button Content="📂 Browse contents"
                                                 Command="{Binding #Root.DataContext.BrowseResourcePackContentsCommand}"
@@ -310,11 +310,11 @@
                                                 Classes="small" HorizontalAlignment="Center" Margin="0,2,0,0" FontSize="11"/>
                                         <!-- Expandable content summary + category list -->
                                         <StackPanel IsVisible="{Binding ShowContents}" Spacing="2" Margin="0,4,0,0">
-                                            <TextBlock Text="{Binding ContentSummary}" Foreground="#888" FontSize="10" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding ContentSummary}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10" HorizontalAlignment="Center"/>
                                             <ItemsControl ItemsSource="{Binding ContentCategories}">
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
-                                                        <TextBlock Foreground="#aaa" FontSize="10" Margin="0,1">
+                                                        <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10" Margin="0,1">
                                                             <Run Text="{Binding Category}"/>
                                                             <Run Text=" (" />
                                                             <Run Text="{Binding FileCount}"/>
@@ -331,7 +331,7 @@
                     </ItemsControl>
                 </WrapPanel>
 
-                <TextBlock Text="{loc:Loc 'content.empty'}" Foreground="#888" FontSize="12" Margin="0,12"
+                <TextBlock Text="{loc:Loc 'content.empty'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" Margin="0,12"
                            IsVisible="{Binding IsEmpty}"/>
 
                 <!-- Import world row (visible on saves tab) -->
@@ -349,16 +349,16 @@
                     <WrapPanel>
                         <TextBox Text="{Binding LogSearchText}" Watermark="{loc:Loc 'content.log_search'}" MinWidth="280"/>
                         <CheckBox Content="{loc:Loc 'log.regex'}" IsChecked="{Binding IsRegexSearch}"
-                                  VerticalAlignment="Center" Margin="8,0" Foreground="#c0c0c0"/>
-                        <TextBlock Text="{loc:Loc 'log.level'}" VerticalAlignment="Center" Margin="4,0" Foreground="#c0c0c0"/>
+                                  VerticalAlignment="Center" Margin="8,0" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{loc:Loc 'log.level'}" VerticalAlignment="Center" Margin="4,0" Foreground="{DynamicResource TextPrimaryBrush}"/>
                         <ComboBox ItemsSource="{Binding LogSeverityOptions}" SelectedItem="{Binding MinSeverity}"
                                   MinWidth="90"/>
                         <Button Content="{loc:Loc 'common.refresh'}" Command="{Binding LoadLogCommand}" Classes="small"/>
                     </WrapPanel>
-                    <TextBlock Text="{loc:Loc 'log.regex_hint'}" Foreground="#666" FontSize="10" FontStyle="Italic"
+                    <TextBlock Text="{loc:Loc 'log.regex_hint'}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10" FontStyle="Italic"
                                IsVisible="{Binding IsRegexSearch}"/>
                     <!-- Colored, per-line log list: severity-driven Foreground on each line. -->
-                    <Border Background="#1a1a1e" CornerRadius="4" Padding="8" MaxHeight="500">
+                    <Border Background="{DynamicResource SurfaceAltBrush}" CornerRadius="4" Padding="8" MaxHeight="500">
                         <ScrollViewer>
                             <ItemsControl ItemsSource="{Binding FilteredLogLines}">
                                 <ItemsControl.ItemTemplate>
@@ -388,7 +388,7 @@
 
                     <!-- Structured per-row editor: renders key=value pairs as labeled inputs,
                          preserving comments/section headers as grayed-out text. For .cfg/.ini/.properties only. -->
-                    <Border Background="#1a1a1e" CornerRadius="4" Padding="8"
+                    <Border Background="{DynamicResource SurfaceAltBrush}" CornerRadius="4" Padding="8"
                             IsVisible="{Binding IsStructuredConfig}" MaxHeight="420">
                         <ScrollViewer>
                             <StackPanel Spacing="3">
@@ -397,7 +397,7 @@
                                         <DataTemplate>
                                             <!-- Editable key=value row -->
                                             <Grid ColumnDefinitions="220,*,Auto" IsVisible="{Binding IsEditable}" Margin="0,1">
-                                                <TextBlock Grid.Column="0" Text="{Binding Key}" Foreground="#4fc3f7" FontFamily="Cascadia Code,Consolas,monospace" FontSize="11" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Grid.Column="0" Text="{Binding Key}" Foreground="{DynamicResource AccentBrush}" FontFamily="Cascadia Code,Consolas,monospace" FontSize="11" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                                                 <TextBox Grid.Column="1" Text="{Binding Value}" FontFamily="Cascadia Code,Consolas,monospace" FontSize="11"/>
                                             </Grid>
                                         </DataTemplate>

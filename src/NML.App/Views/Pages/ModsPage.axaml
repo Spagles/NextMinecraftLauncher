@@ -8,12 +8,12 @@
             <ComboBox ItemsSource="{Binding AvailableSources}" SelectedItem="{Binding SelectedSource}" MinWidth="120"/>
             <Button Content="{loc:Loc 'mods.search'}" Command="{Binding SearchCommand}" HorizontalAlignment="Left"
                     IsEnabled="{Binding !IsSearching}"/>
-            <Border Background="#2a2a30" Padding="12" CornerRadius="4">
+            <Border Background="{DynamicResource SurfaceAltBrush}" Padding="12" CornerRadius="4">
                 <StackPanel Spacing="6">
-                    <TextBlock Text="{loc:Loc 'mods.recommend'}" Foreground="#4fc3f7" FontSize="13"/>
+                    <TextBlock Text="{loc:Loc 'mods.recommend'}" Foreground="{DynamicResource AccentBrush}" FontSize="13"/>
                     <TextBox Text="{Binding RecommendPrompt}" Watermark="{loc:Loc 'mods.recommend_prompt_placeholder'}" MinWidth="400"/>
                     <Button Content="{loc:Loc 'mods.recommend_button'}" Command="{Binding RecommendCommand}"
-                            IsEnabled="{Binding !IsRecommending}" Background="#2f5fcc" Foreground="White" Padding="14,4" HorizontalAlignment="Left"/>
+                            IsEnabled="{Binding !IsRecommending}" Background="{DynamicResource AccentBrush}" Foreground="White" Padding="14,4" HorizontalAlignment="Left"/>
                 </StackPanel>
             </Border>
         </StackPanel>
@@ -22,15 +22,15 @@
             <ItemsControl ItemsSource="{Binding Results}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Background="#1f1f25" CornerRadius="4" Padding="14,10" Margin="0,2">
+                        <Border Background="{DynamicResource PanelBrush}" CornerRadius="4" Padding="14,10" Margin="0,2">
                             <Grid ColumnDefinitions="48,*,120,Auto">
                                 <Image Grid.Column="0" Source="{Binding IconUrl}" Width="40" Height="40"/>
                                 <StackPanel Grid.Column="1" Margin="8,0">
                                     <TextBlock Text="{Binding Title}" Foreground="White" FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding Author}" Foreground="#888" FontSize="11"/>
-                                    <TextBlock Text="{Binding Description}" Foreground="#aaa" FontSize="11" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="{Binding Author}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                                    <TextBlock Text="{Binding Description}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" TextTrimming="CharacterEllipsis"/>
                                 </StackPanel>
-                                <TextBlock Grid.Column="2" Text="{Binding Downloads, StringFormat=\{0:N0\}}" Foreground="#888" FontSize="11" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="{Binding Downloads, StringFormat=\{0:N0\}}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"/>
                                 <Button Grid.Column="3" Content="{loc:Loc 'mods.install'}" Classes="small" VerticalAlignment="Center"
                                         Command="{Binding #Root.DataContext.InstallModCommand}"
                                         CommandParameter="{Binding}"
@@ -44,6 +44,6 @@
     </DockPanel>
 
     <UserControl.Styles>
-        <Style Selector="Button.small"><Setter Property="Padding" Value="12,4"/><Setter Property="FontSize" Value="12"/><Setter Property="Background" Value="#3a5fcd"/><Setter Property="Foreground" Value="White"/></Style>
+        <Style Selector="Button.small"><Setter Property="Padding" Value="12,4"/><Setter Property="FontSize" Value="12"/><Setter Property="Background" Value="{DynamicResource AccentBrush}"/><Setter Property="Foreground" Value="White"/></Style>
     </UserControl.Styles>
 </UserControl>

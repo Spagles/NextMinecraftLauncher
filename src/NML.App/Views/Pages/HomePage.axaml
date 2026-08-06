@@ -8,19 +8,19 @@
             <TextBlock Text="{loc:Loc 'home.instances'}" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
 
             <ListBox ItemsSource="{Binding Instances}" SelectedItem="{Binding SelectedInstance}"
-                     MinHeight="100" MaxHeight="240" Background="#1f1f25" Foreground="#e0e0e0">
+                     MinHeight="100" MaxHeight="240" Background="{DynamicResource PanelBrush}" Foreground="{DynamicResource TextPrimaryBrush}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="4,2">
                             <TextBlock Text="{Binding Name}" Foreground="White"/>
-                            <TextBlock Text="{Binding VersionId}" FontSize="11" Foreground="#888"/>
+                            <TextBlock Text="{Binding VersionId}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
 
             <StackPanel Orientation="Horizontal" Spacing="8">
-                <TextBlock Text="Sort:" Foreground="#888" FontSize="11" VerticalAlignment="Center"/>
+                <TextBlock Text="Sort:" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"/>
                 <ComboBox ItemsSource="{Binding SortModes}" SelectedItem="{Binding SortMode}" MinWidth="100" FontSize="11"/>
             </StackPanel>
 
@@ -40,33 +40,33 @@
             </StackPanel>
 
             <!-- Deep modpack export: pick optional contents (mods/config always bundled) -->
-            <Border Background="#1a1a20" CornerRadius="6" Padding="10" Margin="0,4">
+            <Border Background="{DynamicResource PanelBrush}" CornerRadius="6" Padding="10" Margin="0,4">
                 <StackPanel Spacing="6">
-                    <TextBlock Text="{loc:Loc 'modpack.deep_title'}" Foreground="#4fc3f7" FontSize="12" FontWeight="SemiBold"/>
+                    <TextBlock Text="{loc:Loc 'modpack.deep_title'}" Foreground="{DynamicResource AccentBrush}" FontSize="12" FontWeight="SemiBold"/>
                     <WrapPanel>
-                        <CheckBox Content="{loc:Loc 'modpack.include_saves'}" IsChecked="{Binding ExportIncludeSaves}" Foreground="#c0c0c0" Margin="0,0,12,0"/>
-                        <CheckBox Content="{loc:Loc 'modpack.include_screenshots'}" IsChecked="{Binding ExportIncludeScreenshots}" Foreground="#c0c0c0" Margin="0,0,12,0"/>
-                        <CheckBox Content="{loc:Loc 'modpack.include_settings'}" IsChecked="{Binding ExportIncludeClientSettings}" Foreground="#c0c0c0" Margin="0,0,12,0"/>
-                        <CheckBox Content="{loc:Loc 'modpack.include_logs'}" IsChecked="{Binding ExportIncludeLogs}" Foreground="#c0c0c0"/>
+                        <CheckBox Content="{loc:Loc 'modpack.include_saves'}" IsChecked="{Binding ExportIncludeSaves}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,12,0"/>
+                        <CheckBox Content="{loc:Loc 'modpack.include_screenshots'}" IsChecked="{Binding ExportIncludeScreenshots}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,12,0"/>
+                        <CheckBox Content="{loc:Loc 'modpack.include_settings'}" IsChecked="{Binding ExportIncludeClientSettings}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,12,0"/>
+                        <CheckBox Content="{loc:Loc 'modpack.include_logs'}" IsChecked="{Binding ExportIncludeLogs}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                     </WrapPanel>
                     <Button Content="{loc:Loc 'modpack.deep_export'}" Command="{Binding ExportDeepInstanceCommand}"
                             CommandParameter="{Binding SelectedInstance}"
                             IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}"
-                            Background="#2f5fcc" Foreground="White" Padding="14,5" HorizontalAlignment="Left"/>
-                    <TextBlock Text="{loc:Loc 'modpack.deep_hint'}" Foreground="#666" FontSize="10" FontStyle="Italic"/>
+                            Background="{DynamicResource AccentBrush}" Foreground="White" Padding="14,5" HorizontalAlignment="Left"/>
+                    <TextBlock Text="{loc:Loc 'modpack.deep_hint'}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10" FontStyle="Italic"/>
                 </StackPanel>
             </Border>
 
             <!-- Multi-source modpack import: paste a .mrpack / CurseForge / instance-bundle path → detect → install -->
-            <Border Background="#1a1a20" CornerRadius="6" Padding="10" Margin="0,4">
+            <Border Background="{DynamicResource PanelBrush}" CornerRadius="6" Padding="10" Margin="0,4">
                 <StackPanel Spacing="6">
-                    <TextBlock Text="{loc:Loc 'modpack.import.title'}" Foreground="#4fc3f7" FontSize="12" FontWeight="SemiBold"/>
+                    <TextBlock Text="{loc:Loc 'modpack.import.title'}" Foreground="{DynamicResource AccentBrush}" FontSize="12" FontWeight="SemiBold"/>
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <TextBox Text="{Binding ImportModpackPath}" Watermark="{loc:Loc 'modpack.import.path_hint'}" MinWidth="380" FontSize="11" FontFamily="Cascadia Code,Consolas,monospace"/>
                         <Button Content="{loc:Loc 'modpack.import.button'}" Command="{Binding ImportModpackCommand}"
                                 Background="#388e3c" Foreground="White" Padding="14,5"/>
                     </StackPanel>
-                    <TextBlock Text="{loc:Loc 'modpack.import.hint'}" Foreground="#666" FontSize="10" FontStyle="Italic" TextWrapping="Wrap"/>
+                    <TextBlock Text="{loc:Loc 'modpack.import.hint'}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10" FontStyle="Italic" TextWrapping="Wrap"/>
                 </StackPanel>
             </Border>
 
@@ -88,37 +88,37 @@
             </StackPanel>
 
             <StackPanel Spacing="6">
-                <TextBlock Text="{loc:Loc 'home.offline_username'}" Foreground="#ccc" FontSize="13"/>
+                <TextBlock Text="{loc:Loc 'home.offline_username'}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13"/>
                 <TextBox Text="{Binding OfflineUsername}" MinWidth="240"/>
             </StackPanel>
 
             <!-- Memory allocation slider -->
             <StackPanel Spacing="6">
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <TextBlock Text="{loc:Loc 'home.memory'}" Foreground="#ccc" FontSize="13" VerticalAlignment="Center"/>
-                    <TextBlock Text="{Binding SelectedMaxMemory}" Foreground="#4fc3f7" FontSize="13" VerticalAlignment="Center"/>
-                    <TextBlock Text="MB" Foreground="#888" FontSize="11" VerticalAlignment="Center"/>
+                    <TextBlock Text="{loc:Loc 'home.memory'}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding SelectedMaxMemory}" Foreground="{DynamicResource AccentBrush}" FontSize="13" VerticalAlignment="Center"/>
+                    <TextBlock Text="MB" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"/>
                 </StackPanel>
                 <Slider Minimum="512" Maximum="{Binding SliderMax}" Value="{Binding SelectedMaxMemory}"
                         TickFrequency="512" IsSnapToTickEnabled="True" MinWidth="400"/>
-                <TextBlock Text="{loc:Loc 'home.memory_recommended'}" Foreground="#888" FontSize="11"/>
+                <TextBlock Text="{loc:Loc 'home.memory_recommended'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
             </StackPanel>
 
             <!-- Advanced launch options -->
             <StackPanel Spacing="6">
-                <TextBlock Text="{loc:Loc 'home.advanced'}" Foreground="#ccc" FontSize="13"/>
+                <TextBlock Text="{loc:Loc 'home.advanced'}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13"/>
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <TextBlock Text="{loc:Loc 'home.window_size'}" Foreground="#aaa" FontSize="11" VerticalAlignment="Center"/>
+                    <TextBlock Text="{loc:Loc 'home.window_size'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"/>
                     <TextBox Text="{Binding SelectedWindowWidth}" MinWidth="60" FontSize="11"/>
-                    <TextBlock Text="×" Foreground="#888" VerticalAlignment="Center"/>
+                    <TextBlock Text="×" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
                     <TextBox Text="{Binding SelectedWindowHeight}" MinWidth="60" FontSize="11"/>
                 </StackPanel>
-                <TextBlock Text="{loc:Loc 'home.jvm_args'}" Foreground="#aaa" FontSize="11"/>
+                <TextBlock Text="{loc:Loc 'home.jvm_args'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <TextBox Text="{Binding CustomJvmArgs}" Watermark="-XX:+UseG1GC -Dfml.ignoreInvalidMinecraftCertificates=true" MinWidth="400" FontSize="11" FontFamily="Cascadia Code,Consolas,monospace"/>
                     <Button Content="{loc:Loc 'home.auto_tune'}" Command="{Binding ApplyJvmTuningCommand}" Classes="small" ToolTip.Tip="{loc:Loc 'home.auto_tune_hint'}"/>
                 </StackPanel>
-                <TextBlock Text="{loc:Loc 'home.game_args'}" Foreground="#aaa" FontSize="11"/>
+                <TextBlock Text="{loc:Loc 'home.game_args'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
                 <TextBox Text="{Binding CustomGameArgs}" Watermark="--fullscreen" MinWidth="500" FontSize="11" FontFamily="Cascadia Code,Consolas,monospace"/>
                 <!-- Persist the per-instance launch options edited above back to instances.json.
                      Without this the edits were lost on restart (the panel mutated the model in
@@ -127,18 +127,18 @@
                 <!-- Version isolation toggle for the selected instance (own .minecraft vs shared) -->
                 <StackPanel Spacing="2" Margin="0,2,0,0">
                     <CheckBox Content="{loc:Loc 'isolation.edit_label'}" IsChecked="{Binding SelectedInstanceIsIsolated}"
-                              Foreground="#c0c0c0" FontSize="11"/>
-                    <TextBlock Text="{loc:Loc 'isolation.edit_hint'}" Foreground="#666" FontSize="10" FontStyle="Italic" TextWrapping="Wrap"/>
+                              Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11"/>
+                    <TextBlock Text="{loc:Loc 'isolation.edit_hint'}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10" FontStyle="Italic" TextWrapping="Wrap"/>
                     <!-- One-click migration: copy saves/mods/configs to the opposite isolation mode,
                          then flip the flag — the non-destructive counterpart to the bare toggle. -->
                     <Button Content="{loc:Loc 'migration.button'}" Command="{Binding MigrateIsolationCommand}"
-                            Background="#2f5fcc" Foreground="White" Padding="12,4" HorizontalAlignment="Left"
+                            Background="{DynamicResource AccentBrush}" Foreground="White" Padding="12,4" HorizontalAlignment="Left"
                             Margin="0,2,0,0" FontSize="11"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,2,0,0">
                     <Button Content="{loc:Loc 'instance.save'}" Command="{Binding SaveInstanceOptionsCommand}"
                             IsEnabled="{Binding IsInstanceOptionsDirty}"
-                            Background="#2f5fcc" Foreground="White" Padding="14,5"/>
+                            Background="{DynamicResource AccentBrush}" Foreground="White" Padding="14,5"/>
                     <TextBlock Text="{loc:Loc 'instance.unsaved'}" Foreground="#ffb74d" FontSize="11"
                                VerticalAlignment="Center" IsVisible="{Binding IsInstanceOptionsDirty}"/>
                     <TextBlock Text="{loc:Loc 'instance.saved'}" Foreground="#81c784" FontSize="11"
@@ -147,7 +147,7 @@
             </StackPanel>
 
             <!-- Instance disk usage (shown when available) -->
-            <TextBlock Text="{Binding DiskUsageDisplay}" Foreground="#888" FontSize="11"
+            <TextBlock Text="{Binding DiskUsageDisplay}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"
                        IsVisible="{Binding DiskUsageDisplay, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
 
             <Button Content="{loc:Loc 'home.launch'}" Command="{Binding LaunchCommand}"
@@ -157,10 +157,10 @@
 
             <!-- Live game console -->
             <StackPanel Spacing="4" IsVisible="{Binding IsBusy}">
-                <TextBlock Text="{loc:Loc 'home.console'}" Foreground="#4fc3f7" FontSize="13" FontWeight="SemiBold"/>
-                <Border Background="#1a1a1e" CornerRadius="4" Padding="8" MaxHeight="300">
+                <TextBlock Text="{loc:Loc 'home.console'}" Foreground="{DynamicResource AccentBrush}" FontSize="13" FontWeight="SemiBold"/>
+                <Border Background="{DynamicResource PanelBrush}" CornerRadius="4" Padding="8" MaxHeight="300">
                     <ScrollViewer>
-                        <SelectableTextBlock Text="{Binding ConsoleOutput}" Foreground="#c0c0c0"
+                        <SelectableTextBlock Text="{Binding ConsoleOutput}" Foreground="{DynamicResource TextPrimaryBrush}"
                                              FontFamily="Cascadia Code,Consolas,monospace" FontSize="11"
                                              TextWrapping="NoWrap"/>
                     </ScrollViewer>
@@ -171,37 +171,37 @@
         <!-- New Instance Wizard Dialog -->
         <Border IsVisible="{Binding ShowNewInstanceWizard}" Background="#00000099"
                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="40">
-            <Border Background="#1f1f25" CornerRadius="12" Padding="32" MaxWidth="480" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border Background="{DynamicResource PanelBrush}" CornerRadius="12" Padding="32" MaxWidth="480" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <StackPanel Spacing="16">
                     <TextBlock Text="➕ New Instance" FontSize="18" FontWeight="SemiBold" Foreground="White"/>
 
                     <StackPanel Spacing="6">
-                        <TextBlock Text="Instance name" Foreground="#ccc" FontSize="13"/>
+                        <TextBlock Text="Instance name" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13"/>
                         <TextBox Text="{Binding NewInstanceName}" MinWidth="360"/>
                     </StackPanel>
 
                     <StackPanel Spacing="6">
-                        <TextBlock Text="Minecraft version (e.g. 1.20.1)" Foreground="#ccc" FontSize="13"/>
+                        <TextBlock Text="Minecraft version (e.g. 1.20.1)" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13"/>
                         <TextBox Text="{Binding NewInstanceVersion}" MinWidth="360"/>
                     </StackPanel>
 
                     <StackPanel Spacing="6">
-                        <TextBlock Text="Modloader" Foreground="#ccc" FontSize="13"/>
+                        <TextBlock Text="Modloader" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13"/>
                         <ComboBox ItemsSource="{Binding ModloaderChoices}" SelectedItem="{Binding NewInstanceModloader}" MinWidth="360"/>
                     </StackPanel>
 
                     <StackPanel Spacing="6">
-                        <TextBlock Text="Memory (MB)" Foreground="#ccc" FontSize="13"/>
+                        <TextBlock Text="Memory (MB)" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13"/>
                         <Slider Minimum="1024" Maximum="32768" Value="{Binding NewInstanceMemory}"
                                 TickFrequency="512" IsSnapToTickEnabled="True" MinWidth="360"/>
-                        <TextBlock Text="{Binding NewInstanceMemory}" Foreground="#4fc3f7" FontSize="12"/>
+                        <TextBlock Text="{Binding NewInstanceMemory}" Foreground="{DynamicResource AccentBrush}" FontSize="12"/>
                     </StackPanel>
 
                     <!-- Version isolation toggle: own .minecraft (default) vs shared common root -->
                     <StackPanel Spacing="4">
                         <CheckBox Content="{loc:Loc 'isolation.wizard_label'}" IsChecked="{Binding NewInstanceIsIsolated}"
-                                  Foreground="#c0c0c0" FontSize="12"/>
-                        <TextBlock Text="{loc:Loc 'isolation.hint'}" Foreground="#666" FontSize="10" FontStyle="Italic" TextWrapping="Wrap"/>
+                                  Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12"/>
+                        <TextBlock Text="{loc:Loc 'isolation.hint'}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10" FontStyle="Italic" TextWrapping="Wrap"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" Margin="0,8,0,0">

@@ -4,9 +4,9 @@
              x:Class="NML.App.Views.Pages.AssistantPage">
     <DockPanel LastChildFill="True">
         <!-- Command-block generator panel (docked at top) -->
-        <Border DockPanel.Dock="Top" Background="#1a1a20" Padding="16,12" Margin="0,0,0,4">
+        <Border DockPanel.Dock="Top" Background="{DynamicResource PanelBrush}" Padding="16,12" Margin="0,0,0,4">
             <StackPanel Spacing="8">
-                <TextBlock Text="⚡ Command Block Generator" Foreground="#4fc3f7" FontSize="14" FontWeight="SemiBold"/>
+                <TextBlock Text="⚡ Command Block Generator" Foreground="{DynamicResource AccentBrush}" FontSize="14" FontWeight="SemiBold"/>
                 <WrapPanel>
                     <ComboBox SelectedItem="{Binding CmdType}" MinWidth="120">
                         <ComboBoxItem Content="give"/>
@@ -45,7 +45,7 @@
                 <!-- Generate + output -->
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <Button Content="Generate" Command="{Binding GenerateCommandCommand}"
-                            Background="#2f5fcc" Foreground="White" Padding="14,5"/>
+                            Background="{DynamicResource AccentBrush}" Foreground="White" Padding="14,5"/>
                     <Button Content="📋 Copy" Command="{Binding CopyCommandCommand}" Classes="small"/>
                 </StackPanel>
                 <SelectableTextBlock Text="{Binding CmdOutput}" Foreground="#81c784" FontFamily="Cascadia Code,Consolas,monospace"
@@ -54,7 +54,7 @@
         </Border>
 
         <!-- Input bar -->
-        <Border DockPanel.Dock="Bottom" Background="#2d2d33" Padding="16,10">
+        <Border DockPanel.Dock="Bottom" Background="{DynamicResource PanelAltBrush}" Padding="16,10">
             <StackPanel Orientation="Horizontal" Spacing="8">
                 <TextBox Text="{Binding Input}" Watermark="{loc:Loc 'assistant.placeholder'}" MinWidth="500"
                          IsEnabled="{Binding !IsBusy}" KeyDown="Input_KeyDown"/>
@@ -70,8 +70,8 @@
                     <DataTemplate>
                         <Border Margin="0,6" Padding="14,10" CornerRadius="8" HorizontalAlignment="Stretch">
                             <StackPanel Spacing="4">
-                                <TextBlock Text="{Binding Role}" Foreground="#4fc3f7" FontSize="11"/>
-                                <SelectableTextBlock Text="{Binding Content}" Foreground="#e0e0e0" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding Role}" Foreground="{DynamicResource AccentBrush}" FontSize="11"/>
+                                <SelectableTextBlock Text="{Binding Content}" Foreground="{DynamicResource TextPrimaryBrush}" TextWrapping="Wrap"/>
                             </StackPanel>
                         </Border>
                     </DataTemplate>

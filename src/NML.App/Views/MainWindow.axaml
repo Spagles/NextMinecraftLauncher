@@ -24,7 +24,7 @@
 
     <!-- Custom title bar (PCL-style) -->
     <Grid RowDefinitions="Auto,*" Background="{x:Null}">
-        <Border x:Name="TitleBar" Grid.Row="0" Background="#0a0a0e" Height="40"
+        <Border x:Name="TitleBar" Grid.Row="0" Background="{DynamicResource SurfaceBrush}" Height="40"
                 PointerPressed="TitleBar_PointerPressed">
             <Grid ColumnDefinitions="*,Auto">
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" Margin="14,0" VerticalAlignment="Center">
@@ -43,14 +43,14 @@
         <Grid Grid.Row="1" ColumnDefinitions="220,*">
 
             <!-- Sidebar -->
-            <Border Grid.Column="0" Background="#1a1a1e">
+            <Border Grid.Column="0" Background="{DynamicResource SurfaceAltBrush}">
             <DockPanel>
                 <!-- Brand -->
                 <Border DockPanel.Dock="Top" Padding="20,18,20,14">
                     <StackPanel Spacing="2">
                         <TextBlock Text="🎮" FontSize="22"/>
                         <TextBlock Text="{loc:Loc 'app.title'}" FontSize="14" FontWeight="SemiBold" Foreground="White"/>
-                        <TextBlock Text="{loc:Loc 'app.subtitle'}" FontSize="10" Foreground="#4fc3f7"/>
+                        <TextBlock Text="{loc:Loc 'app.subtitle'}" FontSize="10" Foreground="{DynamicResource AccentBrush}"/>
                     </StackPanel>
                 </Border>
 
@@ -63,7 +63,7 @@
                                         Command="{Binding #Shell.DataContext.NavigateToCommand}"
                                         CommandParameter="{Binding}"
                                         Tag="{Binding TitleKey}"
-                                        BorderBrush="#4fc3f7" BorderThickness="3,0,0,0"
+                                        BorderBrush="{DynamicResource AccentBrush}" BorderThickness="3,0,0,0"
                                         IsHitTestVisible="True">
                                     <StackPanel Orientation="Horizontal" Spacing="10">
                                         <TextBlock Text="{Binding Icon}" FontSize="15" Width="20"/>
@@ -78,9 +78,9 @@
         </Border>
 
         <!-- Content area: the active page view is rendered here via ViewLocator -->
-        <DockPanel Grid.Column="1" Background="#25252b">
+        <DockPanel Grid.Column="1" Background="{DynamicResource PanelAltBrush}">
             <!-- Page header -->
-            <Border DockPanel.Dock="Top" Background="#2d2d33" Padding="24,14">
+            <Border DockPanel.Dock="Top" Background="{DynamicResource PanelAltBrush}" Padding="24,14">
                 <TextBlock Text="{Binding CurrentPage.LocalizedTitle}" FontSize="18" FontWeight="SemiBold" Foreground="White"/>
             </Border>
 
@@ -103,10 +103,10 @@
             <Setter Property="Margin" Value="0,1"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Foreground" Value="#cccccc"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
         </Style>
         <Style Selector="Button.nav:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#33333b"/>
+            <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}"/>
         </Style>
         <Style Selector="Button.nav TextBlock.navLabel">
             <Setter Property="FontSize" Value="13"/>
@@ -115,18 +115,18 @@
         <Style Selector="Button.titleBtn">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Foreground" Value="#cccccc"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Padding" Value="0"/>
         </Style>
         <Style Selector="Button.titleBtn:pointerover">
-            <Setter Property="Background" Value="#33333b"/>
+            <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}"/>
             <Setter Property="Foreground" Value="White"/>
         </Style>
         <Style Selector="Button.titleBtnClose">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Foreground" Value="#cccccc"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Padding" Value="0"/>
         </Style>
