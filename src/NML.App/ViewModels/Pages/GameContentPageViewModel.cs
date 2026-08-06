@@ -8,6 +8,7 @@ using NML.Core;
 using NML.Core.Instances;
 using NML.Core.Logging;
 using NML.Core.Mods;
+using NML.Core.Modpacks;
 using NML.Core.Modloaders;
 
 namespace NML.App.ViewModels.Pages;
@@ -70,9 +71,9 @@ public partial class GameContentPageViewModel : PageViewModelBase
     /// <summary>True when the configs tab is active (shows the config editor).</summary>
     public bool IsConfigsTab => Tab == "configs";
 
-    /// <summary>True when the main flat file-list should be shown (not logs, configs, saves, or
-    /// screenshots — saves and screenshots render their own grids instead).</summary>
-    public bool IsFileListVisible => !IsLogsTab && !IsConfigsTab && !IsSavesTab && !IsScreenshotsTab;
+    /// <summary>True when the main flat file-list should be shown (not logs, configs, saves,
+    /// screenshots, or resource packs — those render their own grids).</summary>
+    public bool IsFileListVisible => !IsLogsTab && !IsConfigsTab && !IsSavesTab && !IsScreenshotsTab && !IsResourcePacksTab;
 
     [ObservableProperty] private string _logContent = string.Empty;
     [ObservableProperty] private string _logSearchText = string.Empty;
@@ -110,6 +111,9 @@ public partial class GameContentPageViewModel : PageViewModelBase
 
     /// <summary>Screenshots grouped by date for the timeline browse (newest-group first).</summary>
     public ObservableCollection<ScreenshotTimelineGroup> ScreenshotGroups { get; } = new();
+
+    /// <summary>Resource-pack cards with icon + description preview.</summary>
+    public ObservableCollection<ResourcePackCard> ResourcePackCards { get; } = new();
 
     /// <summary>World backups shown in the saves-tab backups panel (restore / delete per row).</summary>
     public ObservableCollection<BackupEntry> Backups { get; } = new();
@@ -268,6 +272,7 @@ public partial class GameContentPageViewModel : PageViewModelBase
         WorldCards.Clear();
         ScreenshotCards.Clear();
         ScreenshotGroups.Clear();
+        ResourcePackCards.Clear();
         Backups.Clear();
         try
         {
@@ -316,7 +321,20 @@ public partial class GameContentPageViewModel : PageViewModelBase
                         ScreenshotGroups.Add(g);
                     break;
                 case "resourcepacks":
-                    foreach (GameFile f in browser.ListResourcePacks()) Items.Add(f);
+                    foreach (GameFile f in browser.ListResourcePacks())
+                    {
+                        Items.Add(f);
+                        // Read pack.mcmeta for description + pack_format + icon presence.
+                        var meta = ResourcePackMetadataReader.Read(f.Path);
+                        ResourcePackCards.Add(new ResourcePackCard
+                        {
+                            Name = f.Name,
+                            Path = f.Path,
+                            Description = meta?.Description ?? string.Empty,
+                            PackFormat = meta?.PackFormat ?? 0,
+                            IconPath = meta?.IconPath,
+                        });
+                    }
                     break;
                 case "mods":
                     foreach (GameFile f in browser.ListMods()) Items.Add(f);
@@ -952,4 +970,22 @@ public sealed class ConfigEntryRow : ObservableObject
 
     /// <summary>Reconstruct the source <see cref="ConfigEntry"/> (with edited Key/Value) for serialize.</summary>
     public ConfigEntry ToEntry() => new(_kind, _key, _value, _rawLine);
+}
+
+/// <summary>
+/// A resource pack rendered as a preview card: icon (pack.png bound to the zip path), name,
+/// description from pack.mcmeta, and pack_format compatibility indicator.
+/// </summary>
+public sealed class ResourcePackCard : ObservableObject
+{
+    public string Name { get; set; } = string.Empty;
+    public string Path { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public int PackFormat { get; set; }
+    /// <summary>Absolute path to the pack.zip (which contains pack.png); bound to Image for the icon.</summary>
+    public string? IconPath { get; set; }
+    /// <summary>True when pack.png was found inside the zip.</summary>
+    public bool HasIcon => !string.IsNullOrEmpty(IconPath);
+    /// <summary>Display label for the pack format (e.g. "Format 18").</summary>
+    public string FormatDisplay => PackFormat > 0 ? $"Format {PackFormat}" : string.Empty;
 }

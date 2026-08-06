@@ -228,6 +228,37 @@
                     </ItemsControl>
                 </StackPanel>
 
+                <!-- Resource-pack preview cards (icon + description + pack_format) -->
+                <WrapPanel IsVisible="{Binding IsResourcePacksTab}" Orientation="Horizontal" Margin="0,4,0,0">
+                    <ItemsControl ItemsSource="{Binding ResourcePackCards}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#1f1f25" CornerRadius="6" Padding="10" Margin="0,0,10,10" Width="240">
+                                    <StackPanel Spacing="6">
+                                        <Image Source="{Binding IconPath}" Width="64" Height="64"
+                                               IsVisible="{Binding HasIcon}" HorizontalAlignment="Center"/>
+                                        <Border Background="#2a2a30" CornerRadius="6" Width="64" Height="64"
+                                                IsVisible="{Binding !HasIcon}">
+                                            <TextBlock Text="📦" FontSize="28" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <TextBlock Text="{Binding Name}" Foreground="White" FontWeight="SemiBold" FontSize="12"
+                                                   HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{Binding Description}" Foreground="#aaa" FontSize="10"
+                                                   HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="220"/>
+                                        <TextBlock Text="{Binding FormatDisplay}" Foreground="#666" FontSize="10"
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </WrapPanel>
+
                 <TextBlock Text="{loc:Loc 'content.empty'}" Foreground="#888" FontSize="12" Margin="0,12"
                            IsVisible="{Binding IsEmpty}"/>
 
