@@ -91,6 +91,10 @@ public partial class SettingsPageViewModel : PageViewModelBase
     public bool HasUpdateUrl => !string.IsNullOrEmpty(UpdateUrl);
 
     partial void OnUpdateUrlChanged(string value) => OnPropertyChanged(nameof(HasUpdateUrl));
+
+    /// <summary>Persist MinecraftPath immediately on change (not just when other commands fire).</summary>
+    partial void OnMinecraftPathChanged(string value) => PersistSettings();
+
     [ObservableProperty] private bool _isCheckingUpdate;
     private readonly UpdateChecker? _updateChecker;
 
