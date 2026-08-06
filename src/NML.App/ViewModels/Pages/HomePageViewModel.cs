@@ -97,6 +97,12 @@ public partial class HomePageViewModel : PageViewModelBase
     /// <summary>Live game console output (stdout+stderr), shown in the console panel.</summary>
     [ObservableProperty] private string _consoleOutput = string.Empty;
 
+    /// <summary>Human-readable disk usage of the selected instance (e.g. "12.3 GB total, 8.1 GB mods").</summary>
+    [ObservableProperty] private string _diskUsageDisplay = string.Empty;
+
+    /// <summary>True when disk usage is being calculated.</summary>
+    [ObservableProperty] private bool _isCalculatingDiskUsage;
+
     // --- Deep modpack export toggles (off by default; worlds/screenshots/settings are personal
     // and large, so the user opts in per export). All bound to checkboxes in the export panel. ---
     [ObservableProperty] private bool _exportIncludeSaves;
@@ -310,7 +316,34 @@ public partial class HomePageViewModel : PageViewModelBase
     partial void OnSelectedInstanceChanged(Instance? value)
     {
         IsInstanceOptionsDirty = false;
-        OnPropertyChanged(nameof(SelectedInstanceIsIsolated)); // refresh the toggle when switching instances
+        OnPropertyChanged(nameof(SelectedInstanceIsIsolated));
+        // Refresh the toggle when switching instances
+        _ = RefreshDiskUsageAsync();
+    }
+
+    /// <summary>Calculate the selected instance's disk usage on a background thread.</summary>
+    private async Task RefreshDiskUsageAsync()
+    {
+        Instance? inst = SelectedInstance;
+        if (inst is null) { DiskUsageDisplay = string.Empty; return; }
+        IsCalculatingDiskUsage = true;
+        try
+        {
+            var usage = await Task.Run(() => NML.Core.Instances.InstanceDiskUsageCalculator.Measure(
+                _instances.GameDirFor(inst)));
+            if (usage.TotalBytes == 0)
+            {
+                DiskUsageDisplay = string.Empty;
+            }
+            else
+            {
+                var top = usage.Categories.Take(3);
+                string breakdown = string.Join(", ", top.Select(c => $"{c.SizeDisplay} {c.Folder}"));
+                DiskUsageDisplay = $"💾 {usage.TotalDisplay} ({breakdown})";
+            }
+        }
+        catch { DiskUsageDisplay = string.Empty; }
+        finally { IsCalculatingDiskUsage = false; }
     }
 
     public HomePageViewModel(

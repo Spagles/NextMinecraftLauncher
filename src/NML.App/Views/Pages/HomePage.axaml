@@ -146,6 +146,10 @@
                 </StackPanel>
             </StackPanel>
 
+            <!-- Instance disk usage (shown when available) -->
+            <TextBlock Text="{Binding DiskUsageDisplay}" Foreground="#888" FontSize="11"
+                       IsVisible="{Binding DiskUsageDisplay, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
             <Button Content="{loc:Loc 'home.launch'}" Command="{Binding LaunchCommand}"
                     IsEnabled="{Binding !IsBusy}"
                     FontSize="15" FontWeight="Bold" Background="#4caf50" Foreground="White"
