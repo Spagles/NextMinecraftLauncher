@@ -45,7 +45,14 @@ public static class ServiceRegistration
         services.AddSingleton<Downloader>();
 
         // --- Mojang version services ---
-        services.AddSingleton<VersionManifestService>();
+        services.AddSingleton<VersionManifestService>(sp =>
+        {
+            var svc = new VersionManifestService(
+                sp.GetRequiredService<IHttpFetcher>(),
+                Microsoft.Extensions.Logging.Abstractions.NullLogger<VersionManifestService>.Instance);
+            svc.DiskCache = new ManifestDiskCache(settingsDir);
+            return svc;
+        });
         services.AddSingleton<VersionInfoService>();
         services.AddSingleton<VanillaInstaller>();
 

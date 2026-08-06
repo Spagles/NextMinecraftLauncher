@@ -18,16 +18,43 @@ public sealed class VersionManifestService
     private readonly ILogger<VersionManifestService> _logger;
     private VersionManifest? _cached;
 
+    /// <summary>Optional disk cache (when set, the manifest is persisted + served on startup).</summary>
+    public ManifestDiskCache? DiskCache { get; set; }
+
     public VersionManifestService(IHttpFetcher http, ILogger<VersionManifestService> logger)
     {
         _http = http;
         _logger = logger;
     }
 
-    /// <summary>Fetch (or return cached) the version manifest.</summary>
+    /// <summary>Fetch (or return cached) the version manifest. Uses the disk cache when available:
+    /// serves the cached copy when fresh, re-fetches when stale or forced.</summary>
     public async Task<VersionManifest> GetAsync(bool forceRefresh = false, CancellationToken ct = default)
     {
         if (!forceRefresh && _cached is not null) return _cached;
+
+        // Try the disk cache first (avoids a network round-trip on every startup).
+        if (!forceRefresh && DiskCache is not null && DiskCache.IsFresh())
+        {
+            string? cachedJson = DiskCache.Load();
+            if (cachedJson is not null)
+            {
+                try
+                {
+                    _cached = System.Text.Json.JsonSerializer.Deserialize<VersionManifest>(cachedJson, JsonOptions.Default);
+                    if (_cached is not null)
+                    {
+                        _logger.LogInformation("Loaded version manifest from disk cache ({Count} versions).", _cached.Versions.Count);
+                        return _cached;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Disk cache corrupt; will re-fetch.");
+                    DiskCache.Clear();
+                }
+            }
+        }
 
         _logger.LogInformation("Fetching Mojang version manifest…");
         string json = await _http.GetStringAsync(ManifestUrl, ct);
@@ -35,6 +62,14 @@ public sealed class VersionManifestService
                        ?? throw new InvalidDataException("Version manifest deserialized to null.");
 
         _cached = manifest;
+
+        // Persist to the disk cache for next startup.
+        if (DiskCache is not null)
+        {
+            try { DiskCache.Save(json); }
+            catch (Exception ex) { _logger.LogWarning(ex, "Failed to write manifest disk cache."); }
+        }
+
         _logger.LogInformation("Manifest loaded: {Count} versions, latest release = {Release}.",
             manifest.Versions.Count, manifest.Latest.Release);
         return manifest;
