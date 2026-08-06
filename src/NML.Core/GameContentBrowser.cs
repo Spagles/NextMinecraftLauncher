@@ -193,6 +193,40 @@ public sealed class GameContentBrowser
         catch { /* non-fatal */ }
     }
 
+    /// <summary>
+    /// Bundle the given screenshot files into a single timestamped .zip on the desktop, so the
+    /// user can share a batch. Missing files are skipped silently; returns the zip path.
+    /// Used by the screenshot grid's "export selected" action.
+    /// </summary>
+    public string ExportScreenshotsToZip(IEnumerable<string> paths, string outputZipPath)
+    {
+        if (string.IsNullOrEmpty(outputZipPath))
+            throw new ArgumentException("Output zip path is required.", nameof(outputZipPath));
+        string dir = Path.GetDirectoryName(outputZipPath)!;
+        if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
+
+        using var archive = System.IO.Compression.ZipFile.Open(
+            outputZipPath, System.IO.Compression.ZipArchiveMode.Create);
+        var usedNames = new HashSet<string>(StringComparer.Ordinal);
+        foreach (string p in paths)
+        {
+            if (!File.Exists(p)) continue;
+            // Entry name = bare filename; de-dupe collisions with a counter. (GetEntry throws in
+            // Create mode, so we track used names ourselves.)
+            string entryName = Path.GetFileName(p);
+            string baseName = Path.GetFileNameWithoutExtension(p);
+            string ext = Path.GetExtension(p);
+            int n = 1;
+            while (usedNames.Contains(entryName))
+            {
+                entryName = $"{baseName} ({n++}){ext}";
+            }
+            usedNames.Add(entryName);
+            System.IO.Compression.ZipFileExtensions.CreateEntryFromFile(archive, p, entryName);
+        }
+        return outputZipPath;
+    }
+
     /// <summary>Delete a resource pack file.</summary>
     public void DeleteResourcePack(string path)
     {

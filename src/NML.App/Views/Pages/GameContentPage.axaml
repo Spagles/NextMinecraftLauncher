@@ -107,6 +107,55 @@
                     </ItemsControl>
                 </WrapPanel>
 
+                <!-- Screenshot grid (visible on the screenshots tab): thumbnail cards + multi-select + batch export -->
+                <StackPanel IsVisible="{Binding IsScreenshotsTab}" Spacing="8" Margin="0,4">
+                    <!-- Batch toolbar: select-all toggle + export-selected -->
+                    <WrapPanel>
+                        <CheckBox Content="{loc:Loc 'screenshot.select_all'}" IsChecked="{Binding AllScreenshotsSelected}"
+                                  Command="{Binding SelectAllScreenshotsCommand}" Foreground="#c0c0c0"/>
+                        <Button Content="{loc:Loc 'screenshot.export_selected'}"
+                                Command="{Binding ExportSelectedScreenshotsCommand}"
+                                IsEnabled="{Binding HasScreenshotSelection}"
+                                Background="#2f5fcc" Foreground="White" Padding="14,5" Margin="8,0"/>
+                        <TextBlock Text="{loc:Loc 'screenshot.hint'}" Foreground="#666" FontSize="11"
+                                   VerticalAlignment="Center" FontStyle="Italic"/>
+                    </WrapPanel>
+                    <ItemsControl ItemsSource="{Binding ScreenshotCards}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#1f1f25" CornerRadius="6" Padding="8" Margin="0,0,8,8" Width="220">
+                                    <StackPanel Spacing="4">
+                                        <!-- Thumbnail bound directly to the on-disk PNG path -->
+                                        <Image Source="{Binding Path}" Width="200" Height="112" Stretch="UniformToFill"
+                                               ClipToBounds="True" HorizontalAlignment="Center"/>
+                                        <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}"
+                                                  Command="{Binding #Root.DataContext.ToggleScreenshotCommand}"
+                                                  CommandParameter="{Binding}" Foreground="White" FontSize="11"/>
+                                        <TextBlock Text="{Binding DateDisplay}" Foreground="#888" FontSize="10"
+                                                   HorizontalAlignment="Center"/>
+                                        <WrapPanel HorizontalAlignment="Center">
+                                            <Button Content="{loc:Loc 'content.open'}" Classes="small" Margin="0,0,4,0"
+                                                    Command="{Binding #Root.DataContext.OpenScreenshotCardCommand}"
+                                                    CommandParameter="{Binding}"/>
+                                            <Button Content="{loc:Loc 'screenshot.copy'}" Classes="small" Margin="0,0,4,0"
+                                                    Command="{Binding #Root.DataContext.CopyScreenshotCommand}"
+                                                    CommandParameter="{Binding}"/>
+                                            <Button Content="{loc:Loc 'content.delete'}" Classes="small danger"
+                                                    Command="{Binding #Root.DataContext.DeleteScreenshotCardCommand}"
+                                                    CommandParameter="{Binding}"/>
+                                        </WrapPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
                 <TextBlock Text="{loc:Loc 'content.empty'}" Foreground="#888" FontSize="12" Margin="0,12"
                            IsVisible="{Binding IsEmpty}"/>
 

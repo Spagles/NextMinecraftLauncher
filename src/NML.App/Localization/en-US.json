@@ -258,6 +258,14 @@
   "instance.saved": "Launch options saved",
   "instance.unsaved": "Unsaved changes",
 
+  "screenshot.select_all": "Select all",
+  "screenshot.export_selected": "📦 Export selected",
+  "screenshot.hint": "Tick cards to batch-export to a zip on your desktop.",
+  "screenshot.copy": "Copy path",
+  "screenshot.copied": "Path copied to clipboard",
+  "screenshot.none_selected": "Select at least one screenshot",
+  "screenshot.exported": "Exported {0} screenshots to desktop",
+
   "common.cancel": "Cancel",
   "common.confirm": "OK",
   "common.close": "Close",

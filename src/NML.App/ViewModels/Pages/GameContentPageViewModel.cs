@@ -69,9 +69,9 @@ public partial class GameContentPageViewModel : PageViewModelBase
     /// <summary>True when the configs tab is active (shows the config editor).</summary>
     public bool IsConfigsTab => Tab == "configs";
 
-    /// <summary>True when the main flat file-list should be shown (not logs, configs, or saves —
-    /// saves render their own icon grid instead).</summary>
-    public bool IsFileListVisible => !IsLogsTab && !IsConfigsTab && !IsSavesTab;
+    /// <summary>True when the main flat file-list should be shown (not logs, configs, saves, or
+    /// screenshots — saves and screenshots render their own grids instead).</summary>
+    public bool IsFileListVisible => !IsLogsTab && !IsConfigsTab && !IsSavesTab && !IsScreenshotsTab;
 
     [ObservableProperty] private string _logContent = string.Empty;
     [ObservableProperty] private string _logSearchText = string.Empty;
@@ -103,6 +103,16 @@ public partial class GameContentPageViewModel : PageViewModelBase
 
     /// <summary>World cards shown in the saves grid (icon + name + last played + actions).</summary>
     public ObservableCollection<WorldCardEntry> WorldCards { get; } = new();
+
+    /// <summary>Screenshot cards shown in the screenshots grid (thumbnail + select + actions).</summary>
+    public ObservableCollection<ScreenshotCardEntry> ScreenshotCards { get; } = new();
+
+    /// <summary>True when at least one screenshot card is selected (drives export button).</summary>
+    public bool HasScreenshotSelection => ScreenshotCards.Any(c => c.IsSelected);
+
+    /// <summary>True when all screenshot cards are selected (drives the select-all checkbox state).</summary>
+    public bool AllScreenshotsSelected =>
+        ScreenshotCards.Count > 0 && ScreenshotCards.All(c => c.IsSelected);
 
     /// <summary>Currently-edited config file content.</summary>
     [ObservableProperty] private string _configContent = string.Empty;
@@ -229,6 +239,7 @@ public partial class GameContentPageViewModel : PageViewModelBase
 
         Items.Clear();
         WorldCards.Clear();
+        ScreenshotCards.Clear();
         try
         {
             switch (Tab)
@@ -249,7 +260,16 @@ public partial class GameContentPageViewModel : PageViewModelBase
                     }
                     break;
                 case "screenshots":
-                    foreach (GameFile f in browser.ListScreenshots()) Items.Add(f);
+                    foreach (GameFile f in browser.ListScreenshots())
+                    {
+                        Items.Add(f);
+                        ScreenshotCards.Add(new ScreenshotCardEntry
+                        {
+                            Name = f.Name,
+                            Path = f.Path,
+                            LastModified = f.LastModified,
+                        });
+                    }
                     break;
                 case "resourcepacks":
                     foreach (GameFile f in browser.ListResourcePacks()) Items.Add(f);
@@ -382,6 +402,81 @@ public partial class GameContentPageViewModel : PageViewModelBase
             browser.OpenScreenshot(file.Path);
         }
         catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    /// <summary>Open a screenshot from its grid card (accepts the card, converts to GameFile).</summary>
+    [RelayCommand]
+    private void OpenScreenshotCard(ScreenshotCardEntry card) => OpenScreenshot(card.ToGameFile());
+
+    /// <summary>Copy a screenshot's file path to the system clipboard (paste into chat/upload).</summary>
+    [RelayCommand]
+    private void CopyScreenshot(ScreenshotCardEntry card)
+    {
+        try
+        {
+            if (!File.Exists(card.Path)) { Status = "common.error"; return; }
+            // Avalonia 11: clipboard lives on the TopLevel (the main window), not Application.
+            if (Avalonia.Application.Current?.ApplicationLifetime
+                is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
+                && desktop.MainWindow is { Clipboard: var clipboard } && clipboard is not null)
+            {
+                clipboard.SetTextAsync(card.Path).GetAwaiter().GetResult();
+                Status = "screenshot.copied";
+            }
+            else
+            {
+                Status = "common.error";
+            }
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    /// <summary>Delete a screenshot from its grid card.</summary>
+    [RelayCommand]
+    private void DeleteScreenshotCard(ScreenshotCardEntry card) => DeleteScreenshot(card.ToGameFile());
+
+    /// <summary>Toggle a card's selection state and re-raise the selection-dependent flags.</summary>
+    [RelayCommand]
+    private void ToggleScreenshot(ScreenshotCardEntry card)
+    {
+        card.IsSelected = !card.IsSelected;
+        NotifyScreenshotSelectionChanged();
+    }
+
+    /// <summary>Select (or deselect) every screenshot card. Bound to the header checkbox.</summary>
+    [RelayCommand]
+    private void SelectAllScreenshots()
+    {
+        bool target = !AllScreenshotsSelected; // toggle to "all" if not already
+        foreach (var c in ScreenshotCards) c.IsSelected = target;
+        NotifyScreenshotSelectionChanged();
+    }
+
+    /// <summary>Bundle every selected screenshot into a timestamped .zip on the desktop.</summary>
+    [RelayCommand]
+    private void ExportSelectedScreensshots()
+    {
+        try
+        {
+            Instance? inst = GetActiveInstance();
+            if (inst is null) return;
+            var selected = ScreenshotCards.Where(c => c.IsSelected).ToList();
+            if (selected.Count == 0) { Status = "screenshot.none_selected"; return; }
+            var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
+            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string stamp = DateTime.Now.ToString("yyyyMMdd-HHmmss");
+            string zip = Path.Combine(desktop, $"screenshots-{stamp}.zip");
+            browser.ExportScreenshotsToZip(selected.Select(c => c.Path), zip);
+            Status = $"screenshot.exported,{selected.Count}";
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    /// <summary>Re-raise the selection-driven flags after a card toggles or select-all fires.</summary>
+    private void NotifyScreenshotSelectionChanged()
+    {
+        OnPropertyChanged(nameof(HasScreenshotSelection));
+        OnPropertyChanged(nameof(AllScreenshotsSelected));
     }
 
     [RelayCommand]
@@ -574,5 +669,35 @@ public sealed class WorldCardEntry : ObservableObject
         LastModified = LastModified,
         DisplayName = DisplayName,
         PreviewIconPath = PreviewIconPath,
+    };
+}
+
+/// <summary>
+/// A screenshot rendered as a grid card: thumbnail (bound directly to the file path), filename,
+/// last-modified, a per-card selection checkbox (for batch export), and open/copy/delete actions.
+/// </summary>
+public sealed class ScreenshotCardEntry : ObservableObject
+{
+    public string Name { get; set; } = string.Empty;
+    public string Path { get; set; } = string.Empty;
+    public DateTimeOffset LastModified { get; set; }
+
+    private bool _isSelected;
+    /// <summary>True when the card is part of the batch-export selection.</summary>
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set => SetProperty(ref _isSelected, value);
+    }
+
+    /// <summary>Localized-friendly capture timestamp for display.</summary>
+    public string DateDisplay => LastModified.LocalDateTime.ToString("yyyy-MM-dd HH:mm");
+
+    /// <summary>Reconstruct the equivalent <see cref="GameFile"/> so the shared screenshot commands work.</summary>
+    public GameFile ToGameFile() => new()
+    {
+        Name = Name,
+        Path = Path,
+        LastModified = LastModified,
     };
 }
