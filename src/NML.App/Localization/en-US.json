@@ -337,6 +337,10 @@
   "server.exported": "Exported to {0}",
   "server.imported": "Imported {0} server(s)",
 
+  "server.qr.button": "📱 Share QR",
+  "server.qr.label": "QR share URI (scan or copy):",
+  "server.qr.generated": "QR URI generated + copied to clipboard",
+
   "account.refresh.button": "🔄 Refresh tokens",
   "account.refresh.refreshing": "Refreshing expired tokens…",
   "account.refresh.done": "Refreshed {0} account(s)",

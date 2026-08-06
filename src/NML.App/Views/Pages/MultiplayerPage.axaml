@@ -104,9 +104,19 @@
                         <Button Content="{loc:Loc 'server.ping'}" Command="{Binding PingSelectedCommand}" Margin="0,0,6,0"/>
                         <Button Content="{loc:Loc 'server.connect'}" Command="{Binding ConnectCommand}"
                                 Background="#4caf50" Foreground="White" Padding="14,6" Margin="0,0,6,0"/>
+                        <Button Content="{loc:Loc 'server.qr.button'}" Command="{Binding ShareQrCodeCommand}"
+                                Background="#ab47bc" Foreground="White" Padding="14,6" Margin="0,0,6,0"/>
                         <Button Content="{loc:Loc 'server.remove'}" Command="{Binding RemoveCommand}"
                                 Background="#c62828" Foreground="White" Padding="14,6"/>
                     </WrapPanel>
+                    <!-- QR-shareable URI (visible after Share QR is clicked) -->
+                    <Border Background="#1a1a20" CornerRadius="4" Padding="10" IsVisible="{Binding ShowQrCode}" Margin="0,4,0,0">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="{loc:Loc 'server.qr.label'}" Foreground="#4fc3f7" FontSize="11"/>
+                            <SelectableTextBlock Text="{Binding QrCodeUri}" Foreground="#ccc" FontFamily="Cascadia Code,Consolas,monospace"
+                                                 FontSize="11" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </Border>
 

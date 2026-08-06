@@ -39,6 +39,11 @@ public partial class MultiplayerPageViewModel : PageViewModelBase
     [ObservableProperty] private string _status = string.Empty;
     [ObservableProperty] private bool _isBusy;
 
+    /// <summary>The QR-shareable URI for the selected server (shown when the Share QR button is clicked).</summary>
+    [ObservableProperty] private string _qrCodeUri = string.Empty;
+    /// <summary>True when a QR URI is visible (drives the QR text-block visibility).</summary>
+    [ObservableProperty] private bool _showQrCode;
+
     /// <summary>True while a ping sweep of all servers is running.</summary>
     [ObservableProperty] private bool _isPingingAll;
 
@@ -252,6 +257,25 @@ public partial class MultiplayerPageViewModel : PageViewModelBase
 
     /// <summary>Path to a servers-export zip to import (bound to a textbox).</summary>
     [ObservableProperty] private string _importServersPath = string.Empty;
+
+    /// <summary>Generate and display the QR-shareable URI for the selected server (and copy it to clipboard).</summary>
+    [RelayCommand(CanExecute = nameof(HasSelection))]
+    private void ShareQrCode()
+    {
+        if (SelectedRow is null) return;
+        QrCodeUri = ServerQrCodeUri.Build(SelectedRow.Entry.Name, SelectedRow.Entry.Host, SelectedRow.Entry.Port);
+        ShowQrCode = true;
+        // Also copy to clipboard so the user can paste into any QR generator.
+        try
+        {
+            if (Avalonia.Application.Current?.ApplicationLifetime
+                is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
+                && desktop.MainWindow is { Clipboard: var cb } && cb is not null)
+                cb.SetTextAsync(QrCodeUri).GetAwaiter().GetResult();
+        }
+        catch { /* non-fatal */ }
+        Status = "server.qr.generated";
+    }
 
     /// <summary>Export the saved server list to a portable .zip on the desktop.</summary>
     [RelayCommand]
