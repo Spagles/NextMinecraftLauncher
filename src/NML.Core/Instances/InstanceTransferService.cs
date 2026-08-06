@@ -7,6 +7,31 @@ using NML.Core.Instances;
 namespace NML.Core.Instances;
 
 /// <summary>
+/// Selectable contents for a deep instance export. The base dirs (mods/config/resourcepacks/
+/// shaderpacks) are always bundled so a modded instance remains playable; the optional flags
+/// layer in user content that turns a modpack into a faithful "everything" snapshot.
+/// </summary>
+public sealed record ModpackExportOptions
+{
+    /// <summary>Include the <c>saves/</c> folder (world single-player worlds). Off by default —
+    /// worlds are large and usually personal.</summary>
+    public bool IncludeSaves { get; init; }
+
+    /// <summary>Include the <c>screenshots/</c> folder. Off by default.</summary>
+    public bool IncludeScreenshots { get; init; }
+
+    /// <summary>Include <c>options.txt</c>, <c>servers.dat</c>, <c>servers.dat_old</c>,
+    /// <c>optionsof.txt</c> — the per-instance client settings. Off by default.</summary>
+    public bool IncludeClientSettings { get; init; }
+
+    /// <summary>Include the <c>logs/</c> folder (latest.log + older logs). Off by default.</summary>
+    public bool IncludeLogs { get; init; }
+
+    /// <summary>Default export: mods/config/resourcepacks/shaderpacks only (the existing behavior).</summary>
+    public static ModpackExportOptions Default { get; } = new();
+}
+
+/// <summary>
 /// Exports and imports launcher instances as portable .zip archives. An export bundle contains
 /// an <c>instance.json</c> (the Instance metadata) plus selected game-dir subfolders
 /// (<c>mods/</c>, <c>config/</c>, <c>resourcepacks/</c>) so the instance can be recreated on
@@ -19,6 +44,10 @@ public sealed class InstanceTransferService
 
     private static readonly string[] ExportDirs = { "mods", "config", "resourcepacks", "shaderpacks" };
 
+    /// <summary>Per-instance client-settings files layered in when IncludeClientSettings is on.</summary>
+    private static readonly string[] ClientSettingFiles =
+        { "options.txt", "servers.dat", "servers.dat_old", "optionsof.txt", "realms_persistence.json" };
+
     public InstanceTransferService(InstanceStore instances, ILogger<InstanceTransferService> logger)
     {
         _instances = instances;
@@ -27,37 +56,77 @@ public sealed class InstanceTransferService
 
     /// <summary>
     /// Export an instance to a .zip at <paramref name="outputPath"/>. The zip contains
-    /// <c>instance.json</c> + the contents of the instance's mods/config/etc. dirs.
+    /// <c>instance.json</c> + the contents of the instance's mods/config/etc. dirs. Equivalent to
+    /// <see cref="ExportDeep"/> with default options (no worlds/screenshots/settings).
     /// </summary>
     public void Export(Instance instance, string outputPath)
+        => ExportDeep(instance, outputPath, ModpackExportOptions.Default);
+
+    /// <summary>
+    /// Export an instance with selectable deep contents. Beyond the always-bundled mod dirs, the
+    /// <paramref name="options"/> flags add worlds, screenshots, client-settings files, and logs,
+    /// so a checked-everything export reproduces the instance faithfully on another machine.
+    /// </summary>
+    public void ExportDeep(Instance instance, string outputPath, ModpackExportOptions options)
     {
         if (!File.Exists(outputPath) && Directory.Exists(Path.GetDirectoryName(outputPath)) == false)
             Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
 
         string gameDir = _instances.GameDirFor(instance.Name);
-        _logger.LogInformation("Exporting instance {Name} to {Path}…", instance.Name, outputPath);
+        _logger.LogInformation("Exporting instance {Name} to {Path} (deep: saves={Saves}, shots={Shots}, settings={Set}, logs={Logs})…",
+            instance.Name, outputPath, options.IncludeSaves, options.IncludeScreenshots, options.IncludeClientSettings, options.IncludeLogs);
 
         using (var zip = ZipFile.Open(outputPath, ZipArchiveMode.Create))
         {
+            int entryCount = 0;
             // Write instance.json into the archive.
             string json = JsonSerializer.Serialize(instance, new JsonSerializerOptions { WriteIndented = true });
             AddTextEntry(zip, "instance.json", json);
+            entryCount++;
 
-            // Add each exportable subdirectory if it exists.
+            // Always-bundled mod/config dirs.
             foreach (string sub in ExportDirs)
-            {
-                string dir = Path.Combine(gameDir, sub);
-                if (!Directory.Exists(dir)) continue;
+                entryCount += AddDir(zip, gameDir, sub);
 
-                foreach (string file in Directory.EnumerateFiles(dir, "*", SearchOption.AllDirectories))
+            // Optional user-content dirs.
+            if (options.IncludeSaves) entryCount += AddDir(zip, gameDir, "saves");
+            if (options.IncludeScreenshots) entryCount += AddDir(zip, gameDir, "screenshots");
+            if (options.IncludeLogs) entryCount += AddDir(zip, gameDir, "logs");
+
+            // Optional per-instance client-settings files (top-level, not a folder).
+            if (options.IncludeClientSettings)
+            {
+                foreach (string fileName in ClientSettingFiles)
                 {
-                    string rel = Path.Combine(sub, Path.GetRelativePath(dir, file));
-                    zip.CreateEntryFromFile(file, rel, CompressionLevel.Optimal);
+                    string file = Path.Combine(gameDir, fileName);
+                    if (File.Exists(file))
+                    {
+                        zip.CreateEntryFromFile(file, fileName, CompressionLevel.Optimal);
+                        entryCount++;
+                    }
                 }
             }
 
-            _logger.LogInformation("Exported {Name} ({Count} entries).", instance.Name, zip.Entries.Count);
+            // Note: ZipArchive.Entries is unreadable in Create mode, so we count as we add.
+            _logger.LogInformation("Exported {Name} ({Count} entries).", instance.Name, entryCount);
         }
+    }
+
+    /// <summary>Recursively add a game-dir subfolder into the zip under its own name.
+    /// Returns the number of files added. Entry names use forward slashes per the ZIP spec
+    /// (Path.Combine emits backslashes on Windows, which break cross-platform extraction).</summary>
+    private static int AddDir(ZipArchive zip, string gameDir, string sub)
+    {
+        string dir = Path.Combine(gameDir, sub);
+        if (!Directory.Exists(dir)) return 0;
+        int n = 0;
+        foreach (string file in Directory.EnumerateFiles(dir, "*", SearchOption.AllDirectories))
+        {
+            string rel = Path.Combine(sub, Path.GetRelativePath(dir, file)).Replace('\\', '/');
+            zip.CreateEntryFromFile(file, rel, CompressionLevel.Optimal);
+            n++;
+        }
+        return n;
     }
 
     /// <summary>

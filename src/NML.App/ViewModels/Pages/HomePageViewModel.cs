@@ -87,6 +87,13 @@ public partial class HomePageViewModel : PageViewModelBase
     /// <summary>Live game console output (stdout+stderr), shown in the console panel.</summary>
     [ObservableProperty] private string _consoleOutput = string.Empty;
 
+    // --- Deep modpack export toggles (off by default; worlds/screenshots/settings are personal
+    // and large, so the user opts in per export). All bound to checkboxes in the export panel. ---
+    [ObservableProperty] private bool _exportIncludeSaves;
+    [ObservableProperty] private bool _exportIncludeScreenshots;
+    [ObservableProperty] private bool _exportIncludeClientSettings;
+    [ObservableProperty] private bool _exportIncludeLogs;
+
     // Batch console updates to avoid UI freeze on high-frequency game output.
     private readonly System.Collections.Concurrent.ConcurrentQueue<string> _consoleBuffer = new();
     private int _consoleFlushScheduled;
@@ -409,6 +416,33 @@ public partial class HomePageViewModel : PageViewModelBase
             Status = $"home.exported,{zipPath}";
         }
         catch (Exception ex) { Status = $"home.launch_failed,{ex.Message}"; _logger.LogError(ex, "Export failed."); }
+    }
+
+    /// <summary>
+    /// Deep export: bundle the instance with the user-selected optional contents (worlds,
+    /// screenshots, client settings, logs) on top of the always-included mods/config dirs, so a
+    /// fully-checked export reproduces the instance faithfully on another machine. Output is a
+    /// distinct <c>-deep-export.zip</c> so it never silently overwrites a basic export.
+    /// </summary>
+    [RelayCommand]
+    private void ExportDeepInstance(Instance instance)
+    {
+        if (_instanceTransfer is null || instance is null) return;
+        try
+        {
+            var options = new ModpackExportOptions
+            {
+                IncludeSaves = ExportIncludeSaves,
+                IncludeScreenshots = ExportIncludeScreenshots,
+                IncludeClientSettings = ExportIncludeClientSettings,
+                IncludeLogs = ExportIncludeLogs,
+            };
+            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string zipPath = Path.Combine(desktop, $"{instance.Name}-deep-export.zip");
+            _instanceTransfer.ExportDeep(instance, zipPath, options);
+            Status = $"modpack.exported_deep,{zipPath}";
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; _logger.LogError(ex, "Deep export failed."); }
     }
 
     /// <summary>Import an instance from a .zip bundle.</summary>

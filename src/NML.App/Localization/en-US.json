@@ -266,6 +266,15 @@
   "screenshot.none_selected": "Select at least one screenshot",
   "screenshot.exported": "Exported {0} screenshots to desktop",
 
+  "modpack.deep_title": "Deep modpack export",
+  "modpack.deep_export": "📦 Deep export (worlds / settings / mods)",
+  "modpack.deep_hint": "Mods, config, resource packs & shader packs are always bundled. Tick the boxes above to add worlds, screenshots, client settings or logs.",
+  "modpack.include_saves": "Worlds (saves)",
+  "modpack.include_screenshots": "Screenshots",
+  "modpack.include_settings": "Client settings (options.txt, servers.dat)",
+  "modpack.include_logs": "Logs",
+  "modpack.exported_deep": "Deep export written to {0}",
+
   "common.cancel": "Cancel",
   "common.confirm": "OK",
   "common.close": "Close",

@@ -3,7 +3,7 @@
 A cross-platform **Minecraft launcher** built in **C# / Avalonia UI 11 + .NET 8**, aiming to
 match HMCL and PCL while adding **first-class AI features**.
 
-> **129 commits, 185 tests, 0 warnings, 31 languages.** A real, functional launcher.
+> **130 commits, 189 tests, 0 warnings, 31 languages.** A real, functional launcher.
 
 ## What works right now
 
@@ -18,6 +18,9 @@ match HMCL and PCL while adding **first-class AI features**.
 - **Instance management:** version-isolated game dirs, clone (preserves custom args),
   import/export (zip bundles), share codes (base64), batch export/delete, remove single,
   per-instance launch options (memory / window / JVM & game args) persisted to instances.json
+- **Deep modpack export:** bundle an instance with optional worlds, screenshots, client
+  settings (options.txt/servers.dat) and logs on top of the always-included mods/config —
+  cross-platform zip entries (forward-slash) for faithful cross-machine reproduction
 - **World grid:** saves rendered as icon cards (level.dat LevelName + icon.png preview),
   one-click timestamped backup, export/delete
 - **Screenshot grid:** thumbnail cards + multi-select + batch export to a desktop zip +
@@ -59,7 +62,7 @@ match HMCL and PCL while adding **first-class AI features**.
 - **Accounts:** offline + Microsoft device-code + authlib-injector servers + skin preview
 
 ### Internationalization
-- **31 languages, 259 keys each (8,029 total translated keys):** 中文, English, 日本語, 한국어,
+- **31 languages, 267 keys each (8,277 total translated keys):** 中文, English, 日本語, 한국어,
   Русский, Français, Español, Deutsch, Português, Italiano, العربية, Türkçe, हिन्दी, ไทย,
   Tiếng Việt, Bahasa Indonesia, Polski, Українська, Nederlands, Svenska, Čeština,
   Norsk, Suomi, Dansk, Magyar, Română, Azərbaycan, Afrikaans, עברית, Català, Қазақша

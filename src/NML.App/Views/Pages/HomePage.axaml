@@ -37,6 +37,24 @@
                 <Button Content="{loc:Loc 'home.delete_all'}" Command="{Binding DeleteAllInstancesCommand}" Classes="small"/>
             </StackPanel>
 
+            <!-- Deep modpack export: pick optional contents (mods/config always bundled) -->
+            <Border Background="#1a1a20" CornerRadius="6" Padding="10" Margin="0,4">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="{loc:Loc 'modpack.deep_title'}" Foreground="#4fc3f7" FontSize="12" FontWeight="SemiBold"/>
+                    <WrapPanel>
+                        <CheckBox Content="{loc:Loc 'modpack.include_saves'}" IsChecked="{Binding ExportIncludeSaves}" Foreground="#c0c0c0" Margin="0,0,12,0"/>
+                        <CheckBox Content="{loc:Loc 'modpack.include_screenshots'}" IsChecked="{Binding ExportIncludeScreenshots}" Foreground="#c0c0c0" Margin="0,0,12,0"/>
+                        <CheckBox Content="{loc:Loc 'modpack.include_settings'}" IsChecked="{Binding ExportIncludeClientSettings}" Foreground="#c0c0c0" Margin="0,0,12,0"/>
+                        <CheckBox Content="{loc:Loc 'modpack.include_logs'}" IsChecked="{Binding ExportIncludeLogs}" Foreground="#c0c0c0"/>
+                    </WrapPanel>
+                    <Button Content="{loc:Loc 'modpack.deep_export'}" Command="{Binding ExportDeepInstanceCommand}"
+                            CommandParameter="{Binding SelectedInstance}"
+                            IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}"
+                            Background="#2f5fcc" Foreground="White" Padding="14,5" HorizontalAlignment="Left"/>
+                    <TextBlock Text="{loc:Loc 'modpack.deep_hint'}" Foreground="#666" FontSize="10" FontStyle="Italic"/>
+                </StackPanel>
+            </Border>
+
             <!-- Share code -->
             <StackPanel Spacing="4">
                 <StackPanel Orientation="Horizontal" Spacing="6">
