@@ -178,9 +178,11 @@ public partial class AccountsPageViewModel : PageViewModelBase
         // Extract the code from "https://login.live.com/oauth20_desktop.srf?code=XXX"
         if (code.Contains("code=", StringComparison.OrdinalIgnoreCase))
         {
-            var uri = new System.Uri(code.Contains('?') ? code : code);
-            var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
-            code = query["code"] ?? code;
+            // Simple extraction without System.Web dependency.
+            int idx = code.IndexOf("code=", StringComparison.OrdinalIgnoreCase);
+            code = code[(idx + 5)..]; // skip "code="
+            int amp = code.IndexOf('&');
+            if (amp >= 0) code = code[..amp]; // truncate at next param
         }
 
         IsBusy = true;
