@@ -129,6 +129,8 @@ public partial class SettingsPageViewModel : PageViewModelBase
             if (string.IsNullOrEmpty(value)) return;
             var color = Avalonia.Media.Color.Parse(value);
             Avalonia.Application.Current!.Resources["SystemAccentColor"] = color;
+            // Also update our shared AccentBrush so custom-styled surfaces follow the user's choice.
+            Avalonia.Application.Current!.Resources["AccentBrush"] = new Avalonia.Media.SolidColorBrush(color);
         }
         catch { /* invalid hex — ignore */ }
         // Persist so the accent survives restarts.
@@ -323,14 +325,12 @@ public partial class SettingsPageViewModel : PageViewModelBase
         if (value is not null)
         {
             LocalizationService.Instance.CurrentCulture = value;
-            // Persist the culture to language.txt so Program.cs reads it on next startup.
+            // Persist the resolved culture key to language.txt so it round-trips on next startup.
+            string resolvedKey = LocalizationService.Instance.ResolveCultureKey(value.Name) ?? value.Name;
             string langPath = Path.Combine(_settings.SettingsDir, "language.txt");
-            File.WriteAllText(langPath, value.Name);
-            // Also save the full settings.
-            var s = _settings.Load();
-            s.Providers = Providers.ToList();
-            s.ActiveProviderName = ActiveProvider?.Name;
-            _settings.Save(s);
+            File.WriteAllText(langPath, resolvedKey);
+            // Persist all settings atomically via the shared path.
+            PersistSettings();
         }
     }
 

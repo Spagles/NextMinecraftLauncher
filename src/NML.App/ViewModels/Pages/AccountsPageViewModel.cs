@@ -153,7 +153,7 @@ public partial class AccountsPageViewModel : PageViewModelBase
         try
         {
             DeviceCodeResponse dc = await _microsoft.BeginLoginAsync();
-            DeviceCodeMessage = $"accounts.ms_device_code,{dc.VerificationUri}";
+            DeviceCodeMessage = $"{dc.VerificationUri}  —  {dc.UserCode}";
             ShowDeviceCode = true;
 
             // Poll until the user finishes sign-in (or the flow expires).

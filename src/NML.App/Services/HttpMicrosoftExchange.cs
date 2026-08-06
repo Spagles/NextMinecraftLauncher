@@ -91,7 +91,7 @@ public sealed class HttpMicrosoftExchange : IMicrosoftExchange
             {
                 AuthMethod = "RPS",
                 SiteName = "user.auth.xboxlive.com",
-                RpsTicket = "d=" + msaAccessToken,
+                RpsTicket = "t=" + msaAccessToken,
             },
             RelyingParty = "http://auth.xboxlive.com",
             TokenType = "JWT",
@@ -127,6 +127,11 @@ public sealed class HttpMicrosoftExchange : IMicrosoftExchange
         using var req = new HttpRequestMessage(HttpMethod.Get, MinecraftProfileUrl);
         req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", mcAccessToken);
         using var resp = await _http.SendAsync(req, ct);
+        // 404/204 means the account doesn't own Minecraft — return an empty profile so the
+        // caller can show a clear "you don't own Minecraft" message.
+        if (resp.StatusCode == System.Net.HttpStatusCode.NotFound ||
+            resp.StatusCode == System.Net.HttpStatusCode.NoContent)
+            return new MinecraftProfile { Id = string.Empty, Name = string.Empty };
         resp.EnsureSuccessStatusCode();
         return await resp.Content.ReadFromJsonAsync<MinecraftProfile>(ct)
                ?? throw new InvalidDataException("Minecraft profile response was null.");
@@ -139,6 +144,9 @@ public sealed class HttpMicrosoftExchange : IMicrosoftExchange
             Content = JsonContent.Create(body),
         };
         req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        // The Xbox Live + XSTS endpoints require this header or they return 400.
+        if (url.Contains("xboxlive.com", StringComparison.OrdinalIgnoreCase))
+            req.Headers.Add("x-xbl-contract-version", "1");
         var resp = await _http.SendAsync(req, ct);
         resp.EnsureSuccessStatusCode();
         return resp;

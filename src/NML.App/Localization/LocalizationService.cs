@@ -28,6 +28,8 @@ public sealed class LocalizationService
             if (_current.Name == value.Name) return;
             _current = value;
             CultureInfo.DefaultThreadCurrentUICulture = value;
+            // Also set CurrentCulture so RTL detection and date/number formatting follow the user's choice.
+            CultureInfo.DefaultThreadCurrentCulture = value;
             LanguageChanged?.Invoke(this, value);
         }
     }
@@ -62,8 +64,9 @@ public sealed class LocalizationService
         {
             if (string.IsNullOrEmpty(key)) return string.Empty;
 
-            // 1. Try the current culture.
-            if (_cultures.TryGetValue(_current.Name, out var cur) && cur.TryGetValue(key, out var s))
+            // 1. Try the current culture's exact key.
+            string resolvedKey = ResolveCultureKey(_current.Name) ?? _current.Name;
+            if (_cultures.TryGetValue(resolvedKey, out var cur) && cur.TryGetValue(key, out var s))
                 return s;
 
             // 2. Fall back to English.
@@ -78,6 +81,40 @@ public sealed class LocalizationService
     /// <summary>Convenience for code-behind.</summary>
     public string Get(string key) => this[key];
 
-    /// <summary>Whether a given culture has been registered.</summary>
-    public bool Supports(string cultureName) => _cultures.ContainsKey(cultureName);
+    /// <summary>Whether a given culture has been registered. Tries exact match, then the
+    /// two-letter neutral prefix (e.g. "zh-Hans-CN" → "zh"), so system cultures that don't
+    /// exactly match a file key still resolve.</summary>
+    public bool Supports(string cultureName)
+    {
+        if (string.IsNullOrEmpty(cultureName)) return false;
+        if (_cultures.ContainsKey(cultureName)) return true;
+        // Try the neutral two-letter prefix: "zh-Hans-CN" → "zh", "fr-FR" → "fr".
+        if (cultureName.Length >= 2)
+        {
+            string neutral = cultureName[..2];
+            // Check if any registered key starts with this prefix.
+            foreach (var key in _cultures.Keys)
+                if (key.StartsWith(neutral + "-", StringComparison.OrdinalIgnoreCase) ||
+                    key.Equals(neutral, StringComparison.OrdinalIgnoreCase))
+                    return true;
+        }
+        return false;
+    }
+
+    /// <summary>Resolve a culture name to the best matching registered key, or null.</summary>
+    public string? ResolveCultureKey(string cultureName)
+    {
+        if (string.IsNullOrEmpty(cultureName)) return null;
+        if (_cultures.ContainsKey(cultureName)) return cultureName;
+        // Try the neutral two-letter prefix.
+        if (cultureName.Length >= 2)
+        {
+            string neutral = cultureName[..2];
+            foreach (var key in _cultures.Keys)
+                if (key.StartsWith(neutral + "-", StringComparison.OrdinalIgnoreCase) ||
+                    key.Equals(neutral, StringComparison.OrdinalIgnoreCase))
+                    return key;
+        }
+        return null;
+    }
 }

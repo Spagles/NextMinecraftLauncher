@@ -38,10 +38,15 @@ public static class LocalizationBootstrapper
         }
 
         // Apply saved culture, else fall back to system UI culture if supported, else en-US.
-        string chosen = savedCulture
-                        ?? (svc.Supports(CultureInfo.CurrentUICulture.Name)
-                                ? CultureInfo.CurrentUICulture.Name
-                                : "en-US");
+        // Use ResolveCultureKey so a saved key like "zh-CN" matches even when the system reports
+        // "zh-Hans-CN" or vice-versa.
+        string? chosen = null;
+        if (!string.IsNullOrEmpty(savedCulture))
+            chosen = svc.ResolveCultureKey(savedCulture);
+        if (string.IsNullOrEmpty(chosen) && svc.Supports(CultureInfo.CurrentUICulture.Name))
+            chosen = svc.ResolveCultureKey(CultureInfo.CurrentUICulture.Name);
+        chosen ??= "en-US";
+
         try { svc.CurrentCulture = CultureInfo.GetCultureInfo(chosen); }
         catch { svc.CurrentCulture = new CultureInfo("en-US"); }
     }

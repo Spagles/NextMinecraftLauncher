@@ -15,8 +15,8 @@ public sealed class MicrosoftAuthProvider : IAuthProvider
     /// </summary>
     public const string ClientId = "00000000402b5328";
 
-    /// <summary>The OAuth scope that grants the MSA token access to Xbox Live.</summary>
-    public const string Scope = "service::user.auth.xboxlive.com::MBI_SSL";
+    /// <summary>The OAuth scope for the modern v2.0 device-code flow (XboxLive.signin + offline_access for refresh).</summary>
+    public const string Scope = "XboxLive.signin offline_access";
 
     private readonly IMicrosoftExchange _exchange;
     private readonly ILogger<MicrosoftAuthProvider> _logger;

@@ -1,0 +1,44 @@
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Unified button styles: defined once here, used across all pages -->
+
+    <!-- Small button: flat, compact, for toolbar/inline actions -->
+    <Style Selector="Button.small">
+        <Setter Property="Padding" Value="10,4"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Background" Value="#33333b"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+    </Style>
+    <Style Selector="Button.small:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#404048"/>
+    </Style>
+
+    <!-- Small danger button: red variant of small -->
+    <Style Selector="Button.small.danger">
+        <Setter Property="Background" Value="#b23b3b"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    <Style Selector="Button.small.danger:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#c62828"/>
+    </Style>
+
+    <!-- Tab button: sidebar-style nav buttons -->
+    <Style Selector="Button.tabbtn">
+        <Setter Property="Padding" Value="12,5"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+    </Style>
+    <Style Selector="Button.tabbtn:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#33333b"/>
+    </Style>
+
+    <!-- Card surface: used for world/screenshot/resource-pack cards -->
+    <Style Selector="Border.card">
+        <Setter Property="Background" Value="{DynamicResource PanelBrush}"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="10"/>
+        <Setter Property="Margin" Value="0,0,8,8"/>
+    </Style>
+</Styles>

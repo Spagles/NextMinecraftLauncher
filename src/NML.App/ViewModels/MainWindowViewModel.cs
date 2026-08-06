@@ -31,9 +31,9 @@ public partial class MainWindowViewModel : ObservableObject
 
     partial void OnBackgroundImagePathChanged(string? value) => OnPropertyChanged(nameof(HasBackground));
 
-    /// <summary>True when the current language is RTL (Arabic, Hebrew, etc.).</summary>
+    /// <summary>True when the current UI language is RTL (Arabic, Hebrew, etc.).</summary>
     public bool IsRtl =>
-        System.Globalization.CultureInfo.CurrentCulture.TextInfo.IsRightToLeft;
+        System.Globalization.CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft;
 
     /// <summary>FlowDirection for the window (RightToLeft for RTL languages, LeftToRight otherwise).</summary>
     public Avalonia.Media.FlowDirection WindowFlowDirection => IsRtl

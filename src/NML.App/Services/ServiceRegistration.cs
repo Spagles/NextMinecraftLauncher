@@ -65,7 +65,13 @@ public static class ServiceRegistration
 
         // --- Auth ---
         services.AddSingleton<IOfflineAuthProvider, OfflineAuthProvider>();
-        services.AddSingleton<IMicrosoftExchange, HttpMicrosoftExchange>();
+        services.AddHttpClient<HttpMicrosoftExchange>(c =>
+        {
+            c.Timeout = TimeSpan.FromMinutes(5);
+            c.DefaultRequestHeaders.UserAgent.ParseAdd(
+                "NextMinecraftLauncher/0.1 (https://github.com/weige0831/NextMinecraftLauncher)");
+        });
+        services.AddSingleton<IMicrosoftExchange>(sp => sp.GetRequiredService<HttpMicrosoftExchange>());
         services.AddSingleton<MicrosoftAuthProvider>();
 
         // --- Java ---

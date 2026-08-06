@@ -1,11 +1,28 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="NML.App.App"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+             RequestedThemeVariant="Dark">
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- Shared design tokens (dark theme) -->
+            <SolidColorBrush x:Key="SurfaceBrush" Color="#0a0a0e"/>
+            <SolidColorBrush x:Key="SurfaceAltBrush" Color="#1a1a1e"/>
+            <SolidColorBrush x:Key="PanelBrush" Color="#1f1f25"/>
+            <SolidColorBrush x:Key="PanelAltBrush" Color="#25252b"/>
+            <SolidColorBrush x:Key="TextPrimaryBrush" Color="#e0e0e0"/>
+            <SolidColorBrush x:Key="TextSecondaryBrush" Color="#aaa"/>
+            <SolidColorBrush x:Key="TextMutedBrush" Color="#666"/>
+            <SolidColorBrush x:Key="AccentBrush" Color="#4fc3f7"/>
+            <SolidColorBrush x:Key="SuccessBrush" Color="#4caf50"/>
+            <SolidColorBrush x:Key="DangerBrush" Color="#f44336"/>
+        </ResourceDictionary>
+    </Application.Resources>
 
     <Application.Styles>
         <FluentTheme />
+        <!-- Unified button styles (defined once, used everywhere) -->
+        <StyleInclude Source="avares://NML.App/Styles/Theme.axaml"/>
         <Style Selector="Window">
             <Setter Property="Transitions">
                 <Transitions>
@@ -13,7 +30,6 @@
                 </Transitions>
             </Setter>
         </Style>
-        <!-- Sidebar/nav buttons: smooth background fade on hover -->
         <Style Selector="Button.nav /template/ ContentPresenter">
             <Setter Property="Transitions">
                 <Transitions>
@@ -21,7 +37,6 @@
                 </Transitions>
             </Setter>
         </Style>
-        <!-- Title bar buttons: smooth background fade on hover -->
         <Style Selector="Button.titleBtn /template/ ContentPresenter">
             <Setter Property="Transitions">
                 <Transitions>

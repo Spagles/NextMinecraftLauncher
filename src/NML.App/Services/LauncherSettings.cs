@@ -45,6 +45,7 @@ public sealed class LauncherSettings
 public sealed class SettingsStore
 {
     private readonly string _file;
+    private readonly object _lock = new();
 
     public SettingsStore(string settingsDir)
     {
@@ -57,26 +58,32 @@ public sealed class SettingsStore
 
     public LauncherSettings Load()
     {
-        if (!File.Exists(_file))
-            return new LauncherSettings { SettingsDir = SettingsDir };
+        lock (_lock)
+        {
+            if (!File.Exists(_file))
+                return new LauncherSettings { SettingsDir = SettingsDir };
 
-        try
-        {
-            string json = File.ReadAllText(_file);
-            var s = JsonSerializer.Deserialize<LauncherSettings>(json) ?? new LauncherSettings();
-            s.SettingsDir = SettingsDir;
-            return s;
-        }
-        catch
-        {
-            return new LauncherSettings { SettingsDir = SettingsDir };
+            try
+            {
+                string json = File.ReadAllText(_file);
+                var s = JsonSerializer.Deserialize<LauncherSettings>(json) ?? new LauncherSettings();
+                s.SettingsDir = SettingsDir;
+                return s;
+            }
+            catch
+            {
+                return new LauncherSettings { SettingsDir = SettingsDir };
+            }
         }
     }
 
     public void Save(LauncherSettings settings)
     {
-        settings.SettingsDir = SettingsDir;
-        var opts = new JsonSerializerOptions { WriteIndented = true };
-        File.WriteAllText(_file, JsonSerializer.Serialize(settings, opts));
+        lock (_lock)
+        {
+            settings.SettingsDir = SettingsDir;
+            var opts = new JsonSerializerOptions { WriteIndented = true };
+            File.WriteAllText(_file, JsonSerializer.Serialize(settings, opts));
+        }
     }
 }
