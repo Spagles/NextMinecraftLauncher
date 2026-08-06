@@ -16,6 +16,7 @@ namespace NML.Core.Modloaders;
 public sealed class NeoForgeInstaller
 {
     private const string MavenBase = "https://maven.neoforged.net/releases/net/neoforged/neoforge";
+    private const string MavenMirror = "https://bmclapi2.bangbang93.com/maven/net/neoforged/neoforge";
 
     private readonly IHttpFetcher _http;
     private readonly Downloader _downloader;
@@ -42,7 +43,18 @@ public sealed class NeoForgeInstaller
         string gameVersion, CancellationToken ct = default)
     {
         string metaUrl = $"{MavenBase}/maven-metadata.xml";
-        string xml = await _http.GetStringAsync(metaUrl, ct);
+        string xml;
+        try
+        {
+            xml = await _http.GetStringAsync(metaUrl, ct);
+        }
+        catch (Exception ex)
+        {
+            // The official maven may be unreachable (e.g. GFW/DNS). Try BMCLAPI mirror.
+            _logger.LogWarning(ex, "NeoForge maven unreachable, trying BMCLAPI mirror…");
+            string mirrorUrl = $"{MavenMirror}/maven-metadata.xml";
+            xml = await _http.GetStringAsync(mirrorUrl, ct);
+        }
 
         // NeoForge uses a short version key derived from the MC version (e.g. 1.20.1 → "20.1").
         // The maven versions look like "20.1.5-beta", "20.1.47", etc.
