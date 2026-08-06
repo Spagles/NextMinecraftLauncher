@@ -16,7 +16,7 @@ public static class ScreenshotTimelineGrouper
     /// each group, items are ordered newest-first. The section header is "Today"/"Yesterday"/ISO date
     /// relative to <paramref name="now"/> (UTC).</summary>
     public static IReadOnlyList<ScreenshotTimelineGroup> Group(
-        IEnumerable<(string Name, DateTimeOffset Timestamp)> items,
+        IEnumerable<(string Name, DateTimeOffset Timestamp, string Path)> items,
         DateTimeOffset? now = null)
     {
         var reference = now ?? DateTimeOffset.UtcNow;
@@ -28,7 +28,7 @@ public static class ScreenshotTimelineGrouper
             .Select(g => new ScreenshotTimelineGroup(
                 Header: FormatHeader(g.Key, referenceDate),
                 Items: g.OrderByDescending(item => item.Timestamp)
-                        .Select(item => new ScreenshotTimelineItem(item.Name, item.Timestamp))
+                        .Select(item => new ScreenshotTimelineItem(item.Name, item.Timestamp, item.Path))
                         .ToList()))
             .ToList();
         return groups;
@@ -50,5 +50,5 @@ public static class ScreenshotTimelineGrouper
 /// <summary>A date section in the timeline: a header label + the screenshots captured on that date.</summary>
 public sealed record ScreenshotTimelineGroup(string Header, IReadOnlyList<ScreenshotTimelineItem> Items);
 
-/// <summary>One screenshot in a timeline group.</summary>
-public sealed record ScreenshotTimelineItem(string Name, DateTimeOffset Timestamp);
+/// <summary>One screenshot in a timeline group. Path is the on-disk PNG for the thumbnail binding.</summary>
+public sealed record ScreenshotTimelineItem(string Name, DateTimeOffset Timestamp, string Path);

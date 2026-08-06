@@ -312,7 +312,7 @@ public partial class GameContentPageViewModel : PageViewModelBase
                     }
                     // Also populate the timeline groups (newest-group-first date sections).
                     foreach (var g in ScreenshotTimelineGrouper.Group(
-                        ScreenshotCards.Select(c => (c.Name, c.LastModified))))
+                        ScreenshotCards.Select(c => (c.Name, c.LastModified, c.Path))))
                         ScreenshotGroups.Add(g);
                     break;
                 case "resourcepacks":

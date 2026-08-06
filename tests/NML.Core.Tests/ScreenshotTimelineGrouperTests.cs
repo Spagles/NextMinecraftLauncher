@@ -15,9 +15,9 @@ public class ScreenshotTimelineGrouperTests
     {
         var items = new[]
         {
-            ("old.png",  Now.AddDays(-5)),
-            ("today.png", Now.AddHours(-2)),
-            ("yesterday.png", Now.AddDays(-1)),
+            ("old.png",  Now.AddDays(-5), "/mc/old.png"),
+            ("today.png", Now.AddHours(-2), "/mc/today.png"),
+            ("yesterday.png", Now.AddDays(-1), "/mc/y.png"),
         };
         var groups = ScreenshotTimelineGrouper.Group(items, Now);
         groups.Should().HaveCount(3);
@@ -30,11 +30,11 @@ public class ScreenshotTimelineGrouperTests
     public void Group_Items_Within_Same_Day_Are_In_One_Group_Newest_First()
     {
         var day = new DateTimeOffset(2024, 6, 15, 0, 0, 0, TimeSpan.Zero);
-        var items = new[]
+        var items = new (string, DateTimeOffset, string)[]
         {
-            ("morning.png", day.AddHours(8)),
-            ("afternoon.png", day.AddHours(15)),
-            ("noon.png", day.AddHours(12)),
+            ("morning.png", day.AddHours(8), "/mc/morning.png"),
+            ("afternoon.png", day.AddHours(15), "/mc/afternoon.png"),
+            ("noon.png", day.AddHours(12), "/mc/noon.png"),
         };
         var groups = ScreenshotTimelineGrouper.Group(items, Now);
         groups.Should().ContainSingle();
@@ -50,7 +50,7 @@ public class ScreenshotTimelineGrouperTests
     [Fact]
     public void Group_Empty_Input_Returns_Empty()
     {
-        ScreenshotTimelineGrouper.Group(Array.Empty<(string, DateTimeOffset)>(), Now).Should().BeEmpty();
+        ScreenshotTimelineGrouper.Group(Array.Empty<(string, DateTimeOffset, string)>(), Now).Should().BeEmpty();
     }
 
     [Theory]
@@ -68,10 +68,10 @@ public class ScreenshotTimelineGrouperTests
     public void Group_Across_Months_Boundary()
     {
         // Screenshots from June 1 and May 31 should be in separate groups with ISO-date headers.
-        var items = new[]
+        var items = new (string, DateTimeOffset, string)[]
         {
-            ("jun1.png", new DateTimeOffset(2024, 6, 1, 10, 0, 0, TimeSpan.Zero)),
-            ("may31.png", new DateTimeOffset(2024, 5, 31, 22, 0, 0, TimeSpan.Zero)),
+            ("jun1.png", new DateTimeOffset(2024, 6, 1, 10, 0, 0, TimeSpan.Zero), "/mc/jun1.png"),
+            ("may31.png", new DateTimeOffset(2024, 5, 31, 22, 0, 0, TimeSpan.Zero), "/mc/may31.png"),
         };
         var groups = ScreenshotTimelineGrouper.Group(items, Now);
         groups.Should().HaveCount(2);
