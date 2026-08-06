@@ -343,6 +343,18 @@ public partial class HomePageViewModel : PageViewModelBase
                              ?? runtimes.FirstOrDefault();
             if (java is null) { Status = $"home.no_java,{requiredMajor}"; return; }
 
+            // Pre-launch Java compatibility check: block a runtime that's older than the version's
+            // required major (e.g. Java 8 for 1.17+, which would crash instantly). Surface a clear
+            // status instead of launching into an immediate crash.
+            var compat = JavaVersionValidator.Validate(requiredMajor, java);
+            if (!compat.Ok)
+            {
+                Status = compat.Reason == JavaIncompatibilityReason.Missing
+                    ? $"home.no_java,{requiredMajor}"
+                    : $"java.check.incompatible,{java.MajorVersion},{requiredMajor}";
+                return;
+            }
+
             // Default to an offline account; if the active account is Microsoft or
             // authlib-injector (external Yggdrasil), use it instead.
             Account account = _offline.Create(OfflineUsername);

@@ -268,6 +268,7 @@
   "backup.empty": "Немає копій — створіть копію світу вище.",
   "backup.restore": "♻ Відновити",
   "backup.restored": "Світ відновлено: {0}",
+  "java.check.incompatible": "Java {0} занадто стара для цієї версії (потрібна Java {1}+). Виберіть новіший runtime.",
   "account.refresh.button": "🔄 Оновити токени",
   "account.refresh.refreshing": "Оновлення прострочених токенів…",
   "account.refresh.done": "Оновлено акаунтів: {0}",

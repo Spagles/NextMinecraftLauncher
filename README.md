@@ -3,7 +3,7 @@
 A cross-platform **Minecraft launcher** built in **C# / Avalonia UI 11 + .NET 8**, aiming to
 match HMCL and PCL while adding **first-class AI features**.
 
-> **139 commits, 293 tests, 0 warnings, 31 languages.** A real, functional launcher.
+> **140 commits, 308 tests, 0 warnings, 31 languages.** A real, functional launcher.
 
 ## What works right now
 
@@ -12,6 +12,8 @@ match HMCL and PCL while adding **first-class AI features**.
   downloads, vanilla installer (client.jar + libraries + assets + native extraction), offline +
   Microsoft device-code auth, Java runtime detection + Mojang JRT auto-download, command builder +
   process launcher with **live game console output**
+- **Pre-launch Java version check:** blocks a launch when the selected runtime is older than the
+  version's required major (e.g. Java 8 for 1.17+), surfacing a clear reason instead of crashing
 - **Download tuning (PCL-style):** user-configurable concurrency (1–64) + mirror source
   (BMCLAPI-style host remap for libraries.minecraft.net / piston-*.mojang.com / etc.)
 - **5 modloaders:** Fabric, Quilt, Forge (with processor execution + type coverage), NeoForge, OptiFine
@@ -76,7 +78,7 @@ match HMCL and PCL while adding **first-class AI features**.
   silent multi-account token refresh (MSA refresh-token lifecycle, 5-min proactive margin)
 
 ### Internationalization
-- **31 languages, 313 keys each (9,703 total translated keys):** 中文, English, 日本語, 한국어,
+- **31 languages, 314 keys each (9,734 total translated keys):** 中文, English, 日本語, 한국어,
   Русский, Français, Español, Deutsch, Português, Italiano, العربية, Türkçe, हिन्दी, ไทย,
   Tiếng Việt, Bahasa Indonesia, Polski, Українська, Nederlands, Svenska, Čeština,
   Norsk, Suomi, Dansk, Magyar, Română, Azərbaycan, Afrikaans, עברית, Català, Қазақша

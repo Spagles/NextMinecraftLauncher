@@ -268,6 +268,7 @@
   "backup.empty": "Geen rugsteune — rugsteun 'n wêreld bo.",
   "backup.restore": "♻ Herstel",
   "backup.restored": "Wêreld herstel: {0}",
+  "java.check.incompatible": "Java {0} is te oud vir hierdie weergawe (benodig Java {1}+). Kies 'n nuwer runtime.",
   "account.refresh.button": "🔄 Verfris tokens",
   "account.refresh.refreshing": "Verfris vervalde tokens…",
   "account.refresh.done": "{0} rekening(e) verfris",

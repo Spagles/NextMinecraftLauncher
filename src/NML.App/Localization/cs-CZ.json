@@ -268,6 +268,7 @@
   "backup.empty": "Žádné zálohy — zazálohujte svět výše.",
   "backup.restore": "♻ Obnovit",
   "backup.restored": "Svět obnoven: {0}",
+  "java.check.incompatible": "Java {0} je pro tuto verzi příliš stará (vyžaduje Java {1}+). Vyberte novější runtime.",
   "account.refresh.button": "🔄 Obnovit tokeny",
   "account.refresh.refreshing": "Obnovování propadlých tokenů…",
   "account.refresh.done": "Obnoveno {0} účtů",

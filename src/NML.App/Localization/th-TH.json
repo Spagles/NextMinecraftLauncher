@@ -268,6 +268,7 @@
   "backup.empty": "ยังไม่มีสำรอง — สำรองโลกด้านบนเพื่อสร้าง",
   "backup.restore": "♻ กู้คืน",
   "backup.restored": "กู้คืนโลกแล้ว: {0}",
+  "java.check.incompatible": "Java {0} เก่าเกินไปสำหรับเวอร์ชันนี้ (ต้องการ Java {1}+) เลือกรันไทม์ใหม่กว่า",
   "account.refresh.button": "🔄 รีเฟรชโทเคน",
   "account.refresh.refreshing": "กำลังรีเฟรชโทเคนหมดอายุ…",
   "account.refresh.done": "รีเฟรช {0} บัญชี",

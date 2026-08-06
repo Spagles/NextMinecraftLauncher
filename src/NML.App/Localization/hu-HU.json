@@ -268,6 +268,7 @@
   "backup.empty": "Nincs mentés — készítsen mentést egy világról fent.",
   "backup.restore": "♻ Visszaállítás",
   "backup.restored": "Világ visszaállítva: {0}",
+  "java.check.incompatible": "A Java {0} túl régi ehhez a verzióhoz (Java {1}+ szükséges). Válassz újabb futtatókörnyezetet.",
   "account.refresh.button": "🔄 Tokenek frissítése",
   "account.refresh.refreshing": "Lejárt tokenek frissítése…",
   "account.refresh.done": "{0} fiók frissítve",

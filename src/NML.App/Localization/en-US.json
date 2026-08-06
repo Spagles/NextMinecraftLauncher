@@ -311,6 +311,8 @@
   "theme.css.cleared": "Custom CSS cleared",
   "theme.css.invalid": "Invalid CSS (empty, binary, or too large)",
 
+  "java.check.incompatible": "Java {0} is too old for this version (needs Java {1}+). Pick a newer runtime.",
+
   "account.refresh.button": "🔄 Refresh tokens",
   "account.refresh.refreshing": "Refreshing expired tokens…",
   "account.refresh.done": "Refreshed {0} account(s)",
