@@ -321,10 +321,15 @@ public partial class GameContentPageViewModel : PageViewModelBase
                         ScreenshotGroups.Add(g);
                     break;
                 case "resourcepacks":
+                {
+                    // Read which packs are currently enabled from options.txt.
+                    string optionsPath = Path.Combine(root, "options.txt");
+                    string optionsTxt = File.Exists(optionsPath) ? File.ReadAllText(optionsPath) : string.Empty;
+                    var enabledPacks = ResourcePackStateManager.ReadEnabled(optionsTxt);
+
                     foreach (GameFile f in browser.ListResourcePacks())
                     {
                         Items.Add(f);
-                        // Read pack.mcmeta for description + pack_format + icon presence.
                         var meta = ResourcePackMetadataReader.Read(f.Path);
                         ResourcePackCards.Add(new ResourcePackCard
                         {
@@ -333,9 +338,11 @@ public partial class GameContentPageViewModel : PageViewModelBase
                             Description = meta?.Description ?? string.Empty,
                             PackFormat = meta?.PackFormat ?? 0,
                             IconPath = meta?.IconPath,
+                            IsEnabled = enabledPacks.Contains(f.Name),
                         });
                     }
                     break;
+                }
                 case "mods":
                     foreach (GameFile f in browser.ListMods()) Items.Add(f);
                     break;
@@ -625,6 +632,23 @@ public partial class GameContentPageViewModel : PageViewModelBase
             var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
             browser.DeleteResourcePack(file.Path);
             Refresh();
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    /// <summary>Toggle a resource pack's enabled state in options.txt (no game launch needed).</summary>
+    [RelayCommand]
+    private void ToggleResourcePack(ResourcePackCard card)
+    {
+        try
+        {
+            Instance? inst = GetActiveInstance();
+            if (inst is null) return;
+            string optionsPath = Path.Combine(_instances.GameDirFor(inst.Name), "options.txt");
+            string optionsTxt = File.Exists(optionsPath) ? File.ReadAllText(optionsPath) : string.Empty;
+            var (newOptions, nowEnabled) = ResourcePackStateManager.Toggle(optionsTxt, card.Name);
+            File.WriteAllText(optionsPath, newOptions);
+            card.IsEnabled = nowEnabled;
         }
         catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
     }
@@ -982,10 +1006,14 @@ public sealed class ResourcePackCard : ObservableObject
     public string Path { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public int PackFormat { get; set; }
-    /// <summary>Absolute path to the pack.zip (which contains pack.png); bound to Image for the icon.</summary>
     public string? IconPath { get; set; }
-    /// <summary>True when pack.png was found inside the zip.</summary>
     public bool HasIcon => !string.IsNullOrEmpty(IconPath);
-    /// <summary>Display label for the pack format (e.g. "Format 18").</summary>
     public string FormatDisplay => PackFormat > 0 ? $"Format {PackFormat}" : string.Empty;
+
+    private bool _isEnabled;
+    /// <summary>True when this pack is listed in options.txt's resourcePacks array.</summary>
+    public bool IsEnabled { get => _isEnabled; set => SetProperty(ref _isEnabled, value); }
+
+    /// <summary>Display label for the toggle button.</summary>
+    public string ToggleLabel => _isEnabled ? "✓ Enabled" : "Disabled";
 }

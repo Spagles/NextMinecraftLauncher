@@ -252,6 +252,11 @@
                                                    HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="220"/>
                                         <TextBlock Text="{Binding FormatDisplay}" Foreground="#666" FontSize="10"
                                                    HorizontalAlignment="Center"/>
+                                        <Button Content="{Binding ToggleLabel}"
+                                                Command="{Binding #Root.DataContext.ToggleResourcePackCommand}"
+                                                CommandParameter="{Binding}"
+                                                Background="#2f5fcc" Foreground="White" Padding="10,3"
+                                                HorizontalAlignment="Center" Margin="0,2,0,0" FontSize="11"/>
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>

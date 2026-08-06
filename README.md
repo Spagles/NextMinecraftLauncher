@@ -3,7 +3,7 @@
 A cross-platform **Minecraft launcher** built in **C# / Avalonia UI 11 + .NET 8**, aiming to
 match HMCL and PCL while adding **first-class AI features**.
 
-> **151 commits, 376 tests, 0 warnings, 31 languages.** A real, functional launcher.
+> **152 commits, 386 tests, 0 warnings, 31 languages.** A real, functional launcher.
 
 ## What works right now
 
@@ -35,7 +35,8 @@ match HMCL and PCL while adding **first-class AI features**.
   copy-path-to-clipboard + date-grouped timeline browse (Today / Yesterday / ISO date)
 - **Structured mod-config editor:** parses Forge .cfg / .ini / .properties into editable
   key=value rows (comments + section headers preserved on save); TOML/JSON fall back to plain text
-- **Resource-pack preview:** icon + description + pack_format cards (pack.mcmeta parsed live)
+- **Resource-pack preview:** icon + description + pack_format cards (pack.mcmeta parsed live) +
+  enable/disable toggle (writes options.txt resourcePacks array — no game launch needed)
 - **Live theme preview:** a settings card reflecting the active theme + accent the instant either
   changes (title bar, primary/secondary buttons, sample body text, invalid-hex fallback)
 - **Custom CSS import:** paste CSS, apply to inject a live stylesheet into the theme (validated,
