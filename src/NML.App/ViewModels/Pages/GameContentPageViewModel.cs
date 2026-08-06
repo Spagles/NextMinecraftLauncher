@@ -436,6 +436,20 @@ public partial class GameContentPageViewModel : PageViewModelBase
         card.ShowDetails = !card.ShowDetails;
     }
 
+    /// <summary>Export a world's stats to a CSV file on the desktop.</summary>
+    [RelayCommand]
+    private void ExportWorldStatsCsv(WorldCardEntry card)
+    {
+        try
+        {
+            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string csvPath = System.IO.Path.Combine(desktop, $"{card.Name}-stats.csv");
+            NML.Core.Game.WorldStatsCsvExporter.Export(card.Path, csvPath);
+            Status = $"stats.exported,{csvPath}";
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
     /// <summary>One-click export from a grid world card.</summary>
     [RelayCommand]
     private void ExportWorldCard(WorldCardEntry card) => ExportWorld(card.ToGameSave());

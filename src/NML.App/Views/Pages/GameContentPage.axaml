@@ -129,6 +129,10 @@
                                                 Command="{Binding #Root.DataContext.ToggleWorldDetailsCommand}"
                                                 CommandParameter="{Binding}"
                                                 IsVisible="{Binding StatLines, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                                        <Button Content="📥 Export CSV" Classes="small" HorizontalAlignment="Center" Margin="0,2"
+                                                Command="{Binding #Root.DataContext.ExportWorldStatsCsvCommand}"
+                                                CommandParameter="{Binding}"
+                                                IsVisible="{Binding StatLines, Converter={x:Static ObjectConverters.IsNotNull}}"/>
                                         <ItemsControl ItemsSource="{Binding StatLines}" IsVisible="{Binding ShowDetails}" Margin="0,4">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
