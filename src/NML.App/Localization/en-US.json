@@ -286,6 +286,9 @@
   "backup.empty": "No backups yet — back up a world above to create one.",
   "backup.restore": "♻ Restore",
   "backup.restored": "Restored world: {0}",
+  "backup.restore.restoring": "Restoring world…",
+  "backup.restore.cancel": "Cancel restore",
+  "backup.restore.cancelled": "Restore cancelled",
 
   "account.refresh.button": "🔄 Refresh tokens",
   "account.refresh.refreshing": "Refreshing expired tokens…",

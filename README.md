@@ -3,7 +3,7 @@
 A cross-platform **Minecraft launcher** built in **C# / Avalonia UI 11 + .NET 8**, aiming to
 match HMCL and PCL while adding **first-class AI features**.
 
-> **136 commits, 269 tests, 0 warnings, 31 languages.** A real, functional launcher.
+> **137 commits, 274 tests, 0 warnings, 31 languages.** A real, functional launcher.
 
 ## What works right now
 
@@ -27,7 +27,7 @@ match HMCL and PCL while adding **first-class AI features**.
 - **World grid:** saves rendered as icon cards (level.dat LevelName + icon.png preview),
   one-click timestamped backup, export/delete
 - **World backup/restore UI:** backups panel lists every timestamped zip (newest first),
-  restore overwrites the live folder exactly, delete a stale backup
+  restore overwrites the live folder exactly with a live progress bar + cancel, delete a backup
 - **Screenshot grid:** thumbnail cards + multi-select + batch export to a desktop zip +
   copy-path-to-clipboard
 - **Structured mod-config editor:** parses Forge .cfg / .ini / .properties into editable
@@ -72,7 +72,7 @@ match HMCL and PCL while adding **first-class AI features**.
   silent multi-account token refresh (MSA refresh-token lifecycle, 5-min proactive margin)
 
 ### Internationalization
-- **31 languages, 291 keys each (9,021 total translated keys):** 中文, English, 日本語, 한국어,
+- **31 languages, 294 keys each (9,114 total translated keys):** 中文, English, 日本語, 한국어,
   Русский, Français, Español, Deutsch, Português, Italiano, العربية, Türkçe, हिन्दी, ไทย,
   Tiếng Việt, Bahasa Indonesia, Polski, Українська, Nederlands, Svenska, Čeština,
   Norsk, Suomi, Dansk, Magyar, Română, Azərbaycan, Afrikaans, עברית, Català, Қазақша

@@ -206,6 +206,73 @@ public sealed class GameContentBrowser
         return worldDir;
     }
 
+    /// <summary>
+    /// Restore a world from a backup zip with live progress + cancellation — the entry-by-entry
+    /// equivalent of <see cref="RestoreWorld"/>, for large multi-GB worlds where a fire-and-forget
+    /// restore leaves the user staring at a frozen UI. Reports <c>(extractedBytes, totalBytes)</c>
+    /// as each entry is written; throws <see cref="OperationCanceledException"/> if cancelled (the
+    /// half-extracted folder is left in place — the caller can re-run to finish, matching the
+    /// idempotent extract-with-overwrite behavior).
+    /// </summary>
+    public async Task<string> RestoreWorldAsync(
+        string backupZipPath,
+        IProgress<(long extractedBytes, long totalBytes)>? progress = null,
+        CancellationToken ct = default)
+    {
+        if (!File.Exists(backupZipPath))
+            throw new FileNotFoundException("Backup not found.", backupZipPath);
+
+        string worldName = BackupInfo.WorldNameFromFileName(Path.GetFileName(backupZipPath));
+        string savesDir = Path.Combine(_mc.Root, "saves");
+        string worldDir = Path.Combine(savesDir, worldName);
+
+        // Clear the existing world folder so the restore is exact (no stale files left behind).
+        if (Directory.Exists(worldDir))
+            Directory.Delete(worldDir, recursive: true);
+        Directory.CreateDirectory(worldDir);
+
+        // Open the archive and compute the total uncompressed size once up front (cheap; entries
+        // carry their Length in the central directory).
+        using var archive = System.IO.Compression.ZipFile.OpenRead(backupZipPath);
+        long totalBytes = archive.Entries.Sum(e => e.Length);
+        long extractedBytes = 0;
+
+        // Buffer for stream copying; 64 KiB balances throughput against allocation pressure.
+        byte[] buffer = new byte[64 * 1024];
+
+        foreach (var entry in archive.Entries)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            // Zip entries use forward slashes; normalize for the host OS.
+            string dest = Path.Combine(worldDir, entry.FullName.Replace('\\', '/'));
+            // Directory entries: create and continue (Length is 0 for them).
+            if (entry.Length == 0 && (entry.FullName.EndsWith('/') || entry.FullName.EndsWith('\\')))
+            {
+                Directory.CreateDirectory(dest);
+                continue;
+            }
+            string? parent = Path.GetDirectoryName(dest);
+            if (parent is not null) Directory.CreateDirectory(parent);
+
+            // Extract with overwrite, copying through the buffer so we can report + cancel mid-file.
+            await using (var es = entry.Open())
+            await using (var fs = new FileStream(dest, FileMode.Create, FileAccess.Write, FileShare.None,
+                         bufferSize: buffer.Length, useAsync: true))
+            {
+                int read;
+                while ((read = await es.ReadAsync(buffer.AsMemory(0, buffer.Length), ct)
+                                     .ConfigureAwait(false)) > 0)
+                {
+                    await fs.WriteAsync(buffer.AsMemory(0, read), ct).ConfigureAwait(false);
+                    extractedBytes += read;
+                    progress?.Report((extractedBytes, totalBytes));
+                }
+            }
+        }
+        return worldDir;
+    }
+
     /// <summary>Delete a backup zip (after the caller confirms).</summary>
     public void DeleteBackup(string backupZipPath)
     {

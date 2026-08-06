@@ -111,6 +111,15 @@ public partial class GameContentPageViewModel : PageViewModelBase
     /// <summary>World backups shown in the saves-tab backups panel (restore / delete per row).</summary>
     public ObservableCollection<BackupEntry> Backups { get; } = new();
 
+    /// <summary>True while a world restore is in flight (drives the progress bar + disables restore buttons).</summary>
+    [ObservableProperty] private bool _isRestoring;
+
+    /// <summary>0–100 progress for the in-flight restore (bound to a ProgressBar).</summary>
+    [ObservableProperty] private int _restoreProgress;
+
+    /// <summary>Active restore's cancellation source (null when no restore is running).</summary>
+    private System.Threading.CancellationTokenSource? _restoreCts;
+
     /// <summary>True when at least one screenshot card is selected (drives export button).</summary>
     public bool HasScreenshotSelection => ScreenshotCards.Any(c => c.IsSelected);
 
@@ -363,20 +372,58 @@ public partial class GameContentPageViewModel : PageViewModelBase
     [RelayCommand]
     private void DeleteWorldCard(WorldCardEntry card) => DeleteWorld(card.ToGameSave());
 
-    /// <summary>Restore a world from a backup zip (overwrites the current saves/{world} folder).</summary>
+    /// <summary>Restore a world from a backup zip with live progress + cancellation. Large worlds
+    /// (multi-GB) extract over several seconds; the progress bar + Cancel button keep the UI
+    /// responsive and let the user abort a wrong restore.</summary>
     [RelayCommand]
-    private void RestoreBackup(BackupEntry backup)
+    private async Task RestoreBackupAsync(BackupEntry backup)
     {
+        if (IsRestoring) return; // one restore at a time
         try
         {
             Instance? inst = GetActiveInstance();
             if (inst is null) return;
             var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
-            string restored = browser.RestoreWorld(backup.Path);
+            IsRestoring = true;
+            RestoreProgress = 0;
+            Status = "backup.restore.restoring";
+            _restoreCts = new System.Threading.CancellationTokenSource();
+            // Throttle progress reporting: update at most every 2% so we don't flood the UI thread
+            // with PropertyChanged for every 64 KiB chunk of a multi-GB world.
+            int lastReported = -1;
+            var progress = new Progress<(long extracted, long total)>(p =>
+            {
+                if (p.total <= 0) return;
+                int pct = (int)Math.Clamp(p.extracted * 100 / p.total, 0, 100);
+                if (pct == lastReported) return;
+                lastReported = pct;
+                RestoreProgress = pct;
+            });
+            await browser.RestoreWorldAsync(backup.Path, progress, _restoreCts.Token);
             Status = $"backup.restored,{backup.WorldName}";
             Refresh(); // reload worlds + backups panels
         }
+        catch (OperationCanceledException)
+        {
+            Status = "backup.restore.cancelled";
+        }
         catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+        finally
+        {
+            IsRestoring = false;
+            RestoreProgress = 0;
+            _restoreCts?.Dispose();
+            _restoreCts = null;
+        }
+    }
+
+    /// <summary>Cancel the in-flight restore (if any). The partially-extracted folder is left in
+    /// place; re-running restore finishes the job (overwrite-extract is idempotent).</summary>
+    [RelayCommand]
+    private void CancelRestore()
+    {
+        try { _restoreCts?.Cancel(); }
+        catch (ObjectDisposedException) { /* already finished */ }
     }
 
     /// <summary>Delete a backup zip from the backups/ folder.</summary>
