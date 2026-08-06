@@ -3,7 +3,7 @@
 A cross-platform **Minecraft launcher** built in **C# / Avalonia UI 11 + .NET 8**, aiming to
 match HMCL and PCL while adding **first-class AI features**.
 
-> **149 commits, 368 tests, 0 warnings, 31 languages.** A real, functional launcher.
+> **150 commits, 376 tests, 0 warnings, 31 languages.** A real, functional launcher.
 
 ## What works right now
 
