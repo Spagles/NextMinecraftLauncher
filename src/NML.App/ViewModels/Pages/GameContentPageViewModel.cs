@@ -304,6 +304,9 @@ public partial class GameContentPageViewModel : PageViewModelBase
                             EditableName = string.IsNullOrEmpty(s.DisplayName) ? s.Name : s.DisplayName,
                             EditableDifficulty = settings.Difficulty,
                             EditableGameType = settings.GameType ?? "survival",
+                            EditableSpawnProtection = settings.SpawnProtectionRadius ?? 16,
+                            EditableAllowCommands = settings.AllowCommands ?? false,
+                            EditableHardcore = settings.Hardcore ?? false,
                             EditableKeepInventory = settings.IsRuleEnabled("keepInventory"),
                             EditableMobSpawning = settings.IsRuleEnabled("doMobSpawning"),
                             EditableFireTick = settings.IsRuleEnabled("doFireTick"),
@@ -471,6 +474,9 @@ public partial class GameContentPageViewModel : PageViewModelBase
             {
                 Difficulty = card.EditableDifficulty,
                 GameType = card.EditableGameType,
+                SpawnProtectionRadius = card.EditableSpawnProtection,
+                AllowCommands = card.EditableAllowCommands,
+                Hardcore = card.EditableHardcore,
                 GameRules = new Dictionary<string, string>
                 {
                     ["keepInventory"] = card.EditableKeepInventory.ToString().ToLowerInvariant(),
@@ -1059,6 +1065,15 @@ public sealed class WorldCardEntry : ObservableObject
 
     /// <summary>Editable game mode: survival/creative/adventure/spectator.</summary>
     public string EditableGameType { get; set; } = "survival";
+
+    /// <summary>Editable spawn-protection radius (blocks; 0 = disabled).</summary>
+    public int EditableSpawnProtection { get; set; } = 16;
+
+    /// <summary>Editable "allow commands / cheats" flag.</summary>
+    public bool EditableAllowCommands { get; set; }
+
+    /// <summary>Editable hardcore flag.</summary>
+    public bool EditableHardcore { get; set; }
 
     /// <summary>Editable world display name (bound to a TextBox in the detail panel). Seeded from LevelName on refresh.</summary>
     public string EditableName { get; set; } = string.Empty;

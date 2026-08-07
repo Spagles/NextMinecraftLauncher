@@ -46,9 +46,9 @@ public static class WorldSettingsManager
     public static int GameTypeInt(string name)
         => GameTypeValues.TryGetValue((name ?? "").ToLowerInvariant(), out int v) ? v : 0;
 
-    /// <summary>Read the difficulty (as a name), GameType (survival/creative/...), and the
-    /// toggleable gamerules from a world dir's level.dat. Returns defaults when the file is
-    /// missing or unreadable.</summary>
+    /// <summary>Read the difficulty (as a name), GameType (survival/creative/...), spawn-protection
+    /// radius, command-cheat flag, hardcore flag, and the toggleable gamerules from a world dir's
+    /// level.dat. Returns defaults when the file is missing or unreadable.</summary>
     public static WorldSettings Read(string worldDir)
     {
         string levelDat = Path.Combine(worldDir, "level.dat");
@@ -64,13 +64,24 @@ public static class WorldSettingsManager
 
             byte diff = FindByteTag(nbt, "Difficulty", (byte)2);
             int gameType = FindIntTag(nbt, "GameType", 0);
+            int spawnProtection = FindIntTag(nbt, "SpawnProtection", 16);
+            bool allowCommands = FindByteTag(nbt, "allowCommands", (byte)1) != 0;
+            bool hardcore = FindByteTag(nbt, "hardcore", (byte)0) != 0;
             var rules = new Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
             foreach (string rule in ToggleableRules)
             {
                 string? value = FindStringTag(nbt, rule);
                 if (value is not null) rules[rule] = value;
             }
-            return new WorldSettings(DifficultyName(diff), GameTypeName(gameType), rules);
+            return new WorldSettings
+            {
+                Difficulty = DifficultyName(diff),
+                GameType = GameTypeName(gameType),
+                SpawnProtectionRadius = spawnProtection,
+                AllowCommands = allowCommands,
+                Hardcore = hardcore,
+                GameRules = rules,
+            };
         }
         catch
         {
@@ -121,6 +132,25 @@ public static class WorldSettingsManager
         if (settings.GameType is not null)
         {
             nbt = ReplaceIntTag(nbt, "GameType", GameTypeInt(settings.GameType));
+        }
+
+        // --- SpawnProtection: TAG_Int radius (blocks). Clamped to [0, 32767] (negative/absurd values
+        // would behave oddly). Only written when the caller supplied a non-null value. ---
+        if (settings.SpawnProtectionRadius is int radius)
+        {
+            nbt = ReplaceIntTag(nbt, "SpawnProtection", Math.Clamp(radius, 0, short.MaxValue));
+        }
+
+        // --- allowCommands (cheats): TAG_Byte 0/1. ---
+        if (settings.AllowCommands is bool ac)
+        {
+            nbt = ReplaceByteTag(nbt, "allowCommands", ac ? (byte)1 : (byte)0);
+        }
+
+        // --- hardcore: TAG_Byte 0/1. When on, the world is locked to hard difficulty + permadeath. ---
+        if (settings.Hardcore is bool hc)
+        {
+            nbt = ReplaceByteTag(nbt, "hardcore", hc ? (byte)1 : (byte)0);
         }
 
         // --- GameRules: each rule is a TAG_String whose value may be "true"(4) or "false"(5). ---
@@ -342,13 +372,22 @@ public static class WorldSettingsManager
     }
 }
 
-/// <summary>The read difficulty + GameType + gamerules from a world's level.dat.</summary>
+/// <summary>The world settings read from / written to a world's level.dat.</summary>
 public sealed record WorldSettings
 {
     public string Difficulty { get; init; } = "normal";
 
     /// <summary>Game mode: survival/creative/adventure/spectator, or null when not yet read/edited.</summary>
     public string? GameType { get; init; }
+
+    /// <summary>Spawn-protection radius in blocks (0 = disabled). null = not read/edited.</summary>
+    public int? SpawnProtectionRadius { get; init; }
+
+    /// <summary>True when cheat commands are allowed (allowCommands=1). null = not read/edited.</summary>
+    public bool? AllowCommands { get; init; }
+
+    /// <summary>True when hardcore mode is on (locked hard difficulty + permadeath). null = not read/edited.</summary>
+    public bool? Hardcore { get; init; }
 
     public IReadOnlyDictionary<string, string> GameRules { get; init; } = new Dictionary<string, string>();
 

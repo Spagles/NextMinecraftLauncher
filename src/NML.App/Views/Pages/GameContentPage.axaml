@@ -190,6 +190,15 @@
                                                     <CheckBox Content="fireTick" IsChecked="{Binding EditableFireTick}" FontSize="10"/>
                                                     <CheckBox Content="griefing" IsChecked="{Binding EditableMobGriefing}" FontSize="10"/>
                                                 </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
+                                                    <CheckBox Content="cheats" IsChecked="{Binding EditableAllowCommands}" FontSize="10"/>
+                                                    <CheckBox Content="hardcore" IsChecked="{Binding EditableHardcore}" FontSize="10"/>
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                                    <TextBlock Text="Spawn protect:" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10" VerticalAlignment="Center"/>
+                                                    <TextBox Text="{Binding EditableSpawnProtection}" MinWidth="50" FontSize="10"/>
+                                                    <TextBlock Text="blocks (0=off)" Foreground="{DynamicResource TextMutedBrush}" FontSize="9" VerticalAlignment="Center"/>
+                                                </StackPanel>
                                                 <Button Content="✅ Apply" Classes="small" HorizontalAlignment="Center"
                                                         Command="{Binding #Root.DataContext.ApplyWorldSettingsCommand}"
                                                         CommandParameter="{Binding}"/>

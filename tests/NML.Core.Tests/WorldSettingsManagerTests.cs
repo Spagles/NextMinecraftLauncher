@@ -16,42 +16,50 @@ public class WorldSettingsManagerTests
 
     /// <summary>Build a level.dat carrying Difficulty (TAG_Byte), GameType (TAG_Int), and gamerules.</summary>
     private static string MakeLevelDat(byte difficulty, int gameType, params (string Rule, string Value)[] gamerules)
+        => MakeLevelDatFull(difficulty, gameType, spawnProtection: 16, allowCommands: 1, hardcore: 0, gamerules);
+
+    /// <summary>Full-fidelity level.dat with every editable field present.</summary>
+    private static string MakeLevelDatFull(
+        byte difficulty, int gameType, int spawnProtection, byte allowCommands, byte hardcore,
+        params (string Rule, string Value)[] gamerules)
     {
         string worldDir = Path.Combine(Path.GetTempPath(), "nml-ws-" + Guid.NewGuid().ToString("N")[..8]);
         Directory.CreateDirectory(worldDir);
 
-        // Build a minimal NBT: TAG_Compound root → Data compound → Difficulty byte + GameType int + GameRules compound.
+        // Build a minimal NBT: root → Data → {Difficulty, GameType, SpawnProtection, allowCommands, hardcore, GameRules}.
         using var body = new MemoryStream();
-        // Root: TAG_Compound (10) + empty name (len=0).
-        body.WriteByte(10); body.WriteByte(0); body.WriteByte(0);
-        // Data: TAG_Compound (10) + name "Data".
+        body.WriteByte(10); body.WriteByte(0); body.WriteByte(0); // root compound, empty name
         WriteName(body, 10, "Data");
-        // Difficulty: TAG_Byte (1) + name "Difficulty" + value.
-        WriteName(body, 1, "Difficulty");
-        body.WriteByte(difficulty);
-        // GameType: TAG_Int (3) + name "GameType" + 4-byte big-endian value.
+        // Difficulty (TAG_Byte)
+        WriteName(body, 1, "Difficulty"); body.WriteByte(difficulty);
+        // GameType (TAG_Int)
         WriteName(body, 3, "GameType");
         body.WriteByte((byte)((gameType >> 24) & 0xFF));
         body.WriteByte((byte)((gameType >> 16) & 0xFF));
         body.WriteByte((byte)((gameType >> 8) & 0xFF));
         body.WriteByte((byte)(gameType & 0xFF));
-        // GameRules: TAG_Compound (10) + name "GameRules".
+        // SpawnProtection (TAG_Int)
+        WriteName(body, 3, "SpawnProtection");
+        body.WriteByte((byte)((spawnProtection >> 24) & 0xFF));
+        body.WriteByte((byte)((spawnProtection >> 16) & 0xFF));
+        body.WriteByte((byte)((spawnProtection >> 8) & 0xFF));
+        body.WriteByte((byte)(spawnProtection & 0xFF));
+        // allowCommands (TAG_Byte)
+        WriteName(body, 1, "allowCommands"); body.WriteByte(allowCommands);
+        // hardcore (TAG_Byte)
+        WriteName(body, 1, "hardcore"); body.WriteByte(hardcore);
+        // GameRules compound
         WriteName(body, 10, "GameRules");
-        foreach (var (rule, value) in gamerules)
-        {
-            WriteStringTag(body, rule, value);
-        }
+        foreach (var (rule, value) in gamerules) WriteStringTag(body, rule, value);
         body.WriteByte(0); // end GameRules
         body.WriteByte(0); // end Data
         body.WriteByte(0); // end root
 
         byte[] raw = body.ToArray();
-        // Gzip-wrap.
         string levelDat = Path.Combine(worldDir, "level.dat");
         using (var fs = File.OpenWrite(levelDat))
         using (var gz = new GZipStream(fs, CompressionLevel.Optimal))
             gz.Write(raw, 0, raw.Length);
-
         return worldDir;
     }
 
@@ -364,6 +372,110 @@ public class WorldSettingsManagerTests
             off.Should().BeGreaterThan(0);
             (nbt[off], nbt[off + 1], nbt[off + 2], nbt[off + 3])
                 .Should().Be((0, 0, 0, 3), "spectator is big-endian int 3");
+        }
+        finally { Directory.Delete(dir, recursive: true); }
+    }
+
+    // ===== SpawnProtection / allowCommands / hardcore =====
+
+    [Fact]
+    public void Read_Extracts_SpawnProtection_AllowCommands_Hardcore()
+    {
+        string dir = MakeLevelDatFull(
+            difficulty: 3, gameType: 0, spawnProtection: 32, allowCommands: 1, hardcore: 1);
+        try
+        {
+            var s = WorldSettingsManager.Read(dir);
+            s.SpawnProtectionRadius.Should().Be(32);
+            s.AllowCommands.Should().BeTrue();
+            s.Hardcore.Should().BeTrue();
+        }
+        finally { Directory.Delete(dir, recursive: true); }
+    }
+
+    [Theory]
+    [InlineData(0)]   // disabled
+    [InlineData(16)]  // default-ish
+    [InlineData(64)]  // large radius
+    public void Write_SpawnProtection_Round_Trips(int radius)
+    {
+        string dir = MakeLevelDatFull(2, 0, spawnProtection: 16, allowCommands: 0, hardcore: 0);
+        try
+        {
+            WorldSettingsManager.Write(dir, new WorldSettings { SpawnProtectionRadius = radius });
+            WorldSettingsManager.Read(dir).SpawnProtectionRadius.Should().Be(radius);
+        }
+        finally { Directory.Delete(dir, recursive: true); }
+    }
+
+    [Theory]
+    [InlineData(0, false)]
+    [InlineData(1, true)]
+    public void Write_AllowCommands_Round_Trips(byte onOff, bool expected)
+    {
+        string dir = MakeLevelDatFull(2, 0, 16, allowCommands: (byte)(onOff == 1 ? 0 : 1), hardcore: 0);
+        try
+        {
+            WorldSettingsManager.Write(dir, new WorldSettings { AllowCommands = expected });
+            WorldSettingsManager.Read(dir).AllowCommands.Should().Be(expected);
+        }
+        finally { Directory.Delete(dir, recursive: true); }
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Write_Hardcore_Round_Trips(bool on)
+    {
+        string dir = MakeLevelDatFull(2, 0, 16, 0, hardcore: (byte)(on ? 0 : 1));
+        try
+        {
+            WorldSettingsManager.Write(dir, new WorldSettings { Hardcore = on });
+            WorldSettingsManager.Read(dir).Hardcore.Should().Be(on);
+        }
+        finally { Directory.Delete(dir, recursive: true); }
+    }
+
+    [Fact]
+    public void Write_All_Fields_Together_Preserve_Neighbors()
+    {
+        // Edit every field at once; all must land correctly without clobbering each other.
+        string dir = MakeLevelDatFull(
+            difficulty: 2, gameType: 1, spawnProtection: 16, allowCommands: 0, hardcore: 0,
+            ("keepInventory", "false"));
+        try
+        {
+            WorldSettingsManager.Write(dir, new WorldSettings
+            {
+                Difficulty = "hard",
+                GameType = "creative",
+                SpawnProtectionRadius = 8,
+                AllowCommands = true,
+                Hardcore = true,
+                GameRules = new Dictionary<string, string> { ["keepInventory"] = "true" },
+            });
+            var after = WorldSettingsManager.Read(dir);
+            after.Difficulty.Should().Be("hard");
+            after.GameType.Should().Be("creative");
+            after.SpawnProtectionRadius.Should().Be(8);
+            after.AllowCommands.Should().BeTrue();
+            after.Hardcore.Should().BeTrue();
+            after.IsRuleEnabled("keepInventory").Should().BeTrue();
+        }
+        finally { Directory.Delete(dir, recursive: true); }
+    }
+
+    [Fact]
+    public void Write_SpawnProtection_Does_Not_Disturb_GameType()
+    {
+        // SpawnProtection and GameType are both TAG_Int — editing one must not land on the other.
+        string dir = MakeLevelDatFull(0, gameType: 2 /* adventure */, 16, 0, 0);
+        try
+        {
+            WorldSettingsManager.Write(dir, new WorldSettings { SpawnProtectionRadius = 100 });
+            var after = WorldSettingsManager.Read(dir);
+            after.SpawnProtectionRadius.Should().Be(100);
+            after.GameType.Should().Be("adventure", "GameType TAG_Int must survive the SpawnProtection edit");
         }
         finally { Directory.Delete(dir, recursive: true); }
     }
