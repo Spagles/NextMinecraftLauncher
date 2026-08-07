@@ -94,4 +94,97 @@ public class SkinServiceTests
         Action act = () => new SkinService().AvatarUrl("");
         act.Should().Throw<ArgumentException>();
     }
+
+    // ===== DownloadSkinPngAsync: cache + idempotency (previously untested) =====
+
+    /// <summary>A fake IHttpFetcher that returns canned PNG bytes for any URL.</summary>
+    private sealed class CannedPngFetcher : NML.Core.Download.IHttpFetcher
+    {
+        public Task<byte[]> GetByteArrayAsync(string url, CancellationToken ct = default) =>
+            Task.FromResult(PngBytes);
+        public Task<string> GetStringAsync(string url, CancellationToken ct = default) =>
+            Task.FromResult("{}");
+        public Task StreamToAsync(string url, Stream destination, IProgress<long>? bytesReceived = null, CancellationToken ct = default)
+        {
+            byte[] b = PngBytes;
+            destination.Write(b, 0, b.Length);
+            bytesReceived?.Report(b.Length);
+            return Task.CompletedTask;
+        }
+        public Task<NML.Core.Download.RangeResponse?> TryRangeDownloadAsync(string url, long from, long? to, CancellationToken ct = default) =>
+            Task.FromResult<NML.Core.Download.RangeResponse?>(null);
+
+        // 1×1 red PNG (valid 8-byte signature + minimal IHDR/IDAT/IEND).
+        public static readonly byte[] PngBytes = Convert.FromHexString(
+            "89504E470D0A1A0A0000000D49484452000000010000000108020000009077" +
+            "53DE0000000C4944415408D76360A049181310002C7801E9A5000000004945" +
+            "4E44AE426082");
+    }
+
+    [Fact]
+    public async Task DownloadSkinPng_Writes_Png_To_Cache_Dir()
+    {
+        string cacheDir = Path.Combine(Path.GetTempPath(), "nml-skin-test-" + Guid.NewGuid().ToString("N")[..8]);
+        Directory.CreateDirectory(cacheDir);
+        try
+        {
+            var svc = new SkinService(new CannedPngFetcher(), cacheDir);
+            string path = await svc.DownloadSkinPngAsync(OnlineUuid);
+
+            path.Should().NotBeNullOrEmpty("a successful download returns the cached path");
+            File.Exists(path).Should().BeTrue("the PNG must be written to disk");
+            // The file must be a valid PNG (signature bytes).
+            byte[] written = await File.ReadAllBytesAsync(path);
+            written[0].Should().Be(0x89);
+            written[1].Should().Be(0x50); // 'P'
+            // The cache file is named after the normalized UUID (no dashes).
+            Path.GetFileName(path).Should().Be(OnlineNoDash + ".png");
+        }
+        finally { try { Directory.Delete(cacheDir, recursive: true); } catch { } }
+    }
+
+    [Fact]
+    public async Task DownloadSkinPng_Is_Idempotent_Second_Call_Does_Not_Throw()
+    {
+        // A repeated download for the same UUID must not re-download or error; it returns the cached path.
+        string cacheDir = Path.Combine(Path.GetTempPath(), "nml-skin-test-" + Guid.NewGuid().ToString("N")[..8]);
+        Directory.CreateDirectory(cacheDir);
+        try
+        {
+            var svc = new SkinService(new CannedPngFetcher(), cacheDir);
+            string first = await svc.DownloadSkinPngAsync(OnlineUuid);
+            string second = await svc.DownloadSkinPngAsync(OnlineUuid);
+
+            second.Should().Be(first, "the idempotent second call returns the same cached path");
+            File.Exists(second).Should().BeTrue();
+        }
+        finally { try { Directory.Delete(cacheDir, recursive: true); } catch { } }
+    }
+
+    [Fact]
+    public async Task DownloadSkinPng_Returns_Empty_On_Network_Failure()
+    {
+        // A fetcher that throws should degrade gracefully to "" (the launch flow tolerates a missing skin).
+        string cacheDir = Path.Combine(Path.GetTempPath(), "nml-skin-test-" + Guid.NewGuid().ToString("N")[..8]);
+        Directory.CreateDirectory(cacheDir);
+        try
+        {
+            var svc = new SkinService(new ThrowingFetcher(), cacheDir);
+            string path = await svc.DownloadSkinPngAsync(OnlineUuid);
+            path.Should().BeEmpty("a download failure must return empty, not throw");
+        }
+        finally { try { Directory.Delete(cacheDir, recursive: true); } catch { } }
+    }
+
+    private sealed class ThrowingFetcher : NML.Core.Download.IHttpFetcher
+    {
+        public Task<byte[]> GetByteArrayAsync(string url, CancellationToken ct = default) =>
+            throw new HttpRequestException("network down");
+        public Task<string> GetStringAsync(string url, CancellationToken ct = default) =>
+            throw new HttpRequestException("network down");
+        public Task StreamToAsync(string url, Stream destination, IProgress<long>? bytesReceived = null, CancellationToken ct = default) =>
+            throw new HttpRequestException("network down");
+        public Task<NML.Core.Download.RangeResponse?> TryRangeDownloadAsync(string url, long from, long? to, CancellationToken ct = default) =>
+            throw new HttpRequestException("network down");
+    }
 }

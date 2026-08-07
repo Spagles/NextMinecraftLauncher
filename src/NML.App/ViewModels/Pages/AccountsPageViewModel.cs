@@ -26,6 +26,7 @@ public partial class AccountsPageViewModel : PageViewModelBase
     private readonly SkinService _skinService;
     private readonly SkinUploadService? _skinUpload;
     private readonly ICommunitySkinSource _communitySource;
+    private readonly NML.Core.Download.IHttpFetcher? _httpFetcher;
     private readonly ILogger<AccountsPageViewModel> _logger;
 
     public ObservableCollection<Account> Accounts { get; } = new();
@@ -74,6 +75,16 @@ public partial class AccountsPageViewModel : PageViewModelBase
     [ObservableProperty] private string? _uploadPngPath;
     [ObservableProperty] private bool _isUploadingSkin;
     [ObservableProperty] private bool _isBrowsingSkins;
+
+    /// <summary>ComboBox index for the upload model variant (0 = Classic, 1 = Slim), bound to the
+    /// UI and kept in sync with <see cref="UploadVariant"/>. Fixes the dead Slim option.</summary>
+    public int UploadVariantIndex
+    {
+        get => UploadVariant == SkinVariant.Slim ? 1 : 0;
+        set => UploadVariant = value == 1 ? SkinVariant.Slim : SkinVariant.Classic;
+    }
+
+    partial void OnUploadVariantChanged(SkinVariant value) => OnPropertyChanged(nameof(UploadVariantIndex));
     [ObservableProperty] private bool _hasCommunitySkins;
 
     public AccountsPageViewModel(
@@ -85,7 +96,8 @@ public partial class AccountsPageViewModel : PageViewModelBase
         ILogger<AccountsPageViewModel> logger,
         AuthlibInjectorProvider? authlibProvider = null,
         SkinUploadService? skinUpload = null,
-        ICommunitySkinSource? communitySource = null)
+        ICommunitySkinSource? communitySource = null,
+        NML.Core.Download.IHttpFetcher? httpFetcher = null)
     {
         _offline = offline;
         _microsoft = microsoft;
@@ -96,6 +108,7 @@ public partial class AccountsPageViewModel : PageViewModelBase
         _skinUpload = skinUpload;
         _communitySource = communitySource ?? new MineSkinSource(
             new NML.Core.Download.HttpClientHttpFetcher(new System.Net.Http.HttpClient()));
+        _httpFetcher = httpFetcher;
         _logger = logger;
         EnsureLanguageSubscribed();
 
@@ -423,20 +436,57 @@ public partial class AccountsPageViewModel : PageViewModelBase
         finally { IsBrowsingSkins = false; }
     }
 
-    /// <summary>Download a community skin PNG and set it as the upload target (preview before upload).</summary>
+    /// <summary>
+    /// Download a community skin PNG, cache it, and stage it as the upload target (sets
+    /// <see cref="UploadPngPath"/> + <see cref="UploadVariant"/>) so the user can preview it in the
+    /// 3D control and then click Upload to apply. This was previously a no-op stub.
+    /// </summary>
     [RelayCommand]
-    private Task InstallCommunitySkinAsync(CommunitySkin skin)
+    private async Task InstallCommunitySkinAsync(CommunitySkin skin)
     {
-        if (skin is null) return Task.CompletedTask;
+        if (skin is null) return;
+        if (string.IsNullOrWhiteSpace(skin.DownloadUrl) && string.IsNullOrWhiteSpace(skin.PreviewUrl))
+        {
+            Status = "skins.community_no_url";
+            return;
+        }
+        // Prefer the dedicated download URL; fall back to the preview URL.
+        string url = !string.IsNullOrWhiteSpace(skin.DownloadUrl) ? skin.DownloadUrl : skin.PreviewUrl!;
         try
         {
-            // Download the skin PNG into the skins cache for preview.
-            string? cacheDir = Path.GetDirectoryName(ActiveSkinPngPath ?? string.Empty);
-            if (string.IsNullOrEmpty(cacheDir)) { Status = "common.error"; return Task.CompletedTask; }
-            UploadVariant = skin.Model == "slim" ? SkinVariant.Slim : SkinVariant.Classic;
-            Status = "skins.community_install";
+            // Cache under a community-skins dir keyed by the skin's id so repeat installs don't re-download.
+            string skinsDir = Path.Combine(Path.GetTempPath(), "nml-community-skins");
+            Directory.CreateDirectory(skinsDir);
+            string safeId = string.Concat(skin.Id.Where(c => char.IsLetterOrDigit(c) || c == '-')).Trim();
+            if (safeId.Length == 0) safeId = Guid.NewGuid().ToString("N")[..8];
+            string dest = Path.Combine(skinsDir, $"{safeId}.png");
+
+            if (_httpFetcher is not null)
+            {
+                using var fs = File.Create(dest);
+                await _httpFetcher.StreamToAsync(url, fs, null);
+            }
+            else
+            {
+                using var client = new System.Net.Http.HttpClient();
+                byte[] bytes = await client.GetByteArrayAsync(url);
+                await File.WriteAllBytesAsync(dest, bytes);
+            }
+
+            if (!File.Exists(dest) || new FileInfo(dest).Length == 0)
+            {
+                Status = "skins.community_download_failed";
+                return;
+            }
+            UploadPngPath = dest;
+            UploadVariant = string.Equals(skin.Model, "slim", StringComparison.OrdinalIgnoreCase)
+                ? SkinVariant.Slim : SkinVariant.Classic;
+            Status = $"skins.community_installed,{skin.Name}";
         }
-        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
-        return Task.CompletedTask;
+        catch (Exception ex)
+        {
+            Status = $"common.error,{ex.Message}";
+            _logger.LogWarning(ex, "Community skin install failed for {Name}", skin.Name);
+        }
     }
 }

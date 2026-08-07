@@ -150,11 +150,19 @@ public class BatchModUpdateE2ETests
 
         public LocalFileServer()
         {
-            int port = 5000 + Random.Shared.Next(0, 1500);
-            Url = $"http://localhost:{port}";
-            _listener.Prefixes.Add(Url + "/");
-            _listener.Start();
-            _ = ServeAsync();
+            // Try a few random high ports until one is free (avoids HttpListener port conflicts
+            // with other test runs or OS-reserved prefixes).
+            const int maxAttempts = 10;
+            for (int attempt = 0; attempt < maxAttempts; attempt++)
+            {
+                int port = 5000 + Random.Shared.Next(0, 5000);
+                Url = $"http://localhost:{port}";
+                _listener.Prefixes.Add(Url + "/");
+                try { _listener.Start(); _ = ServeAsync(); return; }
+                catch (HttpListenerException) { _listener.Prefixes.Remove(Url + "/"); }
+            }
+            // Last resort: let the exception propagate with context.
+            throw new InvalidOperationException("Could not bind a free port for LocalFileServer after retries.");
         }
 
         public void Add(string path, string? body, int status = 200)

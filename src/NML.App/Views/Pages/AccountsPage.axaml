@@ -101,7 +101,7 @@
                 <StackPanel Spacing="8">
                     <TextBlock Text="{loc:Loc 'skins.upload_title'}" Foreground="{DynamicResource AccentBrush}" FontSize="13" FontWeight="SemiBold"/>
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                        <ComboBox SelectedIndex="0" MinWidth="140">
+                        <ComboBox SelectedIndex="{Binding UploadVariantIndex}" MinWidth="140">
                             <ComboBoxItem Content="{loc:Loc 'skins.model_classic'}"/>
                             <ComboBoxItem Content="{loc:Loc 'skins.model_slim'}"/>
                         </ComboBox>
