@@ -81,6 +81,7 @@
   "accounts.activate": "Set active",
   "accounts.remove": "Remove",
   "accounts.empty": "No accounts yet — add one to start playing",
+  "accounts.duplicate_uuid": "An account with this UUID already exists.",
   "accounts.ms_device_code": "Visit {0} and enter the code:",
   "accounts.ms_polling": "Waiting for you to complete sign-in in the browser…",
   "accounts.ms_expired": "Login timed out, please retry",

@@ -77,6 +77,7 @@
   "accounts.activate": "设为当前",
   "accounts.remove": "删除",
   "accounts.empty": "还没有账户，添加一个开始游戏",
+  "accounts.duplicate_uuid": "已存在相同 UUID 的账户。",
   "accounts.ms_device_code": "请访问 {0} 并输入代码：",
   "accounts.ms_polling": "等待你在浏览器完成登录…",
   "accounts.ms_expired": "登录超时，请重试",
