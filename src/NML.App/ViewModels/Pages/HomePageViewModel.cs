@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
@@ -94,8 +95,27 @@ public partial class HomePageViewModel : PageViewModelBase
     /// <summary>Available modloaders for the wizard dropdown.</summary>
     public IReadOnlyList<string> ModloaderChoices { get; } = new[] { "None", "Fabric", "Quilt", "Forge", "NeoForge" };
 
-    /// <summary>Live game console output (stdout+stderr), shown in the console panel.</summary>
+    /// <summary>Live game console output (stdout+stderr) as a raw string (for export + the unfiltered record).</summary>
     [ObservableProperty] private string _consoleOutput = string.Empty;
+
+    /// <summary>Console search box text (substring or regex). Filters <see cref="ConsoleLines"/>.</summary>
+    [ObservableProperty] private string _consoleSearchText = string.Empty;
+    /// <summary>When true, <see cref="ConsoleSearchText"/> is treated as a regex; otherwise substring.</summary>
+    [ObservableProperty] private bool _isConsoleRegexSearch;
+    /// <summary>Minimum severity to show (floor). One of: Trace/Debug/Info/Warn/Error.</summary>
+    [ObservableProperty] private string _consoleMinSeverity = nameof(NML.Core.Logging.LogSeverityClassifier.Severity.Trace);
+
+    /// <summary>Severity-floor options for the console filter dropdown.</summary>
+    public IReadOnlyList<string> ConsoleSeverityOptions { get; } =
+        new[] { "Trace", "Debug", "Info", "Warn", "Error" };
+
+    /// <summary>Colored, filtered console lines bound to the live console ItemsControl.</summary>
+    public System.Collections.ObjectModel.ObservableCollection<LogLineEntry> ConsoleLines { get; } = new();
+
+    /// <summary>Every classified line since the last reset (the source the filter rebuilds from).</summary>
+    private readonly List<NML.Core.Logging.LogLine> _allConsoleLines = new();
+    /// <summary>Hard cap on retained console lines (keeps memory bounded on long-running games).</summary>
+    private const int MaxConsoleLines = 5000;
 
     /// <summary>Human-readable disk usage of the selected instance (e.g. "12.3 GB total, 8.1 GB mods").</summary>
     [ObservableProperty] private string _diskUsageDisplay = string.Empty;
@@ -133,14 +153,68 @@ public partial class HomePageViewModel : PageViewModelBase
     private void FlushConsole()
     {
         var sb = new System.Text.StringBuilder();
+        var newLines = new List<NML.Core.Logging.LogLine>();
         while (_consoleBuffer.TryDequeue(out string? line))
+        {
             sb.AppendLine(line);
+            // Classify each line so the live console can color + filter it (mirrors the logs-tab flow).
+            newLines.Add(new NML.Core.Logging.LogLine(line, NML.Core.Logging.LogSeverityClassifier.Classify(line)));
+        }
         if (sb.Length == 0) return;
 
+        // Keep the raw string (for Export) bounded the same way as before.
         string next = ConsoleOutput + sb.ToString();
         if (next.Length > 5000) next = next[^5000..];
         ConsoleOutput = next;
+
+        // Append classified lines + cap the buffer (drop oldest beyond the cap).
+        _allConsoleLines.AddRange(newLines);
+        if (_allConsoleLines.Count > MaxConsoleLines)
+            _allConsoleLines.RemoveRange(0, _allConsoleLines.Count - MaxConsoleLines);
+
+        RebuildFilteredConsole();
     }
+
+    /// <summary>
+    /// Rebuild <see cref="ConsoleLines"/> from <see cref="_allConsoleLines"/> applying the current
+    /// severity floor + substring/regex search. Called on each flush and when the filter inputs
+    /// change. Mirrors <c>GameContentPageViewModel.RebuildFilteredLog</c>.
+    /// </summary>
+    private void RebuildFilteredConsole()
+    {
+        ConsoleLines.Clear();
+        if (_allConsoleLines.Count == 0) return;
+
+        if (!Enum.TryParse<NML.Core.Logging.LogSeverityClassifier.Severity>(ConsoleMinSeverity, out var floor))
+            floor = NML.Core.Logging.LogSeverityClassifier.Severity.Trace;
+
+        Regex? regex = null;
+        bool hasSearch = !string.IsNullOrWhiteSpace(ConsoleSearchText);
+        if (hasSearch && IsConsoleRegexSearch)
+        {
+            try { regex = new Regex(ConsoleSearchText, RegexOptions.IgnoreCase); }
+            catch (ArgumentException) { ConsoleLines.Clear(); return; } // invalid pattern → empty
+        }
+
+        foreach (var line in _allConsoleLines)
+        {
+            // Severity floor: Trace(0) shows everything; Error(4) shows only errors. Lower ordinal = more verbose.
+            if ((int)line.Severity > (int)floor) continue;
+            if (hasSearch)
+            {
+                bool match = regex is not null
+                    ? regex.IsMatch(line.Text)
+                    : line.Text.Contains(ConsoleSearchText, StringComparison.OrdinalIgnoreCase);
+                if (!match) continue;
+            }
+            ConsoleLines.Add(new LogLineEntry(line.Text, line.Color));
+        }
+    }
+
+    // Re-filter when the search/severity inputs change (reactive, no launch needed).
+    partial void OnConsoleSearchTextChanged(string value) => RebuildFilteredConsole();
+    partial void OnIsConsoleRegexSearchChanged(bool value) => RebuildFilteredConsole();
+    partial void OnConsoleMinSeverityChanged(string value) => RebuildFilteredConsole();
 
     /// <summary>System total RAM in MB (drives the slider max + recommended hint).</summary>
     public long SystemRamMb
@@ -527,6 +601,8 @@ public partial class HomePageViewModel : PageViewModelBase
             // Subscribe to live output for the console panel.
             _processLauncher.GameOutputReceived += OnGameOutput;
             ConsoleOutput = string.Empty;
+            _allConsoleLines.Clear();
+            ConsoleLines.Clear();
             Status = $"home.launched,{inst.VersionId},{process.Id}";
 
             // HMCL-style: minimize the launcher after the game starts.

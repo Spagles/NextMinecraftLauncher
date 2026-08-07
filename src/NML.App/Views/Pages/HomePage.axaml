@@ -134,13 +134,26 @@
                     </StackPanel>
                 </Border>
 
-                <!-- ===== LIVE CONSOLE (visible while busy) ===== -->
+                <!-- ===== LIVE CONSOLE (visible while busy) — colored + searchable + severity-filtered ===== -->
                 <Border Background="{DynamicResource SurfaceAltBrush}" CornerRadius="8" Padding="12"
-                        IsVisible="{Binding IsBusy}" MaxHeight="280">
+                        IsVisible="{Binding IsBusy}" MaxHeight="340">
                     <StackPanel Spacing="4">
+                        <!-- Filter toolbar: search box + regex toggle + severity floor -->
+                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <TextBox Text="{Binding ConsoleSearchText}" Watermark="Search console…" MinWidth="200" FontSize="11"/>
+                            <CheckBox Content="Regex" IsChecked="{Binding IsConsoleRegexSearch}" FontSize="10" VerticalAlignment="Center" Margin="6,0"/>
+                            <TextBlock Text="Level" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10" VerticalAlignment="Center" Margin="6,0,2,0"/>
+                            <ComboBox ItemsSource="{Binding ConsoleSeverityOptions}" SelectedItem="{Binding ConsoleMinSeverity}" MinWidth="80" FontSize="10"/>
+                        </WrapPanel>
                         <ScrollViewer MaxHeight="250">
-                            <TextBlock Text="{Binding ConsoleOutput}" Foreground="{DynamicResource TextSecondaryBrush}"
-                                       FontFamily="Cascadia Code,Consolas,monospace" FontSize="11" TextWrapping="NoWrap"/>
+                            <ItemsControl ItemsSource="{Binding ConsoleLines}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Text}" Foreground="{Binding Color}"
+                                                   FontFamily="Cascadia Code,Consolas,monospace" FontSize="11" TextWrapping="NoWrap"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </ScrollViewer>
                         <Button Content="📋 Export Log" Command="{Binding ExportConsoleLogCommand}"
                                 Classes="small" HorizontalAlignment="Right"/>
