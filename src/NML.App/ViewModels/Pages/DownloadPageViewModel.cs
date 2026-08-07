@@ -30,6 +30,8 @@ public partial class DownloadPageViewModel : PageViewModelBase
     private readonly Core.Modloaders.QuiltInstaller? _quiltInstaller;
     private readonly Core.Modloaders.ForgeInstaller? _forgeInstaller;
     private readonly Core.Modloaders.NeoForgeInstaller? _neoForgeInstaller;
+    private readonly Core.Modloaders.OptiFineInstaller? _optifineInstaller;
+    private readonly Core.Java.JavaRuntimeDetector? _javaDetector;
 
     private IReadOnlyList<VersionManifestEntry> _all = Array.Empty<VersionManifestEntry>();
 
@@ -49,7 +51,7 @@ public partial class DownloadPageViewModel : PageViewModelBase
     [ObservableProperty] private string _selectedModloader = "None";
 
     /// <summary>Modloader choices for the install panel (None + the loaders wired into this VM).</summary>
-    public IReadOnlyList<string> ModloaderChoices { get; } = new[] { "None", "Fabric", "Quilt", "Forge", "NeoForge" };
+    public IReadOnlyList<string> ModloaderChoices { get; } = new[] { "None", "Fabric", "Quilt", "Forge", "NeoForge", "OptiFine" };
 
     /// <summary>True when an install is in progress (drives progress bar visibility).</summary>
     public bool IsInstalling => !string.IsNullOrEmpty(InstallingVersion);
@@ -66,7 +68,9 @@ public partial class DownloadPageViewModel : PageViewModelBase
         Core.Modloaders.FabricInstaller? fabricInstaller = null,
         Core.Modloaders.QuiltInstaller? quiltInstaller = null,
         Core.Modloaders.ForgeInstaller? forgeInstaller = null,
-        Core.Modloaders.NeoForgeInstaller? neoForgeInstaller = null)
+        Core.Modloaders.NeoForgeInstaller? neoForgeInstaller = null,
+        Core.Modloaders.OptiFineInstaller? optifineInstaller = null,
+        Core.Java.JavaRuntimeDetector? javaDetector = null)
     {
         _manifest = manifest;
         _vanillaInstaller = vanillaInstaller;
@@ -78,6 +82,8 @@ public partial class DownloadPageViewModel : PageViewModelBase
         _quiltInstaller = quiltInstaller;
         _forgeInstaller = forgeInstaller;
         _neoForgeInstaller = neoForgeInstaller;
+        _optifineInstaller = optifineInstaller;
+        _javaDetector = javaDetector;
         EnsureLanguageSubscribed();
     }
 
@@ -201,6 +207,7 @@ public partial class DownloadPageViewModel : PageViewModelBase
                 "Quilt" => await InstallQuiltAsync(versionId, mc),
                 "Forge" => await InstallForgeAsync(versionId, mc),
                 "NeoForge" => await InstallNeoForgeAsync(versionId, mc),
+                "OptiFine" => await InstallOptiFineAsync(versionId, mc),
                 _ => null,
             };
             if (profileId is null)
@@ -251,5 +258,19 @@ public partial class DownloadPageViewModel : PageViewModelBase
         var versions = await _neoForgeInstaller.ListVersionsAsync(versionId);
         var latest = versions.FirstOrDefault();
         return latest is null ? null : await _neoForgeInstaller.InstallAsync(versionId, latest.LoaderVersion, mc);
+    }
+
+    private async Task<string?> InstallOptiFineAsync(string versionId, MinecraftDirectory mc)
+    {
+        if (_optifineInstaller is null || _javaDetector is null) return null;
+        var versions = await _optifineInstaller.ListVersionsAsync(versionId);
+        var latest = versions.FirstOrDefault();
+        if (latest is null) return null;
+        var runtimes = _javaDetector.DetectAll();
+        var java = runtimes.FirstOrDefault() ?? _javaDetector.FindForVersion(17, runtimes);
+        if (java is null) return null;
+        string installerCacheDir = System.IO.Path.Combine(mc.Root, "cache", "optifine");
+        return await _optifineInstaller.InstallAsync(versionId, latest.Type, latest.Patch,
+            installerCacheDir, java.ExecutablePath, mc);
     }
 }

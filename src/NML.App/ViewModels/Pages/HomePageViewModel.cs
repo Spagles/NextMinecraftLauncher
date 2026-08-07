@@ -46,6 +46,7 @@ public partial class HomePageViewModel : PageViewModelBase
     private readonly Core.Modloaders.QuiltInstaller? _quiltInstaller;
     private readonly Core.Modloaders.ForgeInstaller? _forgeInstaller;
     private readonly Core.Modloaders.NeoForgeInstaller? _neoForgeInstaller;
+    private readonly Core.Modloaders.OptiFineInstaller? _optifineInstaller;
     private readonly ILogger<HomePageViewModel> _logger;
 
     /// <summary>Available sort modes for the instance list.</summary>
@@ -93,7 +94,7 @@ public partial class HomePageViewModel : PageViewModelBase
     [ObservableProperty] private string _importModpackPath = string.Empty;
 
     /// <summary>Available modloaders for the wizard dropdown.</summary>
-    public IReadOnlyList<string> ModloaderChoices { get; } = new[] { "None", "Fabric", "Quilt", "Forge", "NeoForge" };
+    public IReadOnlyList<string> ModloaderChoices { get; } = new[] { "None", "Fabric", "Quilt", "Forge", "NeoForge", "OptiFine" };
 
     /// <summary>Live game console output (stdout+stderr) as a raw string (for export + the unfiltered record).</summary>
     [ObservableProperty] private string _consoleOutput = string.Empty;
@@ -476,7 +477,8 @@ public partial class HomePageViewModel : PageViewModelBase
         Core.Modloaders.FabricInstaller? fabricInstaller = null,
         Core.Modloaders.QuiltInstaller? quiltInstaller = null,
         Core.Modloaders.ForgeInstaller? forgeInstaller = null,
-        Core.Modloaders.NeoForgeInstaller? neoForgeInstaller = null)
+        Core.Modloaders.NeoForgeInstaller? neoForgeInstaller = null,
+        Core.Modloaders.OptiFineInstaller? optifineInstaller = null)
     {
         _manifest = manifest;
         _vanillaInstaller = vanillaInstaller;
@@ -496,6 +498,7 @@ public partial class HomePageViewModel : PageViewModelBase
         _quiltInstaller = quiltInstaller;
         _forgeInstaller = forgeInstaller;
         _neoForgeInstaller = neoForgeInstaller;
+        _optifineInstaller = optifineInstaller;
         _logger = logger;
         EnsureLanguageSubscribed();
         Status = "home.status_ready";
@@ -1061,6 +1064,7 @@ public partial class HomePageViewModel : PageViewModelBase
                     "Quilt" => await InstallQuiltAsync(versionId, mc),
                     "Forge" => await InstallForgeAsync(versionId, mc),
                     "NeoForge" => await InstallNeoForgeAsync(versionId, mc),
+                    "OptiFine" => await InstallOptiFineAsync(versionId, mc),
                     _ => null,
                 };
             }
@@ -1127,6 +1131,29 @@ public partial class HomePageViewModel : PageViewModelBase
         var latest = versions.FirstOrDefault();
         if (latest is null) return null;
         return await _neoForgeInstaller.InstallAsync(versionId, latest.LoaderVersion, mc);
+    }
+
+    /// <summary>
+    /// Install the latest OptiFine for <paramref name="versionId"/>. OptiFine's installer needs a Java
+    /// runtime to run (it patches the vanilla jar), so we resolve one via the detector. Returns the
+    /// OptiFine profile id ("OptiFine_{mc}_{type}") or null when no version/runtime is available.
+    /// </summary>
+    private async Task<string?> InstallOptiFineAsync(string versionId, MinecraftDirectory mc)
+    {
+        if (_optifineInstaller is null) return null;
+        var versions = await _optifineInstaller.ListVersionsAsync(versionId);
+        var latest = versions.FirstOrDefault();
+        if (latest is null) return null;
+
+        // Resolve a Java runtime (OptiFine's installer is a Java app).
+        var runtimes = _javaDetector.DetectAll();
+        var java = runtimes.FirstOrDefault()
+                   ?? _javaDetector.FindForVersion(17, runtimes);
+        if (java is null) return null;
+
+        string installerCacheDir = System.IO.Path.Combine(mc.Root, "cache", "optifine");
+        return await _optifineInstaller.InstallAsync(versionId, latest.Type, latest.Patch,
+            installerCacheDir, java.ExecutablePath, mc);
     }
 
     /// <summary>Delete ALL instances (with no confirmation in the MVP — use carefully).</summary>

@@ -9,4 +9,9 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Expose internals (e.g. OptiFineInstaller.ParseBmclVersions) to the unit-test project. -->
+    <InternalsVisibleTo Include="NML.Core.Tests" />
+  </ItemGroup>
+
 </Project>
