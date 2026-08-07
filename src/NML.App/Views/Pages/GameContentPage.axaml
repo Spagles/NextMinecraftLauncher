@@ -391,6 +391,7 @@
                 <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,8"
                             IsVisible="{Binding IsSavesTab}">
                     <TextBox Text="{Binding ImportWorldPath}" Watermark="{loc:Loc 'content.import_world_placeholder'}" MinWidth="300" FontSize="11"/>
+                    <Button Content="📁 Browse" Command="{Binding BrowseWorldCommand}" Classes="small" FontSize="11"/>
                     <Button Content="{loc:Loc 'content.import_world'}" Classes="small"
                             Command="{Binding ImportWorldCommand}"
                             CommandParameter="{Binding ImportWorldPath}"/>

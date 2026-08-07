@@ -316,6 +316,29 @@ public partial class MultiplayerPageViewModel : PageViewModelBase
     }
 
     /// <summary>Import servers from a portable .zip, merging into the current list.</summary>
+    /// <summary>Open an OS file-picker to choose a servers .zip and populate ImportServersPath.</summary>
+    [RelayCommand]
+    private async Task BrowseServersAsync()
+    {
+        try
+        {
+            if (Avalonia.Application.Current?.ApplicationLifetime
+                is not Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
+                || desktop.MainWindow is null) return;
+            var files = await desktop.MainWindow.StorageProvider.OpenFilePickerAsync(new Avalonia.Platform.Storage.FilePickerOpenOptions
+            {
+                Title = "Import server list",
+                AllowMultiple = false,
+                FileTypeFilter = new[]
+                {
+                    new Avalonia.Platform.Storage.FilePickerFileType("Server list zip") { Patterns = new[] { "*.zip" } },
+                },
+            });
+            if (files.Count > 0) ImportServersPath = files[0].Path.LocalPath;
+        }
+        catch { /* non-fatal */ }
+    }
+
     [RelayCommand]
     private void ImportServers()
     {

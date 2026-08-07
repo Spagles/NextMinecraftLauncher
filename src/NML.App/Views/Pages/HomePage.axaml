@@ -166,6 +166,7 @@
                         <TextBlock Text="{loc:Loc 'modpack.import.title'}" Foreground="{DynamicResource AccentBrush}" FontSize="13" FontWeight="SemiBold"/>
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <TextBox Text="{Binding ImportModpackPath}" Watermark="{loc:Loc 'modpack.import.path_hint'}" MinWidth="320" FontSize="12" FontFamily="Cascadia Code,Consolas,monospace"/>
+                            <Button Content="📁 Browse" Command="{Binding BrowseModpackCommand}" Classes="small"/>
                             <Button Content="{loc:Loc 'modpack.import.button'}" Command="{Binding ImportModpackCommand}"
                                     Background="{DynamicResource SuccessBrush}" Foreground="White" Padding="14,6" FontSize="12"/>
                         </StackPanel>

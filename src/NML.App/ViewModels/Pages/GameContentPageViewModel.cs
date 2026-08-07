@@ -640,6 +640,29 @@ public partial class GameContentPageViewModel : PageViewModelBase
         catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
     }
 
+    /// <summary>Open an OS file-picker to choose a world archive (.zip) and populate ImportWorldPath.</summary>
+    [RelayCommand]
+    private async Task BrowseWorldAsync()
+    {
+        try
+        {
+            if (Avalonia.Application.Current?.ApplicationLifetime
+                is not Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
+                || desktop.MainWindow is null) return;
+            var files = await desktop.MainWindow.StorageProvider.OpenFilePickerAsync(new Avalonia.Platform.Storage.FilePickerOpenOptions
+            {
+                Title = "Import world",
+                AllowMultiple = false,
+                FileTypeFilter = new[]
+                {
+                    new Avalonia.Platform.Storage.FilePickerFileType("World archive") { Patterns = new[] { "*.zip" } },
+                },
+            });
+            if (files.Count > 0) ImportWorldPath = files[0].Path.LocalPath;
+        }
+        catch { /* non-fatal */ }
+    }
+
     [RelayCommand]
     private void ImportWorld(string zipPath)
     {

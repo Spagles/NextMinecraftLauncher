@@ -864,6 +864,33 @@ public partial class HomePageViewModel : PageViewModelBase
     }
 
     /// <summary>
+    /// Open an OS file-picker to choose a modpack/instance archive (.zip / .mrpack), then populate
+    /// <see cref="ImportModpackPath"/>. HMCL-style "Browse…" instead of forcing the user to paste a path.
+    /// </summary>
+    [RelayCommand]
+    private async Task BrowseModpackAsync()
+    {
+        try
+        {
+            if (Avalonia.Application.Current?.ApplicationLifetime
+                is not Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
+                || desktop.MainWindow is null) return;
+            var files = await desktop.MainWindow.StorageProvider.OpenFilePickerAsync(new Avalonia.Platform.Storage.FilePickerOpenOptions
+            {
+                Title = "Import modpack / instance",
+                AllowMultiple = false,
+                FileTypeFilter = new[]
+                {
+                    new Avalonia.Platform.Storage.FilePickerFileType("Modpack / instance archive")
+                    { Patterns = new[] { "*.zip", "*.mrpack" } },
+                },
+            });
+            if (files.Count > 0) ImportModpackPath = files[0].Path.LocalPath;
+        }
+        catch (Exception ex) { _logger.LogWarning(ex, "File picker failed."); }
+    }
+
+    /// <summary>
     /// Import a modpack archive (Modrinth <c>.mrpack</c>, CurseForge <c>manifest.json</c>, or an
     /// NML instance bundle) as a new instance. The format is detected from the archive contents
     /// and routed to the right handler, so the same button accepts packs from multiple sources.

@@ -39,6 +39,7 @@
                         Background="#2f5fcc" Foreground="White" Padding="12,5" FontSize="11"/>
                 <TextBox Text="{Binding ImportServersPath}" Watermark="{loc:Loc 'server.import_placeholder'}"
                          MinWidth="260" FontSize="11" FontFamily="Cascadia Code,Consolas,monospace"/>
+                <Button Content="📁 Browse" Command="{Binding BrowseServersCommand}" Classes="small" FontSize="11"/>
                 <Button Content="{loc:Loc 'server.import'}" Command="{Binding ImportServersCommand}"
                         Background="#388e3c" Foreground="White" Padding="12,5" FontSize="11"/>
             </StackPanel>
