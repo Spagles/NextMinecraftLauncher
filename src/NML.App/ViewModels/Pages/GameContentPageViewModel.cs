@@ -299,6 +299,13 @@ public partial class GameContentPageViewModel : PageViewModelBase
                             AchievementDisplay = ach.TotalAdvancements > 0 ? ach.Display : string.Empty,
                             PlayTimeDisplay = stats.PlayTimeMinutes > 0 ? stats.PlayTimeDisplay : string.Empty,
                             DifficultyDisplay = settings.Difficulty,
+                            // Seed the editable copies from the on-disk values so the detail-panel
+                            // controls open showing the world's current settings (HMCL-style edit flow).
+                            EditableDifficulty = settings.Difficulty,
+                            EditableKeepInventory = settings.IsRuleEnabled("keepInventory"),
+                            EditableMobSpawning = settings.IsRuleEnabled("doMobSpawning"),
+                            EditableFireTick = settings.IsRuleEnabled("doFireTick"),
+                            EditableMobGriefing = settings.IsRuleEnabled("mobGriefing"),
                         });
                         // Populate stat lines for the expandable detail panel.
                         if (stats.TrackedStats.Count > 0)
@@ -446,6 +453,35 @@ public partial class GameContentPageViewModel : PageViewModelBase
     private void ToggleWorldDetails(WorldCardEntry card)
     {
         card.ShowDetails = !card.ShowDetails;
+    }
+
+    /// <summary>
+    /// Persist the editable difficulty + gamerule toggles from a world card's detail panel back into
+    /// the world's level.dat (HMCL-style "edit world without launching"). Only the fields the user
+    /// can change are written; all other NBT tags are preserved byte-for-byte.
+    /// </summary>
+    [RelayCommand]
+    private void ApplyWorldSettings(WorldCardEntry card)
+    {
+        try
+        {
+            var settings = new NML.Core.Game.WorldSettings
+            {
+                Difficulty = card.EditableDifficulty,
+                GameRules = new Dictionary<string, string>
+                {
+                    ["keepInventory"] = card.EditableKeepInventory.ToString().ToLowerInvariant(),
+                    ["doMobSpawning"] = card.EditableMobSpawning.ToString().ToLowerInvariant(),
+                    ["doFireTick"] = card.EditableFireTick.ToString().ToLowerInvariant(),
+                    ["mobGriefing"] = card.EditableMobGriefing.ToString().ToLowerInvariant(),
+                }
+            };
+            NML.Core.Game.WorldSettingsManager.Write(card.Path, settings);
+            // Refresh so DifficultyDisplay reflects the new value on the badge.
+            Refresh();
+            Status = $"world.settings_applied,{card.DisplayName}";
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
     }
 
     /// <summary>Export a world's stats to a CSV file on the desktop.</summary>
@@ -987,6 +1023,21 @@ public sealed class WorldCardEntry : ObservableObject
 
     /// <summary>True when this card's detail panel is expanded.</summary>
     public bool ShowDetails { get; set; }
+
+    /// <summary>Editable difficulty (bound to a ComboBox in the detail panel). One of: peaceful, easy, normal, hard.</summary>
+    public string EditableDifficulty { get; set; } = "normal";
+
+    /// <summary>Editable keepInventory gamerule toggle (bound to a CheckBox in the detail panel).</summary>
+    public bool EditableKeepInventory { get; set; }
+
+    /// <summary>Editable doMobSpawning gamerule toggle (bound to a CheckBox in the detail panel).</summary>
+    public bool EditableMobSpawning { get; set; }
+
+    /// <summary>Editable doFireTick gamerule toggle.</summary>
+    public bool EditableFireTick { get; set; }
+
+    /// <summary>Editable mobGriefing gamerule toggle.</summary>
+    public bool EditableMobGriefing { get; set; }
 
     /// <summary>Formatted stat lines for the detail panel (e.g. "Mob Kills: 42").</summary>
     public System.Collections.ObjectModel.ObservableCollection<string> StatLines { get; } = new();

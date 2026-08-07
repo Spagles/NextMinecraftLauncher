@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:NML.App.Localization"
+             xmlns:sys="clr-namespace:System;assembly=netstandard"
              x:Class="NML.App.Views.Pages.GameContentPage" x:Name="Root">
     <DockPanel>
         <!-- Tab strip + open folder -->
@@ -151,6 +152,33 @@
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
+                                        <!-- Edit world settings (difficulty + gamerules) — HMCL-style edit-without-launch -->
+                                        <Border Background="{DynamicResource SurfaceAltBrush}" CornerRadius="6" Padding="8"
+                                                IsVisible="{Binding ShowDetails}" Margin="0,6,0,0">
+                                            <StackPanel Spacing="6">
+                                                <TextBlock Text="⚙️ World Settings" Foreground="{DynamicResource AccentBrush}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                                <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                                    <TextBlock Text="Difficulty:" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10" VerticalAlignment="Center"/>
+                                                    <ComboBox SelectedItem="{Binding EditableDifficulty}" MinWidth="90" FontSize="10">
+                                                        <sys:String>peaceful</sys:String>
+                                                        <sys:String>easy</sys:String>
+                                                        <sys:String>normal</sys:String>
+                                                        <sys:String>hard</sys:String>
+                                                    </ComboBox>
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
+                                                    <CheckBox Content="keepInv" IsChecked="{Binding EditableKeepInventory}" FontSize="10"/>
+                                                    <CheckBox Content="mobs" IsChecked="{Binding EditableMobSpawning}" FontSize="10"/>
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
+                                                    <CheckBox Content="fireTick" IsChecked="{Binding EditableFireTick}" FontSize="10"/>
+                                                    <CheckBox Content="griefing" IsChecked="{Binding EditableMobGriefing}" FontSize="10"/>
+                                                </StackPanel>
+                                                <Button Content="✅ Apply" Classes="small" HorizontalAlignment="Center"
+                                                        Command="{Binding #Root.DataContext.ApplyWorldSettingsCommand}"
+                                                        CommandParameter="{Binding}"/>
+                                            </StackPanel>
+                                        </Border>
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>

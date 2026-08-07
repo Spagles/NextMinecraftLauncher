@@ -133,4 +133,132 @@ public class WorldSettingsManagerTests
     {
         WorldSettingsManager.DifficultyName(value).Should().Be(expected);
     }
+
+    // ===== Write path (read → edit → write → read-back round trip) =====
+
+    [Theory]
+    [InlineData("normal", "hard")]
+    [InlineData("easy", "peaceful")]
+    [InlineData("hard", "normal")]
+    public void Write_Persists_Difficulty_Change_And_Round_Trips(string from, string to)
+    {
+        // Start with one difficulty, write a different one, read back — the change must survive.
+        string dir = MakeLevelDat(WorldSettingsManager.DifficultyByte(from));
+        try
+        {
+            WorldSettingsManager.Read(dir).Difficulty.Should().Be(from, "precondition: initial value");
+            WorldSettingsManager.Write(dir, new WorldSettings { Difficulty = to });
+            WorldSettingsManager.Read(dir).Difficulty.Should().Be(to, "the write must persist the new difficulty");
+        }
+        finally { Directory.Delete(dir, recursive: true); }
+    }
+
+    [Fact]
+    public void Write_Toggles_Gamerules_And_Round_Trips_Both_Ways()
+    {
+        // keepInventory=true, doDaylightCycle=false initially; flip both and confirm read-back.
+        string dir = MakeLevelDat(2,
+            ("keepInventory", "true"),
+            ("doDaylightCycle", "false"));
+        try
+        {
+            var before = WorldSettingsManager.Read(dir);
+            before.IsRuleEnabled("keepInventory").Should().BeTrue();
+            before.IsRuleEnabled("doDaylightCycle").Should().BeFalse();
+
+            var edited = before with
+            {
+                GameRules = new Dictionary<string, string>
+                {
+                    ["keepInventory"] = "false",     // toggle OFF
+                    ["doDaylightCycle"] = "true",    // toggle ON
+                }
+            };
+            WorldSettingsManager.Write(dir, edited);
+
+            var after = WorldSettingsManager.Read(dir);
+            after.IsRuleEnabled("keepInventory").Should().BeFalse("toggle must persist");
+            after.IsRuleEnabled("doDaylightCycle").Should().BeTrue("toggle must persist");
+        }
+        finally { Directory.Delete(dir, recursive: true); }
+    }
+
+    [Fact]
+    public void Write_Preserves_Neighboring_Gamerules_Not_Being_Edited()
+    {
+        // doMobSpawning is not one of the edited rules but sits between the edited ones in the file —
+        // it must survive the byte-shifting splice intact (guards the ReplaceStringTag splice logic).
+        string dir = MakeLevelDat(2,
+            ("keepInventory", "true"),
+            ("doMobSpawning", "true"),   // should be untouched by the write
+            ("doDaylightCycle", "false"));
+        try
+        {
+            var read = WorldSettingsManager.Read(dir);
+            var edited = read with { GameRules = new Dictionary<string, string>
+            {
+                ["keepInventory"] = "false",
+                ["doDaylightCycle"] = "true",
+            } };
+            WorldSettingsManager.Write(dir, edited);
+
+            var after = WorldSettingsManager.Read(dir);
+            after.IsRuleEnabled("doMobSpawning").Should().BeTrue("an unedited gamerule between edited ones must survive");
+            after.IsRuleEnabled("keepInventory").Should().BeFalse();
+            after.IsRuleEnabled("doDaylightCycle").Should().BeTrue();
+        }
+        finally { Directory.Delete(dir, recursive: true); }
+    }
+
+    [Fact]
+    public void Write_Preserves_Difficulty_Byte_When_Only_Gamerules_Change()
+    {
+        // Editing gamerules must not disturb the Difficulty byte tag (it lives earlier in the NBT).
+        string dir = MakeLevelDat(3 /* hard */, ("keepInventory", "false"));
+        try
+        {
+            WorldSettingsManager.Write(dir, new WorldSettings
+            {
+                Difficulty = "hard", // unchanged
+                GameRules = new Dictionary<string, string> { ["keepInventory"] = "true" }
+            });
+            WorldSettingsManager.Read(dir).Difficulty.Should().Be("hard", "difficulty must be untouched when only gamerules change");
+        }
+        finally { Directory.Delete(dir, recursive: true); }
+    }
+
+    [Fact]
+    public void Write_Throws_When_LevelDat_Missing()
+    {
+        string dir = Path.Combine(Path.GetTempPath(), "nml-noleveldat-" + Guid.NewGuid().ToString("N")[..8]);
+        Directory.CreateDirectory(dir);
+        try
+        {
+            var act = () => WorldSettingsManager.Write(dir, new WorldSettings { Difficulty = "easy" });
+            act.Should().Throw<FileNotFoundException>("writing to a world with no level.dat is an error");
+        }
+        finally { Directory.Delete(dir, recursive: true); }
+    }
+
+    [Fact]
+    public void Write_Is_Atomic_LevelDat_Stays_Valid_On_Success()
+    {
+        // After a successful write the level.dat must still be valid gzip NBT (readable back), and
+        // no .tmp file should be left behind (the atomic-rename contract).
+        string dir = MakeLevelDat(1, ("keepInventory", "false"));
+        try
+        {
+            WorldSettingsManager.Write(dir, new WorldSettings
+            {
+                Difficulty = "normal",
+                GameRules = new Dictionary<string, string> { ["keepInventory"] = "true" }
+            });
+
+            File.Exists(Path.Combine(dir, "level.dat")).Should().BeTrue();
+            File.Exists(Path.Combine(dir, "level.dat.tmp")).Should().BeFalse("the temp file must be cleaned up");
+            // Re-read proves the gzip + NBT is still structurally valid.
+            WorldSettingsManager.Read(dir).Difficulty.Should().Be("normal");
+        }
+        finally { Directory.Delete(dir, recursive: true); }
+    }
 }
