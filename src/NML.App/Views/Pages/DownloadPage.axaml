@@ -51,7 +51,7 @@
                     <DataTemplate>
                         <Border Background="{DynamicResource PanelBrush}" CornerRadius="4" Padding="14,10" Margin="0,2">
                             <Grid ColumnDefinitions="*,120,120,Auto">
-                                <TextBlock Grid.Column="0" Text="{Binding Id}" Foreground="White" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="0" Text="{Binding Id}" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
                                 <TextBlock Grid.Column="1" Text="{Binding Type}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" VerticalAlignment="Center"/>
                                 <TextBlock Grid.Column="2" Text="{Binding ReleaseTime, StringFormat=\{0:yyyy-MM-dd\}}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"/>
                                 <Button Grid.Column="3" Content="{loc:Loc 'download.install'}" Classes="small"

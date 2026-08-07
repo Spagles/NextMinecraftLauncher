@@ -30,7 +30,7 @@
                             <Border Background="{DynamicResource PanelBrush}" CornerRadius="4" Padding="12,8" Margin="0,2">
                                 <Grid ColumnDefinitions="*,Auto,Auto,Auto">
                                     <StackPanel Grid.Column="0">
-                                        <TextBlock Text="{Binding Name}" Foreground="White" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Name}" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
                                         <TextBlock Text="{Binding SizeBytes, StringFormat=\{0:N0\} B}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
                                     </StackPanel>
                                     <Button Grid.Column="1" Content="{loc:Loc 'content.backup'}" Classes="small"
@@ -85,7 +85,7 @@
                                                            VerticalAlignment="Center"/>
                                             </Border>
                                         </Grid>
-                                        <TextBlock Text="{Binding DisplayName}" Foreground="White" FontWeight="SemiBold"
+                                        <TextBlock Text="{Binding DisplayName}" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="SemiBold"
                                                    FontSize="13" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                                         <TextBlock Text="{Binding LastPlayedDisplay}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10"
                                                    HorizontalAlignment="Center"/>
@@ -222,7 +222,7 @@
                                 <Border Background="{DynamicResource PanelBrush}" CornerRadius="4" Padding="10,6" Margin="0,2">
                                     <Grid ColumnDefinitions="*,Auto,Auto">
                                         <StackPanel Grid.Column="0" Spacing="1">
-                                            <TextBlock Text="{Binding WorldName}" Foreground="White" FontSize="12" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding WorldName}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12" FontWeight="SemiBold"/>
                                             <StackPanel Orientation="Horizontal" Spacing="12">
                                                 <TextBlock Text="{Binding DateDisplay}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10"/>
                                                 <TextBlock Text="{Binding SizeDisplay}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10"/>
@@ -346,7 +346,7 @@
                                                 IsVisible="{Binding !HasIcon}">
                                             <TextBlock Text="📦" FontSize="28" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
-                                        <TextBlock Text="{Binding Name}" Foreground="White" FontWeight="SemiBold" FontSize="12"
+                                        <TextBlock Text="{Binding Name}" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="SemiBold" FontSize="12"
                                                    HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                                         <TextBlock Text="{Binding Description}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10"
                                                    HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="220"/>

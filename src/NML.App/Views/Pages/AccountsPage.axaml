@@ -16,7 +16,7 @@
                     <!-- 3D head render (static fallback) -->
                     <Image Source="{Binding ActiveHeadRenderUrl}" Width="64" Height="64" VerticalAlignment="Center"/>
                     <StackPanel VerticalAlignment="Center" Spacing="4">
-                        <TextBlock Text="{Binding ActiveAccount.Username}" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding ActiveAccount.Username}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="16" FontWeight="SemiBold"/>
                         <Image Source="{Binding ActiveAvatarUrl}" Width="32" Height="32"/>
                         <TextBlock Text="{Binding ActiveAccount.Uuid}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10"/>
                         <TextBlock Text="{loc:Loc 'skins.rotate_hint'}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10" FontStyle="Italic"/>
@@ -70,7 +70,7 @@
                                 <Border Background="{DynamicResource SurfaceAltBrush}" CornerRadius="4" Padding="10,8" Margin="0,2">
                                     <Grid ColumnDefinitions="*,Auto">
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{Binding Name}" Foreground="White"/>
+                                            <TextBlock Text="{Binding Name}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                                             <TextBlock Text="{Binding ApiUrl}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}"/>
                                         </StackPanel>
                                         <Button Grid.Column="1" Content="{loc:Loc 'accounts.authlib_delete_server'}" Classes="small danger"
@@ -129,7 +129,7 @@
                                     <Grid ColumnDefinitions="40,*,Auto">
                                         <Image Grid.Column="0" Source="{Binding PreviewUrl}" Width="32" Height="32"/>
                                         <StackPanel Grid.Column="1" Margin="8,0" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Name}" Foreground="White" FontSize="12"/>
+                                            <TextBlock Text="{Binding Name}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12"/>
                                             <TextBlock Text="{Binding Model}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10"/>
                                         </StackPanel>
                                         <Button Grid.Column="2" Content="{loc:Loc 'skins.community_install'}" Classes="small"
@@ -151,7 +151,7 @@
                         <Border Background="{DynamicResource PanelBrush}" CornerRadius="4" Padding="14,10" Margin="0,2">
                             <Grid ColumnDefinitions="*,Auto,Auto">
                                 <StackPanel Grid.Column="0">
-                                    <TextBlock Text="{Binding Username}" Foreground="White"/>
+                                    <TextBlock Text="{Binding Username}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                                     <TextBlock Text="{Binding Uuid}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}"/>
                                 </StackPanel>
                                 <Button Grid.Column="1" Content="{loc:Loc 'accounts.activate'}" Classes="small" Margin="6,0"

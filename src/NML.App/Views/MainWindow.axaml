@@ -21,9 +21,8 @@
         <!-- Enables the "selected nav item" visual: returns "nav active" when the current
              item equals the shell's CurrentPage, otherwise "nav". Bound to Button.Classes. -->
         <v:NavActiveClassConverter x:Key="NavActiveConverter"/>
-        <!-- HMCL-style nav rail colors (semi-transparent accent for the active item). -->
-        <SolidColorBrush x:Key="NavHoverBrush" Color="#1AFFFFFF"/>
-        <SolidColorBrush x:Key="NavActiveBrush" Color="#334FC3F7"/>
+        <!-- NavHoverBrush / NavActiveBrush are variant-scoped in App.axaml (light + dark palettes)
+             so the nav rail recolors with the theme. NavActiveHoverBrush is a shared accent tint. -->
         <SolidColorBrush x:Key="NavActiveHoverBrush" Color="#4D4FC3F7"/>
     </Window.Resources>
 
@@ -41,7 +40,7 @@
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" Margin="14,0" VerticalAlignment="Center">
                     <TextBlock Text="🎮" FontSize="16" VerticalAlignment="Center"/>
                     <TextBlock Text="{loc:Loc 'app.title'}" FontSize="13" FontWeight="SemiBold"
-                               Foreground="White" VerticalAlignment="Center"/>
+                               Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2" Margin="0,0,4,0" VerticalAlignment="Center">
                     <Button Click="Minimize_Click" Content="—" Width="36" Height="28" Classes="titleBtn"/>
@@ -93,7 +92,7 @@
             <DockPanel Grid.Column="1" Background="{DynamicResource PanelAltBrush}">
                 <!-- Page header (HMCL shows the current section title at the top of the content) -->
                 <Border DockPanel.Dock="Top" Background="{DynamicResource PanelAltBrush}" Padding="24,14">
-                    <TextBlock Text="{Binding CurrentPage.LocalizedTitle}" FontSize="18" FontWeight="SemiBold" Foreground="White"/>
+                    <TextBlock Text="{Binding CurrentPage.LocalizedTitle}" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
                 </Border>
 
                 <!-- The page itself (with slide transition between pages) -->

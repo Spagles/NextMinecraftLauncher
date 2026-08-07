@@ -5,14 +5,44 @@
 
     <Application.Resources>
         <ResourceDictionary>
-            <!-- Shared design tokens (dark theme, translucent for Mica backdrop) -->
-            <SolidColorBrush x:Key="SurfaceBrush" Color="#E80A0A0E"/>
-            <SolidColorBrush x:Key="SurfaceAltBrush" Color="#D81A1A1E"/>
-            <SolidColorBrush x:Key="PanelBrush" Color="#CC1F1F25"/>
-            <SolidColorBrush x:Key="PanelAltBrush" Color="#CC25252B"/>
-            <SolidColorBrush x:Key="TextPrimaryBrush" Color="#E8E0E0E0"/>
-            <SolidColorBrush x:Key="TextSecondaryBrush" Color="#B0AAAAAA"/>
-            <SolidColorBrush x:Key="TextMutedBrush" Color="#90666666"/>
+            <!-- Variant-scoped design tokens. Each surface/text token has both a Dark and a Light
+                 palette keyed by ThemeDictionaries, so the Settings page's dark/light/system toggle
+                 recolors NML's own surfaces (not just FluentTheme chrome). Accent/Success/Danger are
+                 shared across variants (accent is user-overridable at runtime). -->
+            <ResourceDictionary.ThemeDictionaries>
+                <!-- DARK (default): translucent dark surfaces so the Mica backdrop shows through. -->
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="SurfaceBrush" Color="#E80A0A0E"/>
+                    <SolidColorBrush x:Key="SurfaceAltBrush" Color="#D81A1A1E"/>
+                    <SolidColorBrush x:Key="PanelBrush" Color="#CC1F1F25"/>
+                    <SolidColorBrush x:Key="PanelAltBrush" Color="#CC25252B"/>
+                    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#E8E0E0E0"/>
+                    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#B0AAAAAA"/>
+                    <SolidColorBrush x:Key="TextMutedBrush" Color="#90666666"/>
+                    <!-- Nav/title button surfaces tuned for the dark sidebar. -->
+                    <SolidColorBrush x:Key="NavHoverBrush" Color="#1AFFFFFF"/>
+                    <SolidColorBrush x:Key="NavActiveBrush" Color="#334fc3f7"/>
+                    <SolidColorBrush x:Key="SmallButtonBgBrush" Color="#33333b"/>
+                    <SolidColorBrush x:Key="SmallButtonHoverBgBrush" Color="#404048"/>
+                    <SolidColorBrush x:Key="DangerButtonBgBrush" Color="#b23b3b"/>
+                </ResourceDictionary>
+                <!-- LIGHT: opaque light surfaces + dark text, so light mode is actually usable. -->
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="SurfaceBrush" Color="#FFF5F5F7"/>
+                    <SolidColorBrush x:Key="SurfaceAltBrush" Color="#FFEAEAEE"/>
+                    <SolidColorBrush x:Key="PanelBrush" Color="#CCFFFFFF"/>
+                    <SolidColorBrush x:Key="PanelAltBrush" Color="#CCF0F0F4"/>
+                    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#E8222222"/>
+                    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#B0555555"/>
+                    <SolidColorBrush x:Key="TextMutedBrush" Color="#90888888"/>
+                    <SolidColorBrush x:Key="NavHoverBrush" Color="#22000000"/>
+                    <SolidColorBrush x:Key="NavActiveBrush" Color="#334fc3f7"/>
+                    <SolidColorBrush x:Key="SmallButtonBgBrush" Color="#FFD0D0D8"/>
+                    <SolidColorBrush x:Key="SmallButtonHoverBgBrush" Color="#FFC0C0C8"/>
+                    <SolidColorBrush x:Key="DangerButtonBgBrush" Color="#FFC03030"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+            <!-- Shared across variants (accent is overridden live by SettingsPageViewModel). -->
             <SolidColorBrush x:Key="AccentBrush" Color="#4fc3f7"/>
             <SolidColorBrush x:Key="SuccessBrush" Color="#4caf50"/>
             <SolidColorBrush x:Key="DangerBrush" Color="#f44336"/>

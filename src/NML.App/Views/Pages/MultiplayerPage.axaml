@@ -7,7 +7,7 @@
 
             <!-- Header -->
             <StackPanel Spacing="2">
-                <TextBlock Text="{loc:Loc 'server.title'}" Foreground="White" FontSize="22" FontWeight="SemiBold"/>
+                <TextBlock Text="{loc:Loc 'server.title'}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="22" FontWeight="SemiBold"/>
                 <TextBlock Text="{loc:Loc 'server.subtitle'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"/>
             </StackPanel>
 
@@ -67,7 +67,7 @@
 
                                 <!-- Name + MOTD -->
                                 <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center" Margin="10,0">
-                                    <TextBlock Text="{Binding Entry.Name}" Foreground="White" FontWeight="SemiBold" FontSize="14"/>
+                                    <TextBlock Text="{Binding Entry.Name}" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="SemiBold" FontSize="14"/>
                                     <TextBlock Text="{Binding Motd}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"
                                                TextWrapping="NoWrap" MaxLines="2"/>
                                     <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,2,0,0">

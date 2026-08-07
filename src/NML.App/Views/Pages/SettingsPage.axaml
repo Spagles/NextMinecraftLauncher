@@ -7,7 +7,7 @@
 
             <!-- General -->
             <StackPanel Spacing="8">
-                <TextBlock Text="{loc:Loc 'settings.general'}" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
+                <TextBlock Text="{loc:Loc 'settings.general'}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
                 <StackPanel Spacing="6">
                     <TextBlock Text="{loc:Loc 'settings.language'}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                     <ComboBox ItemsSource="{Binding AvailableLanguages}" SelectedItem="{Binding SelectedLanguage}" MinWidth="220"/>
@@ -36,7 +36,7 @@
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <TextBlock Text="{loc:Loc 'download.settings.concurrency'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"/>
                         <Slider Minimum="1" Maximum="64" Value="{Binding DownloadConcurrency}" MinWidth="200" TickFrequency="4" IsSnapToTickEnabled="False"/>
-                        <TextBlock Text="{Binding DownloadConcurrency}" Foreground="White" FontSize="11" VerticalAlignment="Center" MinWidth="24"/>
+                        <TextBlock Text="{Binding DownloadConcurrency}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11" VerticalAlignment="Center" MinWidth="24"/>
                     </StackPanel>
                     <TextBlock Text="{loc:Loc 'download.settings.mirror'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
                     <StackPanel Orientation="Horizontal" Spacing="6">
@@ -118,7 +118,7 @@
 
             <!-- Java -->
             <StackPanel Spacing="8">
-                <TextBlock Text="{loc:Loc 'settings.java'}" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
+                <TextBlock Text="{loc:Loc 'settings.java'}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
                 <WrapPanel>
                     <Button Content="{loc:Loc 'common.refresh'}" Command="{Binding DetectJavaCommand}" HorizontalAlignment="Left"/>
                     <Button Content="{loc:Loc 'settings.install_java'}" Command="{Binding InstallJavaRuntimeCommand}"
@@ -143,7 +143,7 @@
 
             <!-- Update check -->
             <StackPanel Spacing="8">
-                <TextBlock Text="{loc:Loc 'settings.check_update'}" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
+                <TextBlock Text="{loc:Loc 'settings.check_update'}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <Button Content="{loc:Loc 'settings.check_update'}" Command="{Binding CheckForUpdatesCommand}"
                             IsEnabled="{Binding !IsCheckingUpdate}" Classes="small"/>
@@ -162,7 +162,7 @@
 
             <!-- CurseForge API key (enables CurseForge mod search/browse) -->
             <StackPanel Spacing="8">
-                <TextBlock Text="CurseForge" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
+                <TextBlock Text="CurseForge" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
                 <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}">
                     Enter a CurseForge API key (from the curseforge.com developer console) to search and install CurseForge mods.
                 </TextBlock>
@@ -178,7 +178,7 @@
 
             <!-- World auto-backup (HMCL-style: backs up worlds periodically while a game runs + on exit) -->
             <StackPanel Spacing="8">
-                <TextBlock Text="World Auto-Backup" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
+                <TextBlock Text="World Auto-Backup" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
                 <CheckBox Content="Auto-backup worlds while a game is running" IsChecked="{Binding AutoBackupWorlds}"/>
                 <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding AutoBackupWorlds}">
                     <TextBlock Text="Every" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
@@ -191,7 +191,7 @@
 
             <!-- AI -->
             <StackPanel Spacing="8">
-                <TextBlock Text="{loc:Loc 'settings.ai'}" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
+                <TextBlock Text="{loc:Loc 'settings.ai'}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
                 <Button Content="{loc:Loc 'settings.detect_local'}" Command="{Binding DetectLocalModelsCommand}" HorizontalAlignment="Left"/>
                 <ItemsControl ItemsSource="{Binding Providers}">
                     <ItemsControl.ItemTemplate>
@@ -199,7 +199,7 @@
                             <Border Background="{DynamicResource PanelBrush}" Padding="10,8" Margin="0,2" CornerRadius="4">
                                 <Grid ColumnDefinitions="*,Auto">
                                     <StackPanel Grid.Column="0">
-                                        <TextBlock Text="{Binding Name}" Foreground="White"/>
+                                        <TextBlock Text="{Binding Name}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                                         <TextBlock Text="{Binding Model}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
                                     </StackPanel>
                                     <Button Grid.Column="1" Content="{loc:Loc 'settings.activate'}" Classes="small"

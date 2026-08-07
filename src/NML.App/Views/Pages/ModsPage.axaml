@@ -26,7 +26,7 @@
                             <Grid ColumnDefinitions="48,*,120,Auto">
                                 <Image Grid.Column="0" Source="{Binding IconUrl}" Width="40" Height="40"/>
                                 <StackPanel Grid.Column="1" Margin="8,0">
-                                    <TextBlock Text="{Binding Title}" Foreground="White" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding Title}" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="SemiBold"/>
                                     <TextBlock Text="{Binding Author}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
                                     <TextBlock Text="{Binding Description}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" TextTrimming="CharacterEllipsis"/>
                                 </StackPanel>

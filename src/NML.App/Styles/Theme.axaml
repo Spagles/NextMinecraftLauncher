@@ -6,20 +6,20 @@
         <Setter Property="Padding" Value="10,4"/>
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="CornerRadius" Value="4"/>
-        <Setter Property="Background" Value="#33333b"/>
+        <Setter Property="Background" Value="{DynamicResource SmallButtonBgBrush}"/>
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
     </Style>
     <Style Selector="Button.small:pointerover /template/ ContentPresenter">
-        <Setter Property="Background" Value="#404048"/>
+        <Setter Property="Background" Value="{DynamicResource SmallButtonHoverBgBrush}"/>
     </Style>
 
     <!-- Small danger button: red variant of small -->
     <Style Selector="Button.small.danger">
-        <Setter Property="Background" Value="#b23b3b"/>
+        <Setter Property="Background" Value="{DynamicResource DangerButtonBgBrush}"/>
         <Setter Property="Foreground" Value="White"/>
     </Style>
     <Style Selector="Button.small.danger:pointerover /template/ ContentPresenter">
-        <Setter Property="Background" Value="#c62828"/>
+        <Setter Property="Background" Value="{DynamicResource DangerBrush}"/>
     </Style>
 
     <!-- Tab button: sidebar-style nav buttons -->
@@ -31,7 +31,7 @@
         <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
     </Style>
     <Style Selector="Button.tabbtn:pointerover /template/ ContentPresenter">
-        <Setter Property="Background" Value="#33333b"/>
+        <Setter Property="Background" Value="{DynamicResource SmallButtonBgBrush}"/>
     </Style>
 
     <!-- Card surface: used for world/screenshot/resource-pack cards -->
