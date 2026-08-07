@@ -287,6 +287,11 @@
                                   MinWidth="320" MaxDropDownHeight="300"/>
                     </StackPanel>
                     <StackPanel Spacing="6">
+                        <TextBlock Text="Modloader" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"/>
+                        <ComboBox ItemsSource="{Binding ModloaderChoices}" SelectedItem="{Binding NewInstanceModloader}"
+                                  MinWidth="200"/>
+                    </StackPanel>
+                    <StackPanel Spacing="6">
                         <TextBlock Text="Memory (MB)" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"/>
                         <Slider Minimum="1024" Maximum="32768" Value="{Binding NewInstanceMemory}"
                                 TickFrequency="512" IsSnapToTickEnabled="True" MinWidth="380"/>

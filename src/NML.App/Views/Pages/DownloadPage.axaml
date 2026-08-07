@@ -22,6 +22,28 @@
             <ProgressBar IsIndeterminate="True" Height="3" IsVisible="{Binding IsLoading}" Margin="0,4"/>
         </StackPanel>
 
+        <!-- Modloader install panel (HMCL-style: install Fabric/Forge/Quilt/NeoForge against a version) -->
+        <Border DockPanel.Dock="Top" Background="{DynamicResource PanelBrush}" CornerRadius="8" Padding="16,12" Margin="24,4,24,8">
+            <StackPanel Spacing="8">
+                <TextBlock Text="🧩 Install Modloader" Foreground="{DynamicResource AccentBrush}" FontSize="14" FontWeight="SemiBold"/>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="Game version:" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" VerticalAlignment="Center"/>
+                    <ComboBox ItemsSource="{Binding FilteredVersions}" SelectedItem="{Binding SelectedModloaderVersion}"
+                              MinWidth="220" MaxDropDownHeight="300">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate><TextBlock Text="{Binding Id}"/></DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <TextBlock Text="Loader:" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" VerticalAlignment="Center"/>
+                    <ComboBox ItemsSource="{Binding ModloaderChoices}" SelectedItem="{Binding SelectedModloader}" MinWidth="120"/>
+                    <Button Content="Install" Command="{Binding InstallModloaderCommand}" Classes="small"
+                            IsEnabled="{Binding !IsInstalling}"/>
+                </StackPanel>
+                <TextBlock Text="{Binding Status}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"
+                           IsVisible="{Binding IsInstalling}"/>
+            </StackPanel>
+        </Border>
+
         <!-- Version list -->
         <ScrollViewer Padding="24,0,24,24">
             <ItemsControl ItemsSource="{Binding FilteredVersions}">

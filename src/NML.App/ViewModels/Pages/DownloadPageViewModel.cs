@@ -26,6 +26,10 @@ public partial class DownloadPageViewModel : PageViewModelBase
     private readonly InstanceStore _instances;
     private readonly SettingsStore _settings;
     private readonly ILogger<DownloadPageViewModel> _logger;
+    private readonly Core.Modloaders.FabricInstaller? _fabricInstaller;
+    private readonly Core.Modloaders.QuiltInstaller? _quiltInstaller;
+    private readonly Core.Modloaders.ForgeInstaller? _forgeInstaller;
+    private readonly Core.Modloaders.NeoForgeInstaller? _neoForgeInstaller;
 
     private IReadOnlyList<VersionManifestEntry> _all = Array.Empty<VersionManifestEntry>();
 
@@ -39,6 +43,14 @@ public partial class DownloadPageViewModel : PageViewModelBase
     [ObservableProperty] private string _installingVersion = string.Empty;
     [ObservableProperty] private int _installProgress;
 
+    /// <summary>Selected version to install a modloader against (HMCL-style modloader install section).</summary>
+    [ObservableProperty] private VersionManifestEntry? _selectedModloaderVersion;
+    /// <summary>Selected modloader type for the modloader install panel.</summary>
+    [ObservableProperty] private string _selectedModloader = "None";
+
+    /// <summary>Modloader choices for the install panel (None + the loaders wired into this VM).</summary>
+    public IReadOnlyList<string> ModloaderChoices { get; } = new[] { "None", "Fabric", "Quilt", "Forge", "NeoForge" };
+
     /// <summary>True when an install is in progress (drives progress bar visibility).</summary>
     public bool IsInstalling => !string.IsNullOrEmpty(InstallingVersion);
 
@@ -50,7 +62,11 @@ public partial class DownloadPageViewModel : PageViewModelBase
         VersionInfoService versions,
         InstanceStore instances,
         SettingsStore settings,
-        ILogger<DownloadPageViewModel> logger)
+        ILogger<DownloadPageViewModel> logger,
+        Core.Modloaders.FabricInstaller? fabricInstaller = null,
+        Core.Modloaders.QuiltInstaller? quiltInstaller = null,
+        Core.Modloaders.ForgeInstaller? forgeInstaller = null,
+        Core.Modloaders.NeoForgeInstaller? neoForgeInstaller = null)
     {
         _manifest = manifest;
         _vanillaInstaller = vanillaInstaller;
@@ -58,6 +74,10 @@ public partial class DownloadPageViewModel : PageViewModelBase
         _instances = instances;
         _settings = settings;
         _logger = logger;
+        _fabricInstaller = fabricInstaller;
+        _quiltInstaller = quiltInstaller;
+        _forgeInstaller = forgeInstaller;
+        _neoForgeInstaller = neoForgeInstaller;
         EnsureLanguageSubscribed();
     }
 
@@ -147,5 +167,89 @@ public partial class DownloadPageViewModel : PageViewModelBase
             _logger.LogError(ex, "Install of {Id} failed.", versionId);
         }
         finally { InstallingVersion = string.Empty; }
+    }
+
+    /// <summary>
+    /// Install a modloader (Fabric/Quilt/Forge/NeoForge) against the selected game version — the
+    /// HMCL-style "download modloader" panel. Installs vanilla first (so the loader has a parent to
+    /// hook into), then the loader, and registers an instance named "{version} ({loader})".
+    /// </summary>
+    [RelayCommand]
+    private async Task InstallModloaderAsync()
+    {
+        if (SelectedModloaderVersion is null) { Status = "download.pick_version"; return; }
+        if (SelectedModloader == "None") { Status = "download.pick_loader"; return; }
+
+        string versionId = SelectedModloaderVersion.Id;
+        string loader = SelectedModloader;
+        string name = $"{versionId} ({loader})";
+        var instance = new Instance { Name = name, VersionId = versionId, MaxMemoryMb = 4096, Modloader = loader };
+        var mc = new MinecraftDirectory(_instances.GameDirFor(name));
+
+        InstallingVersion = $"{versionId}+{loader}";
+        InstallProgress = 0;
+        Status = $"download.installing_loader,{loader},{versionId}";
+        try
+        {
+            // Vanilla first (parent the loader inherits from).
+            await _vanillaInstaller.InstallAsync(versionId, mc,
+                downloadSettings: _settings.ResolveDownloadSettings(_manifest));
+
+            string? profileId = loader switch
+            {
+                "Fabric" => await InstallFabricAsync(versionId, mc),
+                "Quilt" => await InstallQuiltAsync(versionId, mc),
+                "Forge" => await InstallForgeAsync(versionId, mc),
+                "NeoForge" => await InstallNeoForgeAsync(versionId, mc),
+                _ => null,
+            };
+            if (profileId is null)
+            {
+                Status = $"download.loader_unavailable,{loader}";
+                return;
+            }
+            _instances.Add(instance);
+            Status = $"download.loader_installed,{loader},{versionId}";
+        }
+        catch (Exception ex)
+        {
+            Status = $"home.install_failed,{loader}: {ex.Message}";
+            _logger.LogError(ex, "Modloader {Loader} install failed for {Id}.", loader, versionId);
+        }
+        finally { InstallingVersion = string.Empty; }
+    }
+
+    // --- Per-loader install helpers (mirror HomePageViewModel's pattern) ---
+
+    private async Task<string?> InstallFabricAsync(string versionId, MinecraftDirectory mc)
+    {
+        if (_fabricInstaller is null) return null;
+        var loaders = await _fabricInstaller.ListLoadersAsync(versionId);
+        var stable = loaders.FirstOrDefault(l => l.IsStable) ?? loaders.FirstOrDefault();
+        return stable is null ? null : await _fabricInstaller.InstallAsync(versionId, stable.LoaderVersion, mc);
+    }
+
+    private async Task<string?> InstallQuiltAsync(string versionId, MinecraftDirectory mc)
+    {
+        if (_quiltInstaller is null) return null;
+        var loaders = await _quiltInstaller.ListLoadersAsync(versionId);
+        var stable = loaders.FirstOrDefault(l => l.IsStable) ?? loaders.FirstOrDefault();
+        return stable is null ? null : await _quiltInstaller.InstallAsync(versionId, stable.LoaderVersion, mc);
+    }
+
+    private async Task<string?> InstallForgeAsync(string versionId, MinecraftDirectory mc)
+    {
+        if (_forgeInstaller is null) return null;
+        var versions = await _forgeInstaller.ListVersionsAsync(versionId);
+        var latest = versions.FirstOrDefault();
+        return latest is null ? null : await _forgeInstaller.InstallAsync(versionId, latest.LoaderVersion, mc);
+    }
+
+    private async Task<string?> InstallNeoForgeAsync(string versionId, MinecraftDirectory mc)
+    {
+        if (_neoForgeInstaller is null) return null;
+        var versions = await _neoForgeInstaller.ListVersionsAsync(versionId);
+        var latest = versions.FirstOrDefault();
+        return latest is null ? null : await _neoForgeInstaller.InstallAsync(versionId, latest.LoaderVersion, mc);
     }
 }
