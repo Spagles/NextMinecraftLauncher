@@ -143,8 +143,22 @@ public partial class MultiplayerPageViewModel : PageViewModelBase
     private async Task AddAsync()
     {
         if (string.IsNullOrWhiteSpace(NewServerAddress)) return;
-        var (host, port) = ParseAddress(NewServerAddress);
-        string name = string.IsNullOrWhiteSpace(NewServerName) ? NewServerAddress.Trim() : NewServerName.Trim();
+
+        // Accept either a raw host[:port] OR a shared mc://connect?... URI (from a QR scan / paste).
+        // The QR path closes the loop with ShareQrCode: a friend scans/pastes the URI and lands here.
+        string host; int port; string name;
+        var parsed = NML.Core.Multiplayer.ServerQrCodeUri.Parse(NewServerAddress.Trim());
+        if (parsed is { } uri)
+        {
+            (name, host, port) = (uri.Name, uri.Host, uri.Port);
+            // If the user also typed a name, prefer it over the URI's name.
+            if (!string.IsNullOrWhiteSpace(NewServerName)) name = NewServerName.Trim();
+        }
+        else
+        {
+            (host, port) = ParseAddress(NewServerAddress);
+            name = string.IsNullOrWhiteSpace(NewServerName) ? NewServerAddress.Trim() : NewServerName.Trim();
+        }
 
         var entry = new ServerEntry { Name = name, Host = host, Port = port };
         _store.Add(entry);
