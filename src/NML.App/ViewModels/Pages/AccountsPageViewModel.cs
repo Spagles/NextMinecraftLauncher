@@ -33,6 +33,8 @@ public partial class AccountsPageViewModel : PageViewModelBase
 
     [ObservableProperty] private Account? _activeAccount;
     [ObservableProperty] private string _newOfflineUsername = "Player";
+    /// <summary>Optional custom UUID for the offline account (dashed or bare; auto-generated when empty).</summary>
+    [ObservableProperty] private string _newOfflineUuid = string.Empty;
     [ObservableProperty] private string _status = string.Empty;
     [ObservableProperty] private bool _isBusy;
     [ObservableProperty] private string _deviceCodeMessage = string.Empty;
@@ -149,11 +151,20 @@ public partial class AccountsPageViewModel : PageViewModelBase
     private void AddOfflineAccount()
     {
         if (string.IsNullOrWhiteSpace(NewOfflineUsername)) { Status = "accounts.empty"; return; }
-        Account acc = _offline.Create(NewOfflineUsername);
+        Account acc;
+        try { acc = _offline.Create(NewOfflineUsername, NewOfflineUuid); }
+        catch (ArgumentException ex) { Status = $"common.error,{ex.Message}"; return; }
+        // Prevent UUID collisions with existing accounts (storage is keyed by UUID).
+        if (Accounts.Any(a => string.Equals(a.Uuid, acc.Uuid, StringComparison.OrdinalIgnoreCase)))
+        {
+            Status = "accounts.duplicate_uuid";
+            return;
+        }
         Accounts.Add(acc);
         _accountStore.Save(Accounts.ToList());
         if (ActiveAccount is null) Activate(acc);
         NewOfflineUsername = "Player";
+        NewOfflineUuid = string.Empty;
         Status = $"home.installed,{acc.Username}";
     }
 

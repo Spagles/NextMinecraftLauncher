@@ -63,6 +63,12 @@ public interface IOfflineAuthProvider : IAuthProvider
 {
     /// <summary>Create an offline account from a username. UUID is deterministic (offline-mode v3).</summary>
     Account Create(string username);
+
+    /// <summary>Create an offline account from a username + an optional custom UUID. When
+    /// <paramref name="uuid"/> is null/empty, the deterministic offline v3 UUID is used; otherwise
+    /// the supplied UUID (dashes stripped) is honored — useful for matching server-side player data
+    /// or keeping a fixed identity across reinstalls.</summary>
+    Account Create(string username, string? uuid);
 }
 
 /// <summary>
@@ -74,18 +80,31 @@ public sealed class OfflineAuthProvider : IOfflineAuthProvider
 {
     public string Type => "legacy";
 
-    public Account Create(string username)
+    public Account Create(string username) => Create(username, uuid: null);
+
+    public Account Create(string username, string? uuid)
     {
         if (string.IsNullOrWhiteSpace(username))
             throw new ArgumentException("Username is required.", nameof(username));
 
-        // Offline UUID: MD5("OfflinePlayer:" + username), formatted as v3 UUID without dashes.
-        byte[] hash = MD5.HashData(Encoding.UTF8.GetBytes("OfflinePlayer:" + username));
-        // Set version (3) and variant bits per RFC 4122.
-        hash[6] = (byte)((hash[6] & 0x0F) | 0x30);
-        hash[8] = (byte)((hash[8] & 0x3F) | 0x80);
-
-        string uuid = Convert.ToHexString(hash).ToLowerInvariant();
+        string finalUuid;
+        string? custom = uuid?.Trim();
+        if (!string.IsNullOrWhiteSpace(custom))
+        {
+            // Accept dashed (8-4-4-4-12) or bare 32-hex UUIDs; normalize to bare lowercase.
+            string bare = custom.Replace("-", "").Trim();
+            finalUuid = IsValidHexUuid(bare) ? bare.ToLowerInvariant() : throw new ArgumentException(
+                $"Custom UUID '{custom}' is not a valid 32-char hex UUID.", nameof(uuid));
+        }
+        else
+        {
+            // Offline UUID: MD5("OfflinePlayer:" + username), formatted as v3 UUID without dashes.
+            byte[] hash = MD5.HashData(Encoding.UTF8.GetBytes("OfflinePlayer:" + username));
+            // Set version (3) and variant bits per RFC 4122.
+            hash[6] = (byte)((hash[6] & 0x0F) | 0x30);
+            hash[8] = (byte)((hash[8] & 0x3F) | 0x80);
+            finalUuid = Convert.ToHexString(hash).ToLowerInvariant();
+        }
 
         // Random access token (opaque, only validated in online mode).
         Span<byte> tokenBytes = stackalloc byte[20];
@@ -95,9 +114,20 @@ public sealed class OfflineAuthProvider : IOfflineAuthProvider
         return new Account
         {
             Username = username,
-            Uuid = uuid,
+            Uuid = finalUuid,
             AccessToken = accessToken,
             AccountType = "legacy",
         };
     }
+
+    /// <summary>True when <paramref name="s"/> is exactly 32 hex characters (a bare Mojang UUID).</summary>
+    private static bool IsValidHexUuid(string s)
+    {
+        if (s.Length != 32) return false;
+        foreach (char c in s)
+            if (!IsHex(c)) return false;
+        return true;
+    }
+
+    private static bool IsHex(char c) => (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
 }

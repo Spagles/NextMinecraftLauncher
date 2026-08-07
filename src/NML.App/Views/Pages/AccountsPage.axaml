@@ -28,6 +28,7 @@
             <StackPanel Spacing="8">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <TextBox Text="{Binding NewOfflineUsername}" Watermark="{loc:Loc 'accounts.username'}" MinWidth="180"/>
+                    <TextBox Text="{Binding NewOfflineUuid}" Watermark="UUID (optional — auto if blank)" MinWidth="280" FontFamily="Cascadia Code,Consolas,monospace"/>
                     <Button Content="{loc:Loc 'accounts.add_offline'}" Command="{Binding AddOfflineAccountCommand}"/>
                 </StackPanel>
                 <Button Content="{loc:Loc 'accounts.add_microsoft'}" Command="{Binding AddMicrosoftAccountCommand}"
