@@ -23,7 +23,9 @@ namespace NML.Core.Modloaders;
 /// </summary>
 public sealed class ForgeInstaller
 {
-    private const string MavenBase = "https://maven.minecraftforge.net/net/minecraftforge/forge";
+    // BMCLAPI mirror first (works in CN networks), official maven as fallback.
+    private const string MavenBase = "https://bmclapi2.bangbang93.com/maven/net/minecraftforge/forge";
+    private const string MavenFallback = "https://maven.minecraftforge.net/net/minecraftforge/forge";
 
     private readonly IHttpFetcher _http;
     private readonly Downloader _downloader;
@@ -50,7 +52,25 @@ public sealed class ForgeInstaller
         string gameVersion, CancellationToken ct = default)
     {
         string metaUrl = $"{MavenBase}/maven-metadata.xml";
-        string xml = await _http.GetStringAsync(metaUrl, ct);
+        string xml;
+        try
+        {
+            xml = await _http.GetStringAsync(metaUrl, ct);
+        }
+        catch (Exception ex)
+        {
+            // BMCLAPI may not mirror all versions. Try official maven.
+            _logger.LogWarning(ex, "Forge BMCLAPI unreachable, trying official maven…");
+            try
+            {
+                xml = await _http.GetStringAsync($"{MavenFallback}/maven-metadata.xml", ct);
+            }
+            catch (Exception ex2)
+            {
+                throw new InvalidOperationException(
+                    "Forge maven is unreachable. Check network/VPN connection.", ex2);
+            }
+        }
 
         var versions = new List<ForgeVersion>();
         // Lightweight regex parse of maven-metadata.xml (avoid pulling in full XML DOM).
