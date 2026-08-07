@@ -123,6 +123,47 @@ public static class WorldSettingsManager
         return Read(worldDir);
     }
 
+    /// <summary>
+    /// Rename the world's in-game display name by rewriting the <c>Data.LevelName</c> string tag
+    /// in level.dat. Uses the same in-place NBT edit as <see cref="Write"/>: decompress gzip, splice
+    /// the new string value (rebuilding the length prefix when it differs in length), recompress,
+    /// write atomically. Returns the new name on success. Throws when level.dat is missing or the
+    /// <c>LevelName</c> tag can't be located (older/foreign level.dat shapes).
+    /// </summary>
+    public static string WriteLevelName(string worldDir, string newName)
+    {
+        if (string.IsNullOrWhiteSpace(newName))
+            throw new ArgumentException("World name must not be empty.", nameof(newName));
+
+        string levelDat = Path.Combine(worldDir, "level.dat");
+        if (!File.Exists(levelDat))
+            throw new FileNotFoundException("level.dat not found — cannot rename world.", levelDat);
+
+        byte[] nbt;
+        using (var fs = File.OpenRead(levelDat))
+        using (var gz = new GZipStream(fs, CompressionMode.Decompress))
+        using (var ms = new MemoryStream())
+        {
+            gz.CopyTo(ms);
+            nbt = ms.ToArray();
+        }
+
+        byte[] edited = ReplaceStringTag(nbt, "LevelName", newName);
+        // ReplaceStringTag returns the buffer unchanged when the tag isn't found — detect that so
+        // we don't silently succeed while leaving the old name in place.
+        int valueOffset = FindStringTagOffset(nbt, "LevelName");
+        if (valueOffset < 0)
+            throw new InvalidDataException("level.dat has no LevelName tag — cannot rename.");
+
+        string tmp = levelDat + ".tmp";
+        using (var fs = File.Create(tmp))
+        using (var gz = new GZipStream(fs, CompressionLevel.Optimal))
+            gz.Write(edited, 0, edited.Length);
+        File.Copy(tmp, levelDat, overwrite: true);
+        File.Delete(tmp);
+        return newName;
+    }
+
     // --- NBT byte-scanning helpers (same minimal approach as WorldMetadataReader) ---
 
     /// <summary>Find a TAG_Byte value by its tag name. Returns the default when not found.</summary>

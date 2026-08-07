@@ -286,6 +286,60 @@ public sealed class GameContentBrowser
             Directory.Delete(worldPath, recursive: true);
     }
 
+    /// <summary>
+    /// Rename a world: edits the <c>Data.LevelName</c> tag in level.dat so the in-game name changes,
+    /// AND renames the on-disk save folder so the launcher's save list reflects it. When the desired
+    /// folder name is already taken, a numeric suffix is appended so the rename never clobbers an
+    /// existing world. Returns the absolute path of the renamed world directory.
+    /// </summary>
+    /// <remarks>The folder name is sanitized to a filesystem-safe segment (path separators and
+    /// reserved chars stripped) and deconflicted; the in-game LevelName is written verbatim.</remarks>
+    public string RenameWorld(string worldPath, string newDisplayName)
+    {
+        if (!Directory.Exists(worldPath))
+            throw new DirectoryNotFoundException($"World not found: {worldPath}");
+        if (string.IsNullOrWhiteSpace(newDisplayName))
+            throw new ArgumentException("New world name must not be empty.", nameof(newDisplayName));
+
+        string savesDir = Path.Combine(_mc.Root, "saves");
+        Directory.CreateDirectory(savesDir);
+
+        // First edit the in-game LevelName in level.dat (throws on missing tag → caller reports error).
+        NML.Core.Game.WorldSettingsManager.WriteLevelName(worldPath, newDisplayName);
+
+        // Derive a safe folder name. Worlds live under saves/<name>/.
+        string safeName = SanitizeFolderName(newDisplayName);
+        if (string.IsNullOrWhiteSpace(safeName)) safeName = "World";
+        string targetDir = Path.Combine(savesDir, safeName);
+        // Deconflict: never overwrite an existing, different world folder.
+        if (!string.Equals(NormalizePath(worldPath), NormalizePath(targetDir), StringComparison.OrdinalIgnoreCase))
+        {
+            int suffix = 1;
+            while (Directory.Exists(targetDir))
+            {
+                targetDir = Path.Combine(savesDir, $"{safeName} ({suffix++})");
+            }
+            Directory.Move(worldPath, targetDir);
+        }
+        return targetDir;
+    }
+
+    /// <summary>Strip characters that are illegal in Windows folder names, collapse to a single segment.</summary>
+    private static string SanitizeFolderName(string name)
+    {
+        var invalid = Path.GetInvalidFileNameChars();
+        var sb = new System.Text.StringBuilder(name.Length);
+        foreach (char c in name)
+        {
+            if (Array.IndexOf(invalid, c) >= 0) continue;
+            if (c == '/' || c == '\\') continue; // collapse path separators
+            sb.Append(c);
+        }
+        return sb.ToString().Trim().TrimEnd('.');
+    }
+
+    private static string NormalizePath(string p) => Path.GetFullPath(p).TrimEnd(Path.DirectorySeparatorChar);
+
     /// <summary>Delete a screenshot file.</summary>
     public void DeleteScreenshot(string screenshotPath)
     {

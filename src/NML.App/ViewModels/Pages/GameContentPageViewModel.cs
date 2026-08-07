@@ -301,6 +301,7 @@ public partial class GameContentPageViewModel : PageViewModelBase
                             DifficultyDisplay = settings.Difficulty,
                             // Seed the editable copies from the on-disk values so the detail-panel
                             // controls open showing the world's current settings (HMCL-style edit flow).
+                            EditableName = string.IsNullOrEmpty(s.DisplayName) ? s.Name : s.DisplayName,
                             EditableDifficulty = settings.Difficulty,
                             EditableKeepInventory = settings.IsRuleEnabled("keepInventory"),
                             EditableMobSpawning = settings.IsRuleEnabled("doMobSpawning"),
@@ -480,6 +481,33 @@ public partial class GameContentPageViewModel : PageViewModelBase
             // Refresh so DifficultyDisplay reflects the new value on the badge.
             Refresh();
             Status = $"world.settings_applied,{card.DisplayName}";
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    /// <summary>
+    /// Rename a world: rewrites the in-game LevelName in level.dat and renames the on-disk save
+    /// folder (deconflicted so it never clobbers an existing world). Bound to the detail-panel
+    /// rename box. Refreshes the save list afterwards so the new name + folder show up.
+    /// </summary>
+    [RelayCommand]
+    private void RenameWorld(WorldCardEntry card)
+    {
+        string newName = card.EditableName?.Trim() ?? string.Empty;
+        if (string.IsNullOrEmpty(newName)) { Status = "world.rename_empty"; return; }
+        if (string.Equals(newName, card.DisplayName, StringComparison.Ordinal))
+        {
+            Status = "world.rename_same";
+            return;
+        }
+        try
+        {
+            Instance? inst = GetActiveInstance();
+            if (inst is null) return;
+            var browser = new GameContentBrowser(new MinecraftDirectory(_instances.GameDirFor(inst.Name)));
+            browser.RenameWorld(card.Path, newName);
+            Refresh();
+            Status = $"world.renamed,{newName}";
         }
         catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
     }
@@ -1026,6 +1054,9 @@ public sealed class WorldCardEntry : ObservableObject
 
     /// <summary>Editable difficulty (bound to a ComboBox in the detail panel). One of: peaceful, easy, normal, hard.</summary>
     public string EditableDifficulty { get; set; } = "normal";
+
+    /// <summary>Editable world display name (bound to a TextBox in the detail panel). Seeded from LevelName on refresh.</summary>
+    public string EditableName { get; set; } = string.Empty;
 
     /// <summary>Editable keepInventory gamerule toggle (bound to a CheckBox in the detail panel).</summary>
     public bool EditableKeepInventory { get; set; }
