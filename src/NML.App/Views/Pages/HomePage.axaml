@@ -27,6 +27,9 @@
                                 IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}" Margin="0,0,6,4"/>
                         <Button Content="📦" Command="{Binding ExportInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"
                                 IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}" Margin="0,0,6,4"/>
+                        <Button Content="📂" Command="{Binding OpenGameDirCommand}" Classes="small"
+                                IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}" Margin="0,0,6,4"
+                                ToolTip.Tip="Open game directory"/>
                         <Button Content="🗑" Command="{Binding RemoveInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small danger"
                                 IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}" Margin="0,0,6,4"/>
                     </WrapPanel>
@@ -178,10 +181,13 @@
 
                         <!-- Memory -->
                         <StackPanel Spacing="6">
-                            <TextBlock Text="{loc:Loc 'home.memory'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"/>
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <TextBlock Text="{loc:Loc 'home.memory'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" VerticalAlignment="Center"/>
+                                <ComboBox ItemsSource="{Binding MemoryPresets}" SelectedItem="{Binding SelectedMemoryPreset}" MinWidth="120" FontSize="11"/>
+                            </StackPanel>
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <Slider Minimum="512" Maximum="{Binding SliderMax}" Value="{Binding SelectedMaxMemory}"
-                                        MinWidth="300" TickFrequency="512"/>
+                                        MinWidth="260" TickFrequency="512"/>
                                 <TextBlock Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12" VerticalAlignment="Center">
                                     <Run Text="{Binding SelectedMaxMemory}"/> <Run Text=" MB"/>
                                 </TextBlock>

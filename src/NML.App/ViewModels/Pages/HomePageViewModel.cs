@@ -492,10 +492,16 @@ public partial class HomePageViewModel : PageViewModelBase
             ConsoleOutput = string.Empty;
             Status = $"home.launched,{inst.VersionId},{process.Id}";
 
+            // HMCL-style: minimize the launcher after the game starts.
+            MinimizeLauncherWindow();
+
             await process.WaitForExitAsync();
             _processLauncher.GameOutputReceived -= OnGameOutput;
             Status = process.ExitCode != 0 ? $"home.crashed,{process.ExitCode}" : "home.clean_exit";
             if (process.ExitCode != 0) await DiagnoseCrashAsync(logFile);
+
+            // HMCL-style: restore the window when the game exits.
+            RestoreLauncherWindow();
         }
         catch (Exception ex)
         {
@@ -517,6 +523,78 @@ public partial class HomePageViewModel : PageViewModelBase
             Status = $"diagnosis|{d.Confidence}|{d.RootCause}";
         }
         catch (Exception ex) { _logger.LogWarning(ex, "Crash diagnosis failed."); }
+    }
+    private void MinimizeLauncherWindow()
+    {
+        try
+        {
+            if (Avalonia.Application.Current?.ApplicationLifetime
+                is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
+                && desktop.MainWindow is { } window)
+            {
+                Avalonia.Threading.Dispatcher.UIThread.Post(() => window.WindowState = Avalonia.Controls.WindowState.Minimized);
+            }
+        }
+        catch { /* non-fatal */ }
+    }
+
+    /// <summary>Restore the launcher window when the game exits.</summary>
+    private void RestoreLauncherWindow()
+    {
+        try
+        {
+            if (Avalonia.Application.Current?.ApplicationLifetime
+                is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
+                && desktop.MainWindow is { } window)
+            {
+                Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                {
+                    window.WindowState = Avalonia.Controls.WindowState.Normal;
+                    window.Activate();
+                });
+            }
+        }
+        catch { /* non-fatal */ }
+    }
+
+    /// <summary>Memory preset names for the quick-select dropdown (HMCL feature).</summary>
+    public IReadOnlyList<string> MemoryPresets { get; } = new[] { "Auto", "Low (1GB)", "Medium (4GB)", "High (8GB)", "Custom" };
+
+    [ObservableProperty] private string _selectedMemoryPreset = "Auto";
+
+    partial void OnSelectedMemoryPresetChanged(string value)
+    {
+        if (SelectedInstance is null) return;
+        int mb = value switch
+        {
+            "Low (1GB)" => 1024,
+            "Medium (4GB)" => 4096,
+            "High (8GB)" => 8192,
+            "Custom" => SelectedMaxMemory, // don't change
+            _ => (int)Math.Clamp((long)(SystemRamMb * 0.66), 1024, SliderMax), // Auto
+        };
+        if (value != "Custom")
+        {
+            SelectedMaxMemory = mb;
+            MarkOptionsDirty();
+        }
+    }
+
+    /// <summary>Open the selected instance's game directory in the file explorer (HMCL feature).</summary>
+    [RelayCommand]
+    private void OpenGameDir()
+    {
+        try
+        {
+            Instance? inst = SelectedInstance;
+            if (inst is null) return;
+            string gameDir = _instances.GameDirFor(inst);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(gameDir)
+            {
+                UseShellExecute = true,
+            });
+        }
+        catch { /* non-fatal */ }
     }
 
     /// <summary>

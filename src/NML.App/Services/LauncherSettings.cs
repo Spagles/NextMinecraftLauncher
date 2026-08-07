@@ -37,6 +37,12 @@ public sealed class LauncherSettings
 
     /// <summary>Launcher settings directory (where this file, instances.json, secrets live).</summary>
     public string SettingsDir { get; set; } = string.Empty;
+
+    /// <summary>Memory preset name: "auto", "low", "medium", "high", or "custom".</summary>
+    public string? MemoryPreset { get; set; }
+
+    /// <summary>Launch behavior: "normal" (stay open), "minimize" (minimize after launch), "close" (close after launch).</summary>
+    public string? LaunchBehavior { get; set; }
 }
 
 /// <summary>
