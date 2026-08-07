@@ -598,6 +598,68 @@ public partial class SettingsPageViewModel : PageViewModelBase
     /// <summary>True when a non-empty CurseForge key is entered (drives the "saved" indicator).</summary>
     public bool HasCurseForgeKey => !string.IsNullOrWhiteSpace(CurseForgeApiKey);
     partial void OnCurseForgeApiKeyChanged(string value) => OnPropertyChanged(nameof(HasCurseForgeKey));
+
+    /// <summary>
+    /// Export the current look (theme variant + accent + font scale + custom CSS) as a portable
+    /// JSON preset on the desktop, so it can be backed up or shared (HMCL-style theme files).
+    /// </summary>
+    [RelayCommand]
+    private void ExportThemePreset()
+    {
+        try
+        {
+            string desktop = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
+            string stamp = DateTime.Now.ToString("yyyyMMdd-HHmmss");
+            string path = System.IO.Path.Combine(desktop, $"nml-theme-{stamp}.json");
+            var preset = new NML.Core.Theming.ThemePreset
+            {
+                Name = $"Theme {stamp}",
+                Theme = Theme,
+                Accent = AccentColor,
+                FontScale = FontScale,
+                CustomCss = CustomCss,
+            };
+            NML.Core.Theming.ThemePresetSerializer.Export(preset, path);
+            Status = $"Theme exported: {path}";
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    /// <summary>Open an OS file-picker to choose a theme preset JSON, then apply it live.</summary>
+    [RelayCommand]
+    private async Task ImportThemePresetAsync()
+    {
+        try
+        {
+            if (Avalonia.Application.Current?.ApplicationLifetime
+                is not Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
+                || desktop.MainWindow is null) return;
+            var files = await desktop.MainWindow.StorageProvider.OpenFilePickerAsync(new Avalonia.Platform.Storage.FilePickerOpenOptions
+            {
+                Title = "Import theme preset",
+                AllowMultiple = false,
+                FileTypeFilter = new[]
+                {
+                    new Avalonia.Platform.Storage.FilePickerFileType("Theme preset") { Patterns = new[] { "*.json" } },
+                },
+            });
+            if (files.Count == 0) return;
+
+            var preset = NML.Core.Theming.ThemePresetSerializer.Import(files[0].Path.LocalPath);
+            // Apply the imported look live (mirrors the per-field setters).
+            Theme = preset.Theme;
+            AccentColor = preset.Accent;
+            FontScale = preset.FontScale;
+            if (!string.IsNullOrWhiteSpace(preset.CustomCss))
+            {
+                CustomCss = preset.CustomCss;
+                ApplyCustomCss();
+            }
+            PersistSettings();
+            Status = $"Theme imported: {preset.Name}";
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
 }
 
 internal static class ProviderRecordCopy
