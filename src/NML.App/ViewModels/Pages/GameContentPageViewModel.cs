@@ -303,6 +303,7 @@ public partial class GameContentPageViewModel : PageViewModelBase
                             // controls open showing the world's current settings (HMCL-style edit flow).
                             EditableName = string.IsNullOrEmpty(s.DisplayName) ? s.Name : s.DisplayName,
                             EditableDifficulty = settings.Difficulty,
+                            EditableGameType = settings.GameType ?? "survival",
                             EditableKeepInventory = settings.IsRuleEnabled("keepInventory"),
                             EditableMobSpawning = settings.IsRuleEnabled("doMobSpawning"),
                             EditableFireTick = settings.IsRuleEnabled("doFireTick"),
@@ -469,6 +470,7 @@ public partial class GameContentPageViewModel : PageViewModelBase
             var settings = new NML.Core.Game.WorldSettings
             {
                 Difficulty = card.EditableDifficulty,
+                GameType = card.EditableGameType,
                 GameRules = new Dictionary<string, string>
                 {
                     ["keepInventory"] = card.EditableKeepInventory.ToString().ToLowerInvariant(),
@@ -1054,6 +1056,9 @@ public sealed class WorldCardEntry : ObservableObject
 
     /// <summary>Editable difficulty (bound to a ComboBox in the detail panel). One of: peaceful, easy, normal, hard.</summary>
     public string EditableDifficulty { get; set; } = "normal";
+
+    /// <summary>Editable game mode: survival/creative/adventure/spectator.</summary>
+    public string EditableGameType { get; set; } = "survival";
 
     /// <summary>Editable world display name (bound to a TextBox in the detail panel). Seeded from LevelName on refresh.</summary>
     public string EditableName { get; set; } = string.Empty;

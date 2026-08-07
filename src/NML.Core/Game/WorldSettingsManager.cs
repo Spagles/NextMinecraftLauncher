@@ -30,8 +30,25 @@ public static class WorldSettingsManager
         "mobGriefing", "doWeatherCycle", "naturalRegeneration", "showDeathMessages",
     };
 
-    /// <summary>Read the difficulty (as a name) and the toggleable gamerules from a world dir's
-    /// level.dat. Returns defaults when the file is missing or unreadable.</summary>
+    /// <summary>GameType names ↔ int values (Mojang's GameType constants, stored as Data.GameType).</summary>
+    public static readonly IReadOnlyDictionary<string, int> GameTypeValues = new Dictionary<string, int>
+    {
+        { "survival", 0 }, { "creative", 1 }, { "adventure", 2 }, { "spectator", 3 },
+    };
+
+    /// <summary>Convert a GameType int (0–3) to its name; unknown → "survival".</summary>
+    public static string GameTypeName(int value) => value switch
+    {
+        0 => "survival", 1 => "creative", 2 => "adventure", 3 => "spectator", _ => "survival",
+    };
+
+    /// <summary>Convert a GameType name to its int value; unknown → 0 (survival).</summary>
+    public static int GameTypeInt(string name)
+        => GameTypeValues.TryGetValue((name ?? "").ToLowerInvariant(), out int v) ? v : 0;
+
+    /// <summary>Read the difficulty (as a name), GameType (survival/creative/...), and the
+    /// toggleable gamerules from a world dir's level.dat. Returns defaults when the file is
+    /// missing or unreadable.</summary>
     public static WorldSettings Read(string worldDir)
     {
         string levelDat = Path.Combine(worldDir, "level.dat");
@@ -46,13 +63,14 @@ public static class WorldSettingsManager
             byte[] nbt = ms.ToArray();
 
             byte diff = FindByteTag(nbt, "Difficulty", (byte)2);
+            int gameType = FindIntTag(nbt, "GameType", 0);
             var rules = new Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
             foreach (string rule in ToggleableRules)
             {
                 string? value = FindStringTag(nbt, rule);
                 if (value is not null) rules[rule] = value;
             }
-            return new WorldSettings(DifficultyName(diff), rules);
+            return new WorldSettings(DifficultyName(diff), GameTypeName(gameType), rules);
         }
         catch
         {
@@ -71,11 +89,12 @@ public static class WorldSettingsManager
         => DifficultyValues.TryGetValue(name.ToLowerInvariant(), out byte b) ? b : (byte)2;
 
     /// <summary>
-    /// Persist a difficulty change + a set of gamerule toggles back into the world's level.dat,
-    /// editing the NBT in place (no full re-serialization) so every other tag — SpawnPoint,
-    /// Player, Version, RandomSeed, etc. — is preserved byte-for-byte. The file is gzip-compressed
-    /// NBT; we decompress, edit, recompress, and write atomically (level.dat.tmp → replace).
-    /// Unknown/absent tags are skipped (we only touch the ones we can find).
+    /// Persist a difficulty change, a GameType change (survival/creative/adventure/spectator), and a
+    /// set of gamerule toggles back into the world's level.dat, editing the NBT in place (no full
+    /// re-serialization) so every other tag — SpawnPoint, Player, Version, RandomSeed, etc. — is
+    /// preserved byte-for-byte. The file is gzip-compressed NBT; we decompress, edit, recompress, and
+    /// write atomically (level.dat.tmp → replace). Unknown/absent tags are skipped (we only touch the
+    /// ones we can find).
     /// </summary>
     /// <returns>The <see cref="WorldSettings"/> as they now appear on disk (a fresh read-back).</returns>
     public static WorldSettings Write(string worldDir, WorldSettings settings)
@@ -97,6 +116,12 @@ public static class WorldSettingsManager
         // --- Difficulty: a TAG_Byte whose value is exactly one byte → safe in-place overwrite. ---
         byte diffByte = DifficultyByte(settings.Difficulty);
         nbt = ReplaceByteTag(nbt, "Difficulty", diffByte);
+
+        // --- GameType: a TAG_Int (4-byte big-endian) — fixed size, safe in-place overwrite. ---
+        if (settings.GameType is not null)
+        {
+            nbt = ReplaceIntTag(nbt, "GameType", GameTypeInt(settings.GameType));
+        }
 
         // --- GameRules: each rule is a TAG_String whose value may be "true"(4) or "false"(5). ---
         // Only touch the rules the caller actually supplied (so editing one rule never silently
@@ -223,6 +248,52 @@ public static class WorldSettingsManager
         return nbt; // tag not found → leave untouched
     }
 
+    /// <summary>Find a TAG_Int (id 0x03) value by its tag name. Returns the default when not found.</summary>
+    private static int FindIntTag(byte[] nbt, string tagName, int defaultValue)
+    {
+        int off = FindFixedTagValueOffset(nbt, tagName, 0x03);
+        if (off < 0 || off + 4 > nbt.Length) return defaultValue;
+        // 4-byte big-endian.
+        return (nbt[off] << 24) | (nbt[off + 1] << 16) | (nbt[off + 2] << 8) | nbt[off + 3];
+    }
+
+    /// <summary>
+    /// Replace the value of a named TAG_Int in place. An int is always exactly 4 bytes, so the NBT
+    /// layout never shifts — we overwrite the four value bytes (big-endian) after the name. When the
+    /// tag isn't found the buffer is returned unchanged.
+    /// </summary>
+    private static byte[] ReplaceIntTag(byte[] nbt, string tagName, int newValue)
+    {
+        int off = FindFixedTagValueOffset(nbt, tagName, 0x03);
+        if (off < 0 || off + 4 > nbt.Length) return nbt;
+        nbt[off] = (byte)((newValue >> 24) & 0xFF);
+        nbt[off + 1] = (byte)((newValue >> 16) & 0xFF);
+        nbt[off + 2] = (byte)((newValue >> 8) & 0xFF);
+        nbt[off + 3] = (byte)(newValue & 0xFF);
+        return nbt;
+    }
+
+    /// <summary>
+    /// Locate the value offset (into the decompressed NBT byte buffer) of a fixed-size tag by name:
+    /// the byte immediately after [tagId(1)][name length(2)][name bytes]. Used by both the TAG_Byte
+    /// and TAG_Int read/replace paths. Returns -1 when the tag isn't present.
+    /// </summary>
+    private static int FindFixedTagValueOffset(byte[] nbt, string tagName, byte tagId)
+    {
+        byte[] needle = Encoding.ASCII.GetBytes(tagName);
+        for (int i = 1; i < nbt.Length - needle.Length - 3; i++)
+        {
+            if (nbt[i] != tagId) continue;
+            if (nbt[i + 1] != 0x00 || nbt[i + 2] != needle.Length) continue;
+            bool match = true;
+            for (int j = 0; j < needle.Length; j++)
+                if (nbt[i + 3 + j] != needle[j]) { match = false; break; }
+            if (!match) continue;
+            return i + 3 + needle.Length;
+        }
+        return -1;
+    }
+
     /// <summary>
     /// Replace the value of a named TAG_String. Because the new value may have a different length
     /// than the old (e.g. "true"(4) vs "false"(5) when toggling a gamerule), this rebuilds the
@@ -271,16 +342,25 @@ public static class WorldSettingsManager
     }
 }
 
-/// <summary>The read difficulty + gamerules from a world's level.dat.</summary>
+/// <summary>The read difficulty + GameType + gamerules from a world's level.dat.</summary>
 public sealed record WorldSettings
 {
     public string Difficulty { get; init; } = "normal";
+
+    /// <summary>Game mode: survival/creative/adventure/spectator, or null when not yet read/edited.</summary>
+    public string? GameType { get; init; }
+
     public IReadOnlyDictionary<string, string> GameRules { get; init; } = new Dictionary<string, string>();
 
     public WorldSettings() { }
+
     public WorldSettings(string difficulty, IReadOnlyDictionary<string, string> gameRules)
+        : this(difficulty, gameType: null, gameRules) { }
+
+    public WorldSettings(string difficulty, string? gameType, IReadOnlyDictionary<string, string> gameRules)
     {
         Difficulty = difficulty;
+        GameType = gameType;
         GameRules = gameRules ?? new Dictionary<string, string>();
     }
 

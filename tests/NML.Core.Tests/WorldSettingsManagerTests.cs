@@ -12,11 +12,15 @@ namespace NML.Core.Tests;
 public class WorldSettingsManagerTests
 {
     private static string MakeLevelDat(byte difficulty, params (string Rule, string Value)[] gamerules)
+        => MakeLevelDat(difficulty, gameType: 0, gamerules);
+
+    /// <summary>Build a level.dat carrying Difficulty (TAG_Byte), GameType (TAG_Int), and gamerules.</summary>
+    private static string MakeLevelDat(byte difficulty, int gameType, params (string Rule, string Value)[] gamerules)
     {
         string worldDir = Path.Combine(Path.GetTempPath(), "nml-ws-" + Guid.NewGuid().ToString("N")[..8]);
         Directory.CreateDirectory(worldDir);
 
-        // Build a minimal NBT: TAG_Compound root → Data compound → Difficulty byte + GameRules compound.
+        // Build a minimal NBT: TAG_Compound root → Data compound → Difficulty byte + GameType int + GameRules compound.
         using var body = new MemoryStream();
         // Root: TAG_Compound (10) + empty name (len=0).
         body.WriteByte(10); body.WriteByte(0); body.WriteByte(0);
@@ -25,6 +29,12 @@ public class WorldSettingsManagerTests
         // Difficulty: TAG_Byte (1) + name "Difficulty" + value.
         WriteName(body, 1, "Difficulty");
         body.WriteByte(difficulty);
+        // GameType: TAG_Int (3) + name "GameType" + 4-byte big-endian value.
+        WriteName(body, 3, "GameType");
+        body.WriteByte((byte)((gameType >> 24) & 0xFF));
+        body.WriteByte((byte)((gameType >> 16) & 0xFF));
+        body.WriteByte((byte)((gameType >> 8) & 0xFF));
+        body.WriteByte((byte)(gameType & 0xFF));
         // GameRules: TAG_Compound (10) + name "GameRules".
         WriteName(body, 10, "GameRules");
         foreach (var (rule, value) in gamerules)
@@ -260,5 +270,116 @@ public class WorldSettingsManagerTests
             WorldSettingsManager.Read(dir).Difficulty.Should().Be("normal");
         }
         finally { Directory.Delete(dir, recursive: true); }
+    }
+
+    // ===== GameType (TAG_Int) read + write round-trip =====
+
+    [Theory]
+    [InlineData(0, "survival")]
+    [InlineData(1, "creative")]
+    [InlineData(2, "adventure")]
+    [InlineData(3, "spectator")]
+    public void Read_Extracts_GameType(int gameTypeByte, string expectedName)
+    {
+        string dir = MakeLevelDat(2, gameTypeByte);
+        try
+        {
+            WorldSettingsManager.Read(dir).GameType.Should().Be(expectedName);
+        }
+        finally { Directory.Delete(dir, recursive: true); }
+    }
+
+    [Theory]
+    [InlineData("survival", "creative")]
+    [InlineData("spectator", "survival")]
+    [InlineData("adventure", "spectator")]
+    public void Write_Persists_GameType_Change_And_Round_Trips(string from, string to)
+    {
+        string dir = MakeLevelDat(2, WorldSettingsManager.GameTypeInt(from));
+        try
+        {
+            WorldSettingsManager.Read(dir).GameType.Should().Be(from, "precondition");
+            WorldSettingsManager.Write(dir, new WorldSettings { Difficulty = "normal", GameType = to });
+            WorldSettingsManager.Read(dir).GameType.Should().Be(to, "the GameType change must persist");
+        }
+        finally { Directory.Delete(dir, recursive: true); }
+    }
+
+    [Theory]
+    [InlineData("survival", 0)]
+    [InlineData("creative", 1)]
+    [InlineData("adventure", 2)]
+    [InlineData("spectator", 3)]
+    [InlineData("unknown", 0)] // unknown → survival (0)
+    public void GameTypeInt_Converts_Name_To_Value(string name, int expected)
+        => WorldSettingsManager.GameTypeInt(name).Should().Be(expected);
+
+    [Theory]
+    [InlineData(0, "survival")]
+    [InlineData(1, "creative")]
+    [InlineData(2, "adventure")]
+    [InlineData(3, "spectator")]
+    [InlineData(99, "survival")] // unknown → survival
+    public void GameTypeName_Converts_Value_To_Name(int value, string expected)
+        => WorldSettingsManager.GameTypeName(value).Should().Be(expected);
+
+    [Fact]
+    public void Write_GameType_Does_Not_Disturb_Difficulty_Or_Gamerules()
+    {
+        // Editing GameType (TAG_Int) must not disturb Difficulty (TAG_Byte) or a gamerule that sit
+        // near it in the NBT — the in-place 4-byte overwrite must land on exactly the GameType value.
+        string dir = MakeLevelDat(3 /* hard */, gameType: 1 /* creative */, ("keepInventory", "true"));
+        try
+        {
+            WorldSettingsManager.Write(dir, new WorldSettings
+            {
+                Difficulty = "hard", // unchanged
+                GameType = "spectator",
+                GameRules = new Dictionary<string, string> { ["keepInventory"] = "true" } // unchanged
+            });
+            var after = WorldSettingsManager.Read(dir);
+            after.GameType.Should().Be("spectator");
+            after.Difficulty.Should().Be("hard", "difficulty must survive the GameType edit");
+            after.IsRuleEnabled("keepInventory").Should().BeTrue("gamerule must survive the GameType edit");
+        }
+        finally { Directory.Delete(dir, recursive: true); }
+    }
+
+    [Fact]
+    public void Write_GameType_Preserves_Big_Endian_Byte_Order()
+    {
+        // The TAG_Int is 4-byte big-endian; writing spectator (3) must produce [0,0,0,3], not a
+        // little-endian [3,0,0,0] that would misread as a huge negative number. Verify by round trip.
+        string dir = MakeLevelDat(0, gameType: 0);
+        try
+        {
+            WorldSettingsManager.Write(dir, new WorldSettings { Difficulty = "normal", GameType = "spectator" });
+            // Read raw NBT back and confirm the 4 bytes after "GameType" are big-endian 3.
+            using var fs = File.OpenRead(Path.Combine(dir, "level.dat"));
+            using var gz = new GZipStream(fs, CompressionMode.Decompress);
+            using var ms = new MemoryStream();
+            gz.CopyTo(ms);
+            byte[] nbt = ms.ToArray();
+            int off = FindGameTypeOffset(nbt);
+            off.Should().BeGreaterThan(0);
+            (nbt[off], nbt[off + 1], nbt[off + 2], nbt[off + 3])
+                .Should().Be((0, 0, 0, 3), "spectator is big-endian int 3");
+        }
+        finally { Directory.Delete(dir, recursive: true); }
+    }
+
+    private static int FindGameTypeOffset(byte[] nbt)
+    {
+        byte[] needle = Encoding.ASCII.GetBytes("GameType");
+        for (int i = 1; i < nbt.Length - needle.Length - 7; i++)
+        {
+            if (nbt[i] != 0x03) continue; // TAG_Int id
+            if (nbt[i + 1] != 0x00 || nbt[i + 2] != needle.Length) continue;
+            bool match = true;
+            for (int j = 0; j < needle.Length; j++)
+                if (nbt[i + 3 + j] != needle[j]) { match = false; break; }
+            if (match) return i + 3 + needle.Length;
+        }
+        return -1;
     }
 }
