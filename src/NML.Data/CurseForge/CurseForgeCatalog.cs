@@ -22,21 +22,40 @@ public sealed class CurseForgeCatalog : IModCatalog, ICurseForgeFileResolver
     private readonly IHttpFetcher _http;
     private readonly string _apiKey;
     private readonly ILogger<CurseForgeCatalog> _logger;
+    private readonly Lazy<HttpClient> _apiClient;
 
-    public CurseForgeCatalog(IHttpFetcher http, string apiKey, ILogger<CurseForgeCatalog> logger)
+    /// <param name="http">Reserved for callers that still inject the shared fetcher (not used by the
+    /// catalog endpoints today, but kept so DI resolution shape stays stable).</param>
+    /// <param name="apiKey">The CurseForge API key (required).</param>
+    /// <param name="logger"></param>
+    /// <param name="handler">Optional <see cref="HttpMessageHandler"/> override — tests inject a
+    /// fake handler so the catalog can be exercised off-network; production passes null (default OS handler).</param>
+    public CurseForgeCatalog(IHttpFetcher http, string apiKey, ILogger<CurseForgeCatalog> logger,
+        HttpMessageHandler? handler = null)
     {
         if (string.IsNullOrWhiteSpace(apiKey))
             throw new ArgumentException("CurseForge requires an API key.", nameof(apiKey));
         _http = http;
         _apiKey = apiKey;
         _logger = logger;
+        // A dedicated HttpClient with the x-api-key default header — every catalog endpoint
+        // (search/get-project/get-files) goes through this so the key is always sent. The modpack
+        // resolver builds its own client too (ResolveModpackFilesAsync); both are consistent.
+        _apiClient = new Lazy<HttpClient>(() =>
+        {
+            var c = handler is null ? new HttpClient() : new HttpClient(handler);
+            c.DefaultRequestHeaders.Add("x-api-key", _apiKey);
+            c.DefaultRequestHeaders.Accept.Add(
+                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            c.Timeout = handler is null ? TimeSpan.FromSeconds(30) : Timeout.InfiniteTimeSpan;
+            return c;
+        });
     }
 
     public ModCatalogKind Kind => ModCatalogKind.CurseForge;
 
-    // Note: the production IHttpFetcher would need to inject the x-api-key header.
-    // For simplicity this implementation assumes the underlying HttpClient has the key
-    // configured; if not, callers should use the Modrinth catalog (no key needed).
+    // Every catalog endpoint sends x-api-key via the dedicated client (built in the ctor). The
+    // shared IHttpFetcher is no longer used for these calls — it has no CurseForge key configured.
 
     public async Task<IReadOnlyList<ModSearchResult>> SearchAsync(
         string query, string? gameVersion = null, ModLoader? loader = null,
@@ -53,7 +72,7 @@ public sealed class CurseForgeCatalog : IModCatalog, ICurseForgeFileResolver
             qs["modLoaderType"] = LoaderInt(loader.Value).ToString();
 
         string url = $"{BaseUrl}/mods/search?{qs}";
-        string json = await _http.GetStringAsync(url, ct);
+        string json = await _apiClient.Value.GetStringAsync(url, ct);
         using var doc = JsonDocument.Parse(json);
         var data = doc.RootElement.GetProperty("data");
 
@@ -82,12 +101,13 @@ public sealed class CurseForgeCatalog : IModCatalog, ICurseForgeFileResolver
     public async Task<ModProject?> GetProjectAsync(string projectId, CancellationToken ct = default)
     {
         string url = $"{BaseUrl}/mods/{projectId}";
-        string json;
-        try { json = await _http.GetStringAsync(url, ct); }
-        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-        {
-            return null;
-        }
+        HttpResponseMessage resp;
+        try { resp = await _apiClient.Value.GetAsync(url, ct); }
+        catch (HttpRequestException) { return null; }
+        if (resp.StatusCode == System.Net.HttpStatusCode.NotFound) { resp.Dispose(); return null; }
+        resp.EnsureSuccessStatusCode();
+        string json = await resp.Content.ReadAsStringAsync(ct);
+        resp.Dispose();
         using var doc = JsonDocument.Parse(json);
         JsonElement m = doc.RootElement.GetProperty("data");
         return new ModProject
@@ -109,7 +129,7 @@ public sealed class CurseForgeCatalog : IModCatalog, ICurseForgeFileResolver
         qs["modLoaderType"] = LoaderInt(loader).ToString();
 
         string url = $"{BaseUrl}/mods/{projectId}/files?{qs}";
-        string json = await _http.GetStringAsync(url, ct);
+        string json = await _apiClient.Value.GetStringAsync(url, ct);
         using var doc = JsonDocument.Parse(json);
         var data = doc.RootElement.GetProperty("data");
 

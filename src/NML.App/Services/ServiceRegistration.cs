@@ -148,13 +148,20 @@ public static class ServiceRegistration
         // --- Mod catalogs + recommender ---
         services.AddSingleton<NML.Data.Modrinth.ModrinthCatalog>();
         services.AddSingleton<NML.Data.IModCatalog>(sp => sp.GetRequiredService<NML.Data.Modrinth.ModrinthCatalog>());
-        // CurseForge needs an API key; register lazily (null if no key configured).
+        // CurseForge needs a user-supplied API key. Read it from the secret store (DPAPI-protected);
+        // when absent, register null so the UI falls back to Modrinth. The key is entered on the
+        // Settings page and persisted via SettingsPageViewModel.SaveCurseForgeKeyAsync.
         services.AddSingleton<NML.Data.CurseForge.CurseForgeCatalog>(sp =>
         {
             var fetcher = sp.GetRequiredService<IHttpFetcher>();
-            // For MVP, use an empty key — CurseForge search will fail gracefully and the UI
-            // falls back to Modrinth. A real deployment would read the key from settings.
-            try { return new NML.Data.CurseForge.CurseForgeCatalog(fetcher, "", Microsoft.Extensions.Logging.Abstractions.NullLogger<NML.Data.CurseForge.CurseForgeCatalog>.Instance); }
+            try
+            {
+                string? key = sp.GetRequiredService<NML.AICore.Secrets.ISecretStore>()
+                    .GetAsync(NML.App.ViewModels.Pages.SettingsPageViewModel.CurseForgeKeySecret).GetAwaiter().GetResult();
+                if (string.IsNullOrWhiteSpace(key)) return null!;
+                return new NML.Data.CurseForge.CurseForgeCatalog(fetcher, key!,
+                    Microsoft.Extensions.Logging.Abstractions.NullLogger<NML.Data.CurseForge.CurseForgeCatalog>.Instance);
+            }
             catch { return null!; }
         });
         services.AddTransient<ModRecommenderFactory>();

@@ -197,6 +197,13 @@ public partial class SettingsPageViewModel : PageViewModelBase
     [ObservableProperty] private bool _isCheckingUpdate;
     private readonly UpdateChecker? _updateChecker;
     private readonly NML.Core.Download.IHttpFetcher? _httpFetcher;
+    private readonly NML.AICore.Secrets.ISecretStore? _secrets;
+
+    /// <summary>The secret-store key under which the CurseForge API key is persisted (DPAPI-protected).</summary>
+    public const string CurseForgeKeySecret = "catalog:curseforge";
+
+    /// <summary>User-entered CurseForge API key (shown masked in the UI; persisted via ISecretStore).</summary>
+    [ObservableProperty] private string _curseForgeApiKey = string.Empty;
 
     /// <summary>Available theme choices for the dropdown.</summary>
     public IReadOnlyList<string> ThemeChoices { get; } = new[] { "dark", "light", "system" };
@@ -315,7 +322,8 @@ public partial class SettingsPageViewModel : PageViewModelBase
         ILogger<SettingsPageViewModel> logger,
         UpdateChecker? updateChecker = null,
         NML.Core.Java.JavaRuntimeInstaller? javaInstaller = null,
-        NML.Core.Download.IHttpFetcher? httpFetcher = null)
+        NML.Core.Download.IHttpFetcher? httpFetcher = null,
+        NML.AICore.Secrets.ISecretStore? secretStore = null)
     {
         _settings = settings;
         _probe = probe;
@@ -325,6 +333,7 @@ public partial class SettingsPageViewModel : PageViewModelBase
         _updateChecker = updateChecker;
         _javaInstaller = javaInstaller;
         _httpFetcher = httpFetcher;
+        _secrets = secretStore;
         EnsureLanguageSubscribed();
 
         // Populate the language picker from the registered cultures.
@@ -336,6 +345,10 @@ public partial class SettingsPageViewModel : PageViewModelBase
         DownloadMirrorUrl = s.DownloadMirrorUrl ?? string.Empty;
         FontScale = s.FontScale ?? 1.0;
         CheckForUpdatesOnStartup = s.CheckForUpdatesOnStartup ?? true;
+
+        // Load the saved CurseForge API key from the secret store (DPAPI-protected), if any.
+        try { CurseForgeApiKey = _secrets?.GetAsync(CurseForgeKeySecret).GetAwaiter().GetResult() ?? string.Empty; }
+        catch { CurseForgeApiKey = string.Empty; }
         BackgroundImagePath = s.BackgroundImagePath ?? string.Empty;
         AccentColor = s.AccentColor ?? "#4fc3f7";
         Theme = s.Theme ?? "dark";
@@ -537,6 +550,36 @@ public partial class SettingsPageViewModel : PageViewModelBase
         }
         catch { /* non-fatal */ }
     }
+
+    /// <summary>
+    /// Persist the entered CurseForge API key to the secret store (DPAPI-protected on Windows) so the
+    /// CurseForge mod catalog becomes functional. After saving, the next launcher restart wires the
+    /// key into the catalog via DI. Empty input clears the stored key (disables CurseForge).
+    /// </summary>
+    [RelayCommand]
+    private async Task SaveCurseForgeKeyAsync()
+    {
+        if (_secrets is null) { Status = "common.error"; return; }
+        try
+        {
+            string key = CurseForgeApiKey?.Trim() ?? string.Empty;
+            if (string.IsNullOrEmpty(key))
+            {
+                await _secrets.DeleteAsync(CurseForgeKeySecret);
+                Status = "curseforge.key_cleared";
+            }
+            else
+            {
+                await _secrets.SetAsync(CurseForgeKeySecret, key);
+                Status = "curseforge.key_saved";
+            }
+        }
+        catch (Exception ex) { Status = $"common.error,{ex.Message}"; }
+    }
+
+    /// <summary>True when a non-empty CurseForge key is entered (drives the "saved" indicator).</summary>
+    public bool HasCurseForgeKey => !string.IsNullOrWhiteSpace(CurseForgeApiKey);
+    partial void OnCurseForgeApiKeyChanged(string value) => OnPropertyChanged(nameof(HasCurseForgeKey));
 }
 
 internal static class ProviderRecordCopy

@@ -160,6 +160,22 @@
                           Margin="0,6,0,0"/>
             </StackPanel>
 
+            <!-- CurseForge API key (enables CurseForge mod search/browse) -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="CurseForge" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
+                <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}">
+                    Enter a CurseForge API key (from the curseforge.com developer console) to search and install CurseForge mods.
+                </TextBlock>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBox Text="{Binding CurseForgeApiKey}" MinWidth="320" Watermark="$2a$10$... API key"/>
+                    <Button Content="Save" Command="{Binding SaveCurseForgeKeyCommand}" Classes="small"/>
+                    <TextBlock Text="{Binding HasCurseForgeKey, StringFormat='key set: {0}'}"
+                               Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" FontSize="12"/>
+                </StackPanel>
+                <TextBlock Text="Restart the launcher after saving to apply the key to the mod browser."
+                           FontSize="10" Foreground="{DynamicResource TextMutedBrush}" FontStyle="Italic"/>
+            </StackPanel>
+
             <!-- AI -->
             <StackPanel Spacing="8">
                 <TextBlock Text="{loc:Loc 'settings.ai'}" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
