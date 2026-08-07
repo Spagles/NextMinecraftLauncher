@@ -47,6 +47,7 @@ public partial class HomePageViewModel : PageViewModelBase
     private readonly Core.Modloaders.ForgeInstaller? _forgeInstaller;
     private readonly Core.Modloaders.NeoForgeInstaller? _neoForgeInstaller;
     private readonly Core.Modloaders.OptiFineInstaller? _optifineInstaller;
+    private readonly Core.Modloaders.LiteLoaderInstaller? _liteloaderInstaller;
     private readonly ILogger<HomePageViewModel> _logger;
 
     /// <summary>Available sort modes for the instance list.</summary>
@@ -94,7 +95,7 @@ public partial class HomePageViewModel : PageViewModelBase
     [ObservableProperty] private string _importModpackPath = string.Empty;
 
     /// <summary>Available modloaders for the wizard dropdown.</summary>
-    public IReadOnlyList<string> ModloaderChoices { get; } = new[] { "None", "Fabric", "Quilt", "Forge", "NeoForge", "OptiFine" };
+    public IReadOnlyList<string> ModloaderChoices { get; } = new[] { "None", "Fabric", "Quilt", "Forge", "NeoForge", "OptiFine", "LiteLoader" };
 
     /// <summary>Live game console output (stdout+stderr) as a raw string (for export + the unfiltered record).</summary>
     [ObservableProperty] private string _consoleOutput = string.Empty;
@@ -478,7 +479,8 @@ public partial class HomePageViewModel : PageViewModelBase
         Core.Modloaders.QuiltInstaller? quiltInstaller = null,
         Core.Modloaders.ForgeInstaller? forgeInstaller = null,
         Core.Modloaders.NeoForgeInstaller? neoForgeInstaller = null,
-        Core.Modloaders.OptiFineInstaller? optifineInstaller = null)
+        Core.Modloaders.OptiFineInstaller? optifineInstaller = null,
+        Core.Modloaders.LiteLoaderInstaller? liteloaderInstaller = null)
     {
         _manifest = manifest;
         _vanillaInstaller = vanillaInstaller;
@@ -499,6 +501,7 @@ public partial class HomePageViewModel : PageViewModelBase
         _forgeInstaller = forgeInstaller;
         _neoForgeInstaller = neoForgeInstaller;
         _optifineInstaller = optifineInstaller;
+        _liteloaderInstaller = liteloaderInstaller;
         _logger = logger;
         EnsureLanguageSubscribed();
         Status = "home.status_ready";
@@ -1065,6 +1068,7 @@ public partial class HomePageViewModel : PageViewModelBase
                     "Forge" => await InstallForgeAsync(versionId, mc),
                     "NeoForge" => await InstallNeoForgeAsync(versionId, mc),
                     "OptiFine" => await InstallOptiFineAsync(versionId, mc),
+                    "LiteLoader" => await InstallLiteLoaderAsync(versionId, mc),
                     _ => null,
                 };
             }
@@ -1154,6 +1158,16 @@ public partial class HomePageViewModel : PageViewModelBase
         string installerCacheDir = System.IO.Path.Combine(mc.Root, "cache", "optifine");
         return await _optifineInstaller.InstallAsync(versionId, latest.Type, latest.Patch,
             installerCacheDir, java.ExecutablePath, mc);
+    }
+
+    /// <summary>Install the latest LiteLoader for <paramref name="versionId"/> (legacy loader, ≤ 1.12.2).</summary>
+    private async Task<string?> InstallLiteLoaderAsync(string versionId, MinecraftDirectory mc)
+    {
+        if (_liteloaderInstaller is null) return null;
+        var versions = await _liteloaderInstaller.ListVersionsAsync(versionId);
+        var latest = versions.FirstOrDefault();
+        if (latest is null) return null;
+        return await _liteloaderInstaller.InstallAsync(latest, mc);
     }
 
     /// <summary>Delete ALL instances (with no confirmation in the MVP — use carefully).</summary>

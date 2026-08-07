@@ -66,6 +66,7 @@ public static class ServiceRegistration
         services.AddSingleton<ForgeInstaller>();
         services.AddSingleton<NeoForgeInstaller>();
         services.AddSingleton<OptiFineInstaller>();
+        services.AddSingleton<LiteLoaderInstaller>();
 
         // --- Auth ---
         services.AddSingleton<IOfflineAuthProvider, OfflineAuthProvider>();

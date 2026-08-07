@@ -24,7 +24,7 @@ public static class ModloaderCompatibilityChecker
 {
     /// <summary>Known modloader identifiers.</summary>
     public const string Fabric = "fabric", Quilt = "quilt", Forge = "forge",
-                         NeoForge = "neoforge", OptiFine = "optifine", Vanilla = "vanilla";
+                         NeoForge = "neoforge", OptiFine = "optifine", LiteLoader = "liteloader", Vanilla = "vanilla";
 
     /// <summary>Check compatibility. Returns a result with OK + reason.</summary>
     public static ModloaderCompatibility Check(string modloader, string loaderVersion, string gameVersion)
@@ -46,8 +46,22 @@ public static class ModloaderCompatibilityChecker
             Forge => CheckForge(loaderVersion, gameVersion),
             NeoForge => CheckNeoForge(loaderVersion, gameVersion),
             OptiFine => CheckOptiFine(loaderVersion, gameVersion),
+            LiteLoader => CheckLiteLoader(loaderVersion, gameVersion),
             _ => new ModloaderCompatibility(true, ModloaderCompatibilityReason.None, string.Empty), // unknown → assume OK
         };
+    }
+
+    /// <summary>LiteLoader: only available for Minecraft ≤ 1.12.2 (last official release). It is
+    /// version-bound — a LiteLoader build must match the exact game version.</summary>
+    private static ModloaderCompatibility CheckLiteLoader(string loaderVer, string gameVer)
+    {
+        // LiteLoader supports 1.6.x through 1.12.2 only. Reject anything newer.
+        if (!gameVer.StartsWith("1.", StringComparison.OrdinalIgnoreCase))
+            return Incompatible($"LiteLoader does not support game version '{gameVer}'.");
+        string tail = gameVer[2..];
+        if (int.TryParse(tail.Split('.')[0], out int major) && major > 12)
+            return Incompatible($"LiteLoader is not available for Minecraft {gameVer} (last supported: 1.12.2).");
+        return new ModloaderCompatibility(true, ModloaderCompatibilityReason.None, string.Empty);
     }
 
     /// <summary>Fabric/Quilt: compatible when the loader version string either doesn't embed a game

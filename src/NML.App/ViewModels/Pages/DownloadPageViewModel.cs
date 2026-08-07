@@ -31,6 +31,7 @@ public partial class DownloadPageViewModel : PageViewModelBase
     private readonly Core.Modloaders.ForgeInstaller? _forgeInstaller;
     private readonly Core.Modloaders.NeoForgeInstaller? _neoForgeInstaller;
     private readonly Core.Modloaders.OptiFineInstaller? _optifineInstaller;
+    private readonly Core.Modloaders.LiteLoaderInstaller? _liteloaderInstaller;
     private readonly Core.Java.JavaRuntimeDetector? _javaDetector;
 
     private IReadOnlyList<VersionManifestEntry> _all = Array.Empty<VersionManifestEntry>();
@@ -51,7 +52,7 @@ public partial class DownloadPageViewModel : PageViewModelBase
     [ObservableProperty] private string _selectedModloader = "None";
 
     /// <summary>Modloader choices for the install panel (None + the loaders wired into this VM).</summary>
-    public IReadOnlyList<string> ModloaderChoices { get; } = new[] { "None", "Fabric", "Quilt", "Forge", "NeoForge", "OptiFine" };
+    public IReadOnlyList<string> ModloaderChoices { get; } = new[] { "None", "Fabric", "Quilt", "Forge", "NeoForge", "OptiFine", "LiteLoader" };
 
     /// <summary>True when an install is in progress (drives progress bar visibility).</summary>
     public bool IsInstalling => !string.IsNullOrEmpty(InstallingVersion);
@@ -70,6 +71,7 @@ public partial class DownloadPageViewModel : PageViewModelBase
         Core.Modloaders.ForgeInstaller? forgeInstaller = null,
         Core.Modloaders.NeoForgeInstaller? neoForgeInstaller = null,
         Core.Modloaders.OptiFineInstaller? optifineInstaller = null,
+        Core.Modloaders.LiteLoaderInstaller? liteloaderInstaller = null,
         Core.Java.JavaRuntimeDetector? javaDetector = null)
     {
         _manifest = manifest;
@@ -83,6 +85,7 @@ public partial class DownloadPageViewModel : PageViewModelBase
         _forgeInstaller = forgeInstaller;
         _neoForgeInstaller = neoForgeInstaller;
         _optifineInstaller = optifineInstaller;
+        _liteloaderInstaller = liteloaderInstaller;
         _javaDetector = javaDetector;
         EnsureLanguageSubscribed();
     }
@@ -208,6 +211,7 @@ public partial class DownloadPageViewModel : PageViewModelBase
                 "Forge" => await InstallForgeAsync(versionId, mc),
                 "NeoForge" => await InstallNeoForgeAsync(versionId, mc),
                 "OptiFine" => await InstallOptiFineAsync(versionId, mc),
+                "LiteLoader" => await InstallLiteLoaderAsync(versionId, mc),
                 _ => null,
             };
             if (profileId is null)
@@ -272,5 +276,13 @@ public partial class DownloadPageViewModel : PageViewModelBase
         string installerCacheDir = System.IO.Path.Combine(mc.Root, "cache", "optifine");
         return await _optifineInstaller.InstallAsync(versionId, latest.Type, latest.Patch,
             installerCacheDir, java.ExecutablePath, mc);
+    }
+
+    private async Task<string?> InstallLiteLoaderAsync(string versionId, MinecraftDirectory mc)
+    {
+        if (_liteloaderInstaller is null) return null;
+        var versions = await _liteloaderInstaller.ListVersionsAsync(versionId);
+        var latest = versions.FirstOrDefault();
+        return latest is null ? null : await _liteloaderInstaller.InstallAsync(latest, mc);
     }
 }
