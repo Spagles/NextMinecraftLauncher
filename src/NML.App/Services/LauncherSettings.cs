@@ -46,6 +46,9 @@ public sealed class LauncherSettings
 
     /// <summary>UI font size scale: 0.9 (small), 1.0 (normal), 1.1 (large), 1.2 (extra large).</summary>
     public double? FontScale { get; set; } = 1.0;
+
+    /// <summary>True to check GitHub Releases for a newer launcher version on startup (non-blocking).</summary>
+    public bool? CheckForUpdatesOnStartup { get; set; } = true;
 }
 
 /// <summary>

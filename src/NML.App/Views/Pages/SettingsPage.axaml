@@ -152,6 +152,12 @@
                 <!-- Clickable release link (visible only when an update URL is set) -->
                 <Button Content="🔗 Open release page" Click="OpenUpdateUrl_Click" Classes="small"
                         IsVisible="{Binding HasUpdateUrl}" Margin="0,4,0,0"/>
+                <!-- Download the update binary directly when the release ships an asset -->
+                <Button Content="⬇️ Download update" Command="{Binding DownloadUpdateCommand}" Classes="small"
+                        IsVisible="{Binding HasUpdateAsset}" Margin="0,4,0,0"/>
+                <!-- Startup auto-check toggle -->
+                <CheckBox Content="Check for updates on startup" IsChecked="{Binding CheckForUpdatesOnStartup}"
+                          Margin="0,6,0,0"/>
             </StackPanel>
 
             <!-- AI -->

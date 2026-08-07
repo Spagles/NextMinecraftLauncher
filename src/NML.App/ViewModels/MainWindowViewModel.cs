@@ -1,9 +1,11 @@
 using System.Collections.ObjectModel;
+using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using NML.App.Services;
 using NML.App.ViewModels.Pages;
+using NML.Core.Update;
 
 namespace NML.App.ViewModels;
 
@@ -15,6 +17,7 @@ namespace NML.App.ViewModels;
 public partial class MainWindowViewModel : ObservableObject
 {
     private readonly ILogger<MainWindowViewModel> _logger;
+    private readonly UpdateChecker? _updateChecker;
 
     /// <summary>All navigable pages, in sidebar order.</summary>
     public ObservableCollection<PageViewModelBase> Pages { get; } = new();
@@ -50,6 +53,16 @@ public partial class MainWindowViewModel : ObservableObject
     /// <summary>Localized window title (resolves via {Loc}).</summary>
     public string Title => "Next Minecraft Launcher";
 
+    /// <summary>The latest release detected by the startup update check, or null when up-to-date /
+    /// check disabled / check failed. Drives the sidebar "new version" badge.</summary>
+    [ObservableProperty]
+    private UpdateInfo? _availableUpdate;
+
+    /// <summary>True when <see cref="AvailableUpdate"/> is a genuinely newer release (badge visibility).</summary>
+    public bool HasUpdateBanner => AvailableUpdate is { IsNewer: true };
+
+    partial void OnAvailableUpdateChanged(UpdateInfo? value) => OnPropertyChanged(nameof(HasUpdateBanner));
+
     public MainWindowViewModel(
         Pages.HomePageViewModel home,
         Pages.DownloadPageViewModel download,
@@ -60,9 +73,11 @@ public partial class MainWindowViewModel : ObservableObject
         Pages.GameContentPageViewModel content,
         Pages.SettingsPageViewModel settings,
         Services.SettingsStore settingsStore,
+        UpdateChecker? updateChecker,
         ILogger<MainWindowViewModel> logger)
     {
         _logger = logger;
+        _updateChecker = updateChecker;
         Pages.Add(home);
         Pages.Add(download);
         Pages.Add(accounts);
@@ -76,6 +91,32 @@ public partial class MainWindowViewModel : ObservableObject
         // Subscribe to language changes for RTL re-evaluation.
         Localization.LocalizationService.Instance.LanguageChanged += (_, _) => NotifyLanguageChanged();
         NavigateTo(home);
+
+        // Fire-and-forget a non-blocking startup update check when the user opted in (default on).
+        // Failures are swallowed so a flaky network never affects startup.
+        if (settingsStore.Load().CheckForUpdatesOnStartup != false && updateChecker is not null)
+        {
+            _ = CheckForUpdateOnStartupAsync();
+        }
+    }
+
+    /// <summary>
+    /// Background startup check against GitHub Releases. Sets <see cref="AvailableUpdate"/> only when
+    /// a strictly newer release is found; otherwise leaves it null (no banner). Swallows all errors.
+    /// </summary>
+    private async Task CheckForUpdateOnStartupAsync()
+    {
+        try
+        {
+            string currentVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "0.1.0";
+            UpdateInfo? info = await _updateChecker!.CheckAsync(currentVersion);
+            if (info is { IsNewer: true })
+                AvailableUpdate = info;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "Startup update check failed (non-fatal).");
+        }
     }
 
     /// <summary>Switch the active page and trigger its lazy-load hook.</summary>

@@ -132,7 +132,7 @@ public static class ServiceRegistration
         // --- Auto-update checker ---
         services.AddSingleton<UpdateChecker>(_ =>
             new UpdateChecker("weige0831", "NextMinecraftLauncher",
-                (url, ct) => _.GetRequiredService<IHttpFetcher>().GetStringAsync(url, ct)));
+                async (url, ct) => (string?)await _.GetRequiredService<IHttpFetcher>().GetStringAsync(url, ct)));
 
         // --- Skin rendering ---
         services.AddSingleton<SkinService>(sp =>

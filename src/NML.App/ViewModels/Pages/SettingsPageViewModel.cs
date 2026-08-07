@@ -89,6 +89,11 @@ public partial class SettingsPageViewModel : PageViewModelBase
     /// <summary>UI font scale: 0.9=small, 1.0=normal, 1.1=large, 1.2=extra large.</summary>
     [ObservableProperty] private double _fontScale = 1.0;
 
+    /// <summary>Whether to check GitHub Releases for a new launcher version on startup.</summary>
+    [ObservableProperty] private bool _checkForUpdatesOnStartup = true;
+
+    partial void OnCheckForUpdatesOnStartupChanged(bool value) => PersistSettings();
+
     partial void OnFontScaleChanged(double value)
     {
         // Apply globally: set Application FontSize resource.
@@ -191,6 +196,7 @@ public partial class SettingsPageViewModel : PageViewModelBase
 
     [ObservableProperty] private bool _isCheckingUpdate;
     private readonly UpdateChecker? _updateChecker;
+    private readonly NML.Core.Download.IHttpFetcher? _httpFetcher;
 
     /// <summary>Available theme choices for the dropdown.</summary>
     public IReadOnlyList<string> ThemeChoices { get; } = new[] { "dark", "light", "system" };
@@ -308,7 +314,8 @@ public partial class SettingsPageViewModel : PageViewModelBase
         JavaRuntimeDetector javaDetector,
         ILogger<SettingsPageViewModel> logger,
         UpdateChecker? updateChecker = null,
-        NML.Core.Java.JavaRuntimeInstaller? javaInstaller = null)
+        NML.Core.Java.JavaRuntimeInstaller? javaInstaller = null,
+        NML.Core.Download.IHttpFetcher? httpFetcher = null)
     {
         _settings = settings;
         _probe = probe;
@@ -317,6 +324,7 @@ public partial class SettingsPageViewModel : PageViewModelBase
         _logger = logger;
         _updateChecker = updateChecker;
         _javaInstaller = javaInstaller;
+        _httpFetcher = httpFetcher;
         EnsureLanguageSubscribed();
 
         // Populate the language picker from the registered cultures.
@@ -327,6 +335,7 @@ public partial class SettingsPageViewModel : PageViewModelBase
         DownloadConcurrency = s.DownloadConcurrency ?? DownloadSettings.DefaultConcurrency;
         DownloadMirrorUrl = s.DownloadMirrorUrl ?? string.Empty;
         FontScale = s.FontScale ?? 1.0;
+        CheckForUpdatesOnStartup = s.CheckForUpdatesOnStartup ?? true;
         BackgroundImagePath = s.BackgroundImagePath ?? string.Empty;
         AccentColor = s.AccentColor ?? "#4fc3f7";
         Theme = s.Theme ?? "dark";
@@ -418,6 +427,7 @@ public partial class SettingsPageViewModel : PageViewModelBase
         s.DownloadConcurrency = DownloadSettings.Clamp(DownloadConcurrency);
         s.DownloadMirrorUrl = string.IsNullOrEmpty(DownloadMirrorUrl) ? null : DownloadMirrorUrl;
         s.FontScale = FontScale;
+        s.CheckForUpdatesOnStartup = CheckForUpdatesOnStartup;
         s.BackgroundImagePath = string.IsNullOrEmpty(BackgroundImagePath) ? null : BackgroundImagePath;
         s.AccentColor = string.IsNullOrEmpty(AccentColor) ? null : AccentColor;
         s.Theme = Theme;
@@ -436,7 +446,12 @@ public partial class SettingsPageViewModel : PageViewModelBase
             string currentVersion = System.Reflection.Assembly.GetExecutingAssembly()
                 .GetName().Version?.ToString(3) ?? "0.1.0";
             var info = await _updateChecker.CheckAsync(currentVersion);
-            if (info is null || !info.IsNewer)
+            if (info is null)
+            {
+                UpdateStatus = "update.check_failed";
+                UpdateUrl = string.Empty;
+            }
+            else if (!info.IsNewer)
             {
                 UpdateStatus = "update.up_to_date";
                 UpdateUrl = string.Empty;
@@ -445,6 +460,8 @@ public partial class SettingsPageViewModel : PageViewModelBase
             {
                 UpdateStatus = $"update.available,{info.TagName}";
                 UpdateUrl = info.HtmlUrl;
+                // Remember the asset URL so DownloadUpdate can fetch the binary directly (if any).
+                LatestUpdateInfo = info;
             }
         }
         catch (Exception ex)
@@ -453,6 +470,72 @@ public partial class SettingsPageViewModel : PageViewModelBase
             _logger.LogError(ex, "Update check failed.");
         }
         finally { IsCheckingUpdate = false; }
+    }
+
+    /// <summary>The most recent update-info (when an update is available). Drives DownloadUpdate.</summary>
+    [ObservableProperty] private NML.Core.Update.UpdateInfo? _latestUpdateInfo;
+
+    /// <summary>True when the available update ships a downloadable asset (exe/zip).</summary>
+    public bool HasUpdateAsset => LatestUpdateInfo?.Assets.Count > 0;
+    partial void OnLatestUpdateInfoChanged(NML.Core.Update.UpdateInfo? value) => OnPropertyChanged(nameof(HasUpdateAsset));
+
+    /// <summary>
+    /// Download the update's binary asset to the user's Downloads folder, then open that folder so
+    /// they can run the installer/replace the exe. Falls back to opening the release web page when no
+    /// asset is present. Non-fatal on any error (network/disk) — surfaced via Status.
+    /// </summary>
+    [RelayCommand]
+    private async Task DownloadUpdateAsync()
+    {
+        if (LatestUpdateInfo is null) return;
+        try
+        {
+            // Prefer an exe/zip asset; fall back to opening the release page.
+            var asset = LatestUpdateInfo.Assets.FirstOrDefault(a =>
+                a.Name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
+                || a.Name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+                ?? LatestUpdateInfo.Assets.FirstOrDefault();
+            if (asset is null)
+            {
+                OpenUpdateUrl(LatestUpdateInfo.HtmlUrl);
+                return;
+            }
+
+            string downloads = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+            if (string.IsNullOrEmpty(downloads)) downloads = System.IO.Path.GetTempPath();
+            string dest = System.IO.Path.Combine(downloads, asset.Name);
+            Status = $"update.downloading,{asset.Name}";
+            if (_httpFetcher is not null)
+            {
+                await _httpFetcher.StreamToAsync(asset.Url, System.IO.File.Create(dest), null);
+            }
+            OpenInExplorer(dest);
+            Status = $"update.downloaded,{dest}";
+        }
+        catch (Exception ex)
+        {
+            Status = $"common.error,{ex.Message}";
+            _logger.LogWarning(ex, "Update download failed.");
+        }
+    }
+
+    private static void OpenUpdateUrl(string url)
+    {
+        try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true }); }
+        catch { /* non-fatal */ }
+    }
+
+    private static void OpenInExplorer(string path)
+    {
+        try
+        {
+            if (System.OperatingSystem.IsWindows())
+                System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{path}\"");
+            else
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(
+                    System.IO.Path.GetDirectoryName(path) ?? path) { UseShellExecute = true });
+        }
+        catch { /* non-fatal */ }
     }
 }
 
