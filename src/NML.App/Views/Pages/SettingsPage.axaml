@@ -176,6 +176,19 @@
                            FontSize="10" Foreground="{DynamicResource TextMutedBrush}" FontStyle="Italic"/>
             </StackPanel>
 
+            <!-- World auto-backup (HMCL-style: backs up worlds periodically while a game runs + on exit) -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="World Auto-Backup" FontSize="16" FontWeight="SemiBold" Foreground="White"/>
+                <CheckBox Content="Auto-backup worlds while a game is running" IsChecked="{Binding AutoBackupWorlds}"/>
+                <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding AutoBackupWorlds}">
+                    <TextBlock Text="Every" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding AutoBackupIntervalMinutes}" MinWidth="60"/>
+                    <TextBlock Text="minutes · Keep" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding AutoBackupKeepCount}" MinWidth="60"/>
+                    <TextBlock Text="backups per instance" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                </StackPanel>
+            </StackPanel>
+
             <!-- AI -->
             <StackPanel Spacing="8">
                 <TextBlock Text="{loc:Loc 'settings.ai'}" FontSize="16" FontWeight="SemiBold" Foreground="White"/>

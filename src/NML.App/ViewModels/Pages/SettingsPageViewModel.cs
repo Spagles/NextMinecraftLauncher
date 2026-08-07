@@ -94,6 +94,18 @@ public partial class SettingsPageViewModel : PageViewModelBase
 
     partial void OnCheckForUpdatesOnStartupChanged(bool value) => PersistSettings();
 
+    /// <summary>Whether to auto-backup the active instance's worlds periodically while a game runs + on exit.</summary>
+    [ObservableProperty] private bool _autoBackupWorlds;
+    partial void OnAutoBackupWorldsChanged(bool value) => PersistSettings();
+
+    /// <summary>Auto-backup interval in minutes (only while a game is running).</summary>
+    [ObservableProperty] private int _autoBackupIntervalMinutes = 30;
+    partial void OnAutoBackupIntervalMinutesChanged(int value) => PersistSettings();
+
+    /// <summary>Max auto-backup zips to keep per instance (0 = no pruning).</summary>
+    [ObservableProperty] private int _autoBackupKeepCount = 10;
+    partial void OnAutoBackupKeepCountChanged(int value) => PersistSettings();
+
     partial void OnFontScaleChanged(double value)
     {
         // Apply globally: set Application FontSize resource.
@@ -345,6 +357,9 @@ public partial class SettingsPageViewModel : PageViewModelBase
         DownloadMirrorUrl = s.DownloadMirrorUrl ?? string.Empty;
         FontScale = s.FontScale ?? 1.0;
         CheckForUpdatesOnStartup = s.CheckForUpdatesOnStartup ?? true;
+        AutoBackupWorlds = s.AutoBackupWorlds ?? false;
+        AutoBackupIntervalMinutes = s.AutoBackupIntervalMinutes ?? 30;
+        AutoBackupKeepCount = s.AutoBackupKeepCount ?? 10;
 
         // Load the saved CurseForge API key from the secret store (DPAPI-protected), if any.
         try { CurseForgeApiKey = _secrets?.GetAsync(CurseForgeKeySecret).GetAwaiter().GetResult() ?? string.Empty; }
@@ -441,6 +456,9 @@ public partial class SettingsPageViewModel : PageViewModelBase
         s.DownloadMirrorUrl = string.IsNullOrEmpty(DownloadMirrorUrl) ? null : DownloadMirrorUrl;
         s.FontScale = FontScale;
         s.CheckForUpdatesOnStartup = CheckForUpdatesOnStartup;
+        s.AutoBackupWorlds = AutoBackupWorlds;
+        s.AutoBackupIntervalMinutes = AutoBackupIntervalMinutes;
+        s.AutoBackupKeepCount = AutoBackupKeepCount;
         s.BackgroundImagePath = string.IsNullOrEmpty(BackgroundImagePath) ? null : BackgroundImagePath;
         s.AccentColor = string.IsNullOrEmpty(AccentColor) ? null : AccentColor;
         s.Theme = Theme;

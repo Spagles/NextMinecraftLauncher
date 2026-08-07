@@ -605,10 +605,21 @@ public partial class HomePageViewModel : PageViewModelBase
             ConsoleLines.Clear();
             Status = $"home.launched,{inst.VersionId},{process.Id}";
 
+            // HMCL-style: auto-backup the active instance's worlds periodically while the game runs.
+            // The timer lives only for this launch; cancellation is tied to process exit below.
+            var backupCts = new CancellationTokenSource();
+            Task? backupTask = StartAutoBackupAsync(mc, backupCts.Token);
+
             // HMCL-style: minimize the launcher after the game starts.
             MinimizeLauncherWindow();
 
             await process.WaitForExitAsync();
+            // Stop the periodic auto-backup and take a final snapshot on exit (HMCL "backup on exit").
+            backupCts.Cancel();
+            try { if (backupTask is not null) await backupTask; } catch { /* non-fatal */ }
+            backupCts.Dispose();
+            FinalBackupOnExit(mc);
+
             _processLauncher.GameOutputReceived -= OnGameOutput;
             Status = process.ExitCode != 0 ? $"home.crashed,{process.ExitCode}" : "home.clean_exit";
             if (process.ExitCode != 0) await DiagnoseCrashAsync(logFile);
@@ -623,6 +634,58 @@ public partial class HomePageViewModel : PageViewModelBase
         }
         finally { IsBusy = false; }
     }
+
+    /// <summary>
+    /// Run a periodic world-backup loop on a background thread while a game is running. Each tick
+    /// backs up every save in the active instance and prunes old backups to the configured keep-count.
+    /// The loop exits cleanly when <paramref name="ct"/> is cancelled (on game exit). Non-fatal on any
+    /// error — a backup failure never disturbs the running game.
+    /// </summary>
+    private Task StartAutoBackupAsync(MinecraftDirectory mc, CancellationToken ct)
+    {
+        LauncherSettings s = _settings.Load();
+        if (s.AutoBackupWorlds != true) return Task.CompletedTask; // opt-in
+        int intervalMin = s.AutoBackupIntervalMinutes is { } im && im > 0 ? im : 30;
+        int keep = s.AutoBackupKeepCount ?? 10;
+
+        return Task.Run(async () =>
+        {
+            try
+            {
+                using var timer = new PeriodicTimer(TimeSpan.FromMinutes(intervalMin));
+                while (await timer.WaitForNextTickAsync(ct))
+                {
+                    BackupAllWorlds(mc, keep);
+                }
+            }
+            catch (OperationCanceledException) { /* expected on game exit */ }
+            catch (Exception ex) { _logger.LogWarning(ex, "Auto-backup loop ended unexpectedly."); }
+        }, ct);
+    }
+
+    /// <summary>One-shot backup of every world on game exit (the HMCL "backup on exit" snapshot).</summary>
+    private void FinalBackupOnExit(MinecraftDirectory mc)
+    {
+        LauncherSettings s = _settings.Load();
+        if (s.AutoBackupWorlds != true) return;
+        int keep = s.AutoBackupKeepCount ?? 10;
+        try { BackupAllWorlds(mc, keep); }
+        catch (Exception ex) { _logger.LogWarning(ex, "Final on-exit backup failed."); }
+    }
+
+    /// <summary>Back up every save folder under <paramref name="mc"/> and prune old backups.</summary>
+    private void BackupAllWorlds(MinecraftDirectory mc, int keepCount)
+    {
+        var browser = new GameContentBrowser(mc);
+        foreach (var save in browser.ListSaves())
+        {
+            try { browser.BackupWorld(save.Path); }
+            catch { /* a single world failing shouldn't abort the rest */ }
+        }
+        try { if (keepCount > 0) browser.PruneOldBackups(keepCount); }
+        catch { /* pruning is best-effort */ }
+    }
+
 
     private async Task DiagnoseCrashAsync(string launchLogPath)
     {

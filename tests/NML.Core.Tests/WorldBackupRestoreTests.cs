@@ -146,4 +146,92 @@ public class WorldBackupRestoreTests
         // Names containing hyphens are preserved.
         BackupInfo.WorldNameFromFileName("New-World-20240607-120000.zip").Should().Be("New-World");
     }
+
+    // ===== PruneOldBackups (auto-backup retention) =====
+
+    private static void PutBackupZip(string root, string fileName)
+    {
+        string backupDir = Path.Combine(root, "backups");
+        Directory.CreateDirectory(backupDir);
+        File.WriteAllBytes(Path.Combine(backupDir, fileName), new byte[] { 1 });
+    }
+
+    [Fact]
+    public void PruneOldBackups_Keeps_Newest_And_Deletes_Rest()
+    {
+        // 5 backups (ascending timestamps); keep 2 → 3 oldest deleted.
+        string root = TempDir();
+        try
+        {
+            PutBackupZip(root, "World-20240101-000000.zip");
+            PutBackupZip(root, "World-20240201-000000.zip");
+            PutBackupZip(root, "World-20240301-000000.zip");
+            PutBackupZip(root, "World-20240401-000000.zip");
+            PutBackupZip(root, "World-20240501-000000.zip");
+            var browser = new GameContentBrowser(new MinecraftDirectory(root));
+
+            int pruned = browser.PruneOldBackups(keepCount: 2);
+
+            pruned.Should().Be(3);
+            var remaining = browser.ListBackups();
+            remaining.Should().HaveCount(2);
+            remaining[0].Timestamp.DateTime.Should().BeAfter(remaining[1].Timestamp.DateTime,
+                "newest must be kept");
+            // The two newest (May, April) survive; older three pruned.
+            remaining.Should().OnlyContain(b => b.WorldName == "World");
+        }
+        finally { Directory.Delete(root, recursive: true); }
+    }
+
+    [Fact]
+    public void PruneOldBackups_Noop_When_Under_KeepCount()
+    {
+        string root = TempDir();
+        try
+        {
+            PutBackupZip(root, "World-20240501-000000.zip");
+            PutBackupZip(root, "World-20240502-000000.zip");
+            var browser = new GameContentBrowser(new MinecraftDirectory(root));
+
+            browser.PruneOldBackups(keepCount: 5).Should().Be(0);
+            browser.ListBackups().Should().HaveCount(2);
+        }
+        finally { Directory.Delete(root, recursive: true); }
+    }
+
+    [Fact]
+    public void PruneOldBackups_Noop_When_KeepCount_Zero_Or_Negative()
+    {
+        // keepCount <= 0 means "no pruning" (disabled retention) — never delete anything.
+        string root = TempDir();
+        try
+        {
+            PutBackupZip(root, "World-20240501-000000.zip");
+            var browser = new GameContentBrowser(new MinecraftDirectory(root));
+            browser.PruneOldBackups(0).Should().Be(0);
+            browser.PruneOldBackups(-1).Should().Be(0);
+            browser.ListBackups().Should().HaveCount(1);
+        }
+        finally { Directory.Delete(root, recursive: true); }
+    }
+
+    [Fact]
+    public void PruneOldBackups_Across_Multiple_Worlds_Keeps_Per_Global_Total()
+    {
+        // Pruning operates on the global backups/ list (all worlds together), keeping the newest N
+        // regardless of which world they belong to — matching the per-instance retention policy.
+        string root = TempDir();
+        try
+        {
+            PutBackupZip(root, "Survival-20240101-000000.zip");
+            PutBackupZip(root, "Creative-20240201-000000.zip");
+            PutBackupZip(root, "Survival-20240301-000000.zip");
+            PutBackupZip(root, "Creative-20240401-000000.zip");
+            var browser = new GameContentBrowser(new MinecraftDirectory(root));
+
+            browser.PruneOldBackups(keepCount: 2).Should().Be(2);
+            browser.ListBackups().Should().HaveCount(2);
+        }
+        finally { Directory.Delete(root, recursive: true); }
+    }
 }

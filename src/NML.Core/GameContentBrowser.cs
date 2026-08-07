@@ -279,6 +279,24 @@ public sealed class GameContentBrowser
         if (File.Exists(backupZipPath)) File.Delete(backupZipPath);
     }
 
+    /// <summary>
+    /// Keep only the newest <paramref name="keepCount"/> backup zips; delete the rest. Returns the
+    /// number pruned. Used by auto-backup to bound on-disk accumulation. keepCount &lt;= 0 is a no-op.
+    /// </summary>
+    public int PruneOldBackups(int keepCount)
+    {
+        if (keepCount <= 0) return 0;
+        var all = ListBackups(); // already newest-first
+        if (all.Count <= keepCount) return 0;
+        int pruned = 0;
+        foreach (var old in all.Skip(keepCount))
+        {
+            try { if (File.Exists(old.Path)) { File.Delete(old.Path); pruned++; } }
+            catch { /* best-effort; a locked zip shouldn't abort pruning */ }
+        }
+        return pruned;
+    }
+
     /// <summary>Delete a world save folder (after the caller confirms).</summary>
     public void DeleteWorld(string worldPath)
     {

@@ -49,6 +49,15 @@ public sealed class LauncherSettings
 
     /// <summary>True to check GitHub Releases for a newer launcher version on startup (non-blocking).</summary>
     public bool? CheckForUpdatesOnStartup { get; set; } = true;
+
+    /// <summary>True to auto-backup the active instance's worlds periodically while a game is running, plus a final backup on exit.</summary>
+    public bool? AutoBackupWorlds { get; set; }
+
+    /// <summary>Auto-backup interval in minutes (only when a game is running). Default 30.</summary>
+    public int? AutoBackupIntervalMinutes { get; set; } = 30;
+
+    /// <summary>Max auto-backup zips to keep per instance (oldest pruned). 0 = no pruning. Default 10.</summary>
+    public int? AutoBackupKeepCount { get; set; } = 10;
 }
 
 /// <summary>
