@@ -21,6 +21,11 @@ public sealed class VersionManifestService
     /// <summary>Optional disk cache (when set, the manifest is persisted + served on startup).</summary>
     public ManifestDiskCache? DiskCache { get; set; }
 
+    /// <summary>Mirror base URL to route the manifest + version.json fetches through
+    /// (BMCLAPI-style), or null/empty = official Mojang endpoints. Set by the host from
+    /// <c>LauncherSettings.DownloadMirrorUrl</c> so mirror coverage spans the whole install.</summary>
+    public string? MirrorUrl { get; set; }
+
     public VersionManifestService(IHttpFetcher http, ILogger<VersionManifestService> logger)
     {
         _http = http;
@@ -57,7 +62,10 @@ public sealed class VersionManifestService
         }
 
         _logger.LogInformation("Fetching Mojang version manifest…");
-        string json = await _http.GetStringAsync(ManifestUrl, ct);
+        string manifestUrl = string.IsNullOrWhiteSpace(MirrorUrl)
+            ? ManifestUrl
+            : MirrorUrlRewriter.Rewrite(ManifestUrl, MirrorUrl);
+        string json = await _http.GetStringAsync(manifestUrl, ct);
         var manifest = System.Text.Json.JsonSerializer.Deserialize<VersionManifest>(json, JsonOptions.Default)
                        ?? throw new InvalidDataException("Version manifest deserialized to null.");
 

@@ -95,4 +95,27 @@ public sealed class SettingsStore
             File.WriteAllText(_file, JsonSerializer.Serialize(settings, opts));
         }
     }
+
+    /// <summary>
+    /// Build a <see cref="Core.Download.DownloadSettings"/> from the current saved settings,
+    /// threading the user's <c>DownloadMirrorUrl</c> + <c>DownloadConcurrency</c> into the value
+    /// the install pipeline actually consumes. Callers should invoke this fresh on every install
+    /// so edits made on the settings page take effect immediately (the persisted settings.json is
+    /// the single source of truth). Also pushes the mirror into the manifest service so the
+    /// version_manifest + version.json fetches are mirror-aware.
+    /// </summary>
+    public NML.Core.Download.DownloadSettings ResolveDownloadSettings(
+        NML.Core.VersionManifestService? manifest = null)
+    {
+        LauncherSettings s = Load();
+        var mirror = string.IsNullOrWhiteSpace(s.DownloadMirrorUrl) ? null : s.DownloadMirrorUrl;
+        // Keep the manifest service in sync so its next fetch (manifest + version.json) uses the
+        // same mirror as the bulk library/asset downloads.
+        if (manifest is not null) manifest.MirrorUrl = mirror;
+        return new NML.Core.Download.DownloadSettings
+        {
+            MirrorUrl = mirror,
+            Concurrency = s.DownloadConcurrency ?? NML.Core.Download.DownloadSettings.DefaultConcurrency,
+        };
+    }
 }

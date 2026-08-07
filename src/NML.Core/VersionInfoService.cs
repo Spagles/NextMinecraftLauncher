@@ -16,6 +16,15 @@ public sealed class VersionInfoService
     private readonly ILogger<VersionInfoService> _logger;
     private readonly VersionManifestService _manifest;
 
+    /// <summary>Optional mirror to route the version.json fetch through (mirrors the manifest
+    /// service's setting). When non-empty, the version.json URL is rewritten via
+    /// <see cref="MirrorUrlRewriter"/> before download.</summary>
+    public string? MirrorUrl
+    {
+        get => _manifest.MirrorUrl;
+        set => _manifest.MirrorUrl = value;
+    }
+
     public VersionInfoService(
         IHttpFetcher http,
         VersionManifestService manifest,
@@ -62,7 +71,11 @@ public sealed class VersionInfoService
                     $"Version '{versionId}' not found in manifest and no local json exists.");
 
             _logger.LogInformation("Downloading version metadata for {Id}…", versionId);
-            json = await _http.GetStringAsync(entry.Url, ct);
+            // Route the version.json through the mirror when one is set (entry.Url is piston-meta/piston-data).
+            string versionUrl = string.IsNullOrWhiteSpace(_manifest.MirrorUrl)
+                ? entry.Url
+                : MirrorUrlRewriter.Rewrite(entry.Url, _manifest.MirrorUrl);
+            json = await _http.GetStringAsync(versionUrl, ct);
             Directory.CreateDirectory(mc.VersionDir(versionId));
             await File.WriteAllTextAsync(localJson, json, ct);
         }

@@ -121,7 +121,9 @@ public partial class LauncherViewModel : ObservableObject
         Status = $"Installing {versionId}…";
         try
         {
-            await _vanillaInstaller.InstallAsync(versionId, mc, progress: ReportInstallProgress);
+            await _vanillaInstaller.InstallAsync(versionId, mc, ruleCtx: null, cancel: null,
+                progress: ReportInstallProgress,
+                downloadSettings: _settings.ResolveDownloadSettings(_manifest));
             _instances.Add(instance);
             Instances.Add(instance);
             SelectedInstance = instance;

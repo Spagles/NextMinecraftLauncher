@@ -867,7 +867,7 @@ public partial class HomePageViewModel : PageViewModelBase
         Status = $"home.installing,{versionId}";
         try
         {
-            await _vanillaInstaller.InstallAsync(versionId, mc);
+            await _vanillaInstaller.InstallAsync(versionId, mc, downloadSettings: _settings.ResolveDownloadSettings(_manifest));
 
             // Install modloader if selected.
             string? modloaderProfileId = null;

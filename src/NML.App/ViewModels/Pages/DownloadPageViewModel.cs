@@ -24,6 +24,7 @@ public partial class DownloadPageViewModel : PageViewModelBase
     private readonly VanillaInstaller _vanillaInstaller;
     private readonly VersionInfoService _versions;
     private readonly InstanceStore _instances;
+    private readonly SettingsStore _settings;
     private readonly ILogger<DownloadPageViewModel> _logger;
 
     private IReadOnlyList<VersionManifestEntry> _all = Array.Empty<VersionManifestEntry>();
@@ -48,12 +49,14 @@ public partial class DownloadPageViewModel : PageViewModelBase
         VanillaInstaller vanillaInstaller,
         VersionInfoService versions,
         InstanceStore instances,
+        SettingsStore settings,
         ILogger<DownloadPageViewModel> logger)
     {
         _manifest = manifest;
         _vanillaInstaller = vanillaInstaller;
         _versions = versions;
         _instances = instances;
+        _settings = settings;
         _logger = logger;
         EnsureLanguageSubscribed();
     }
@@ -129,10 +132,12 @@ public partial class DownloadPageViewModel : PageViewModelBase
         InstallProgress = 0;
         try
         {
-            await _vanillaInstaller.InstallAsync(versionId, mc, progress: (in DownloadProgress p, string f) =>
-            {
-                if (p.TotalFiles > 0) InstallProgress = (int)(p.FileFraction * 100);
-            });
+            await _vanillaInstaller.InstallAsync(versionId, mc,
+                downloadSettings: _settings.ResolveDownloadSettings(_manifest),
+                progress: (in DownloadProgress p, string f) =>
+                {
+                    if (p.TotalFiles > 0) InstallProgress = (int)(p.FileFraction * 100);
+                });
             _instances.Add(instance);
             Status = $"home.installed,{versionId}";
         }

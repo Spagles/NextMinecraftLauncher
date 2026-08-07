@@ -55,7 +55,7 @@ public sealed class VanillaInstaller
 
         VersionInfo info = await _versions.GetAsync(versionId, mc, ct);
 
-        await DownloadClientJarAsync(info, mc, cancel, progress, ct);
+        await DownloadClientJarAsync(info, mc, cancel, progress, mirror, ct);
         await DownloadLibrariesAsync(info, mc, ruleCtx, cancel, progress, libConcurrency, mirror, ct);
         await DownloadAssetsAsync(info, mc, cancel, progress, assetConcurrency, mirror, ct);
         await ExtractNativesAsync(info, mc, ruleCtx, ct);
@@ -66,7 +66,8 @@ public sealed class VanillaInstaller
 
     private async Task DownloadClientJarAsync(
         VersionInfo info, MinecraftDirectory mc,
-        DownloadCancel? cancel, ProgressReporter? progress, CancellationToken ct)
+        DownloadCancel? cancel, ProgressReporter? progress, string? mirror,
+        CancellationToken ct)
     {
         Downloadable? client = info.Downloads?.Client;
         if (client is null)
@@ -74,8 +75,10 @@ public sealed class VanillaInstaller
                 $"Version '{info.Id}' has no client download (server-only?).");
 
         Directory.CreateDirectory(mc.VersionDir(info.Id));
+        // Route through the configured mirror if one is set (rewrites piston-data.mojang.com etc.).
+        Downloadable fetched = mirror is null ? client : WithMirror(client, mirror);
         await _downloader.DownloadAsync(
-            client, info.Id + ".jar", mc.VersionDir(info.Id),
+            fetched, info.Id + ".jar", mc.VersionDir(info.Id),
             cancel, null, ct);
     }
 
@@ -137,7 +140,10 @@ public sealed class VanillaInstaller
         if (!File.Exists(indexPath))
         {
             Directory.CreateDirectory(mc.AssetIndexesDir);
-            string indexJson = await _http.GetStringAsync(indexRef.Url, ct);
+            // The asset index document is served from piston-meta.mojang.com — route through
+            // the mirror when one is set so users behind the GFW can fetch it too.
+            string indexUrl = mirror is null ? indexRef.Url : MirrorUrlRewriter.Rewrite(indexRef.Url, mirror);
+            string indexJson = await _http.GetStringAsync(indexUrl, ct);
             await File.WriteAllTextAsync(indexPath, indexJson, ct);
         }
 

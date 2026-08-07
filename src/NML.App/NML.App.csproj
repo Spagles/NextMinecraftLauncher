@@ -5,6 +5,15 @@
     <TargetFramework>net8.0</TargetFramework>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Description>NML.App — desktop entry point (Windows / macOS / Linux). Hosts Avalonia UI + DI container.</Description>
+
+    <!-- Single-file self-contained publish (HMCL/PCL-style: one NML.App.exe, no other files).
+         Self-contained so users don't need the .NET 8 runtime installed; native libs + managed
+         assemblies are bundled into the exe and extracted to a temp dir at run time. -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
 
   <ItemGroup>

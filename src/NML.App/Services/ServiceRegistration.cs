@@ -51,6 +51,10 @@ public static class ServiceRegistration
                 sp.GetRequiredService<IHttpFetcher>(),
                 Microsoft.Extensions.Logging.Abstractions.NullLogger<VersionManifestService>.Instance);
             svc.DiskCache = new ManifestDiskCache(settingsDir);
+            // Seed the mirror from saved settings so the very first manifest fetch on startup
+            // is already mirror-aware. (Callers refresh it on each install to pick up live edits.)
+            try { svc.MirrorUrl = sp.GetRequiredService<SettingsStore>().Load().DownloadMirrorUrl; }
+            catch { /* brand-new install: no settings.json yet — fall back to official */ }
             return svc;
         });
         services.AddSingleton<VersionInfoService>();
