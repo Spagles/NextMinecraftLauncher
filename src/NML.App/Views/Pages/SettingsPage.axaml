@@ -16,6 +16,16 @@
                     <TextBlock Text="{loc:Loc 'settings.theme'}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                     <ComboBox ItemsSource="{Binding ThemeChoices}" SelectedItem="{Binding Theme}" MinWidth="180"/>
                 </StackPanel>
+                <!-- Font size scale (HMCL feature) -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Font Size" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13"/>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Slider Minimum="0.8" Maximum="1.3" Value="{Binding FontScale}" MinWidth="200" TickFrequency="0.1"/>
+                        <TextBlock Foreground="{DynamicResource AccentBrush}" FontSize="12" VerticalAlignment="Center">
+                            <Run Text="{Binding FontScale}"/><Run Text="×"/>
+                        </TextBlock>
+                    </StackPanel>
+                </StackPanel>
                 <StackPanel Spacing="6">
                     <TextBlock Text="{loc:Loc 'settings.minecraft_path'}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                     <TextBox Text="{Binding MinecraftPath}" MinWidth="500"/>

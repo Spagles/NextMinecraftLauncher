@@ -137,10 +137,14 @@
                 <!-- ===== LIVE CONSOLE (visible while busy) ===== -->
                 <Border Background="{DynamicResource SurfaceAltBrush}" CornerRadius="8" Padding="12"
                         IsVisible="{Binding IsBusy}" MaxHeight="280">
-                    <ScrollViewer x:Name="ConsoleScroll">
-                        <TextBlock Text="{Binding ConsoleOutput}" Foreground="{DynamicResource TextSecondaryBrush}"
-                                   FontFamily="Cascadia Code,Consolas,monospace" FontSize="11" TextWrapping="NoWrap"/>
-                    </ScrollViewer>
+                    <StackPanel Spacing="4">
+                        <ScrollViewer MaxHeight="250">
+                            <TextBlock Text="{Binding ConsoleOutput}" Foreground="{DynamicResource TextSecondaryBrush}"
+                                       FontFamily="Cascadia Code,Consolas,monospace" FontSize="11" TextWrapping="NoWrap"/>
+                        </ScrollViewer>
+                        <Button Content="📋 Export Log" Command="{Binding ExportConsoleLogCommand}"
+                                Classes="small" HorizontalAlignment="Right"/>
+                    </StackPanel>
                 </Border>
 
                 <!-- ===== MODPACK IMPORT ===== -->
@@ -201,6 +205,7 @@
                             <TextBox Text="{Binding SelectedWindowWidth}" MinWidth="70" FontSize="12"/>
                             <TextBlock Text="×" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
                             <TextBox Text="{Binding SelectedWindowHeight}" MinWidth="70" FontSize="12"/>
+                            <CheckBox Content="⛶ Fullscreen" IsChecked="{Binding LaunchFullscreen}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" VerticalAlignment="Center"/>
                         </StackPanel>
 
                         <!-- Version isolation -->

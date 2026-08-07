@@ -43,6 +43,9 @@ public sealed class LauncherSettings
 
     /// <summary>Launch behavior: "normal" (stay open), "minimize" (minimize after launch), "close" (close after launch).</summary>
     public string? LaunchBehavior { get; set; }
+
+    /// <summary>UI font size scale: 0.9 (small), 1.0 (normal), 1.1 (large), 1.2 (extra large).</summary>
+    public double? FontScale { get; set; } = 1.0;
 }
 
 /// <summary>

@@ -223,6 +223,43 @@ public partial class HomePageViewModel : PageViewModelBase
         set { if (SelectedInstance is not null) { SelectedInstance.WindowHeight = value; OnPropertyChanged(); MarkOptionsDirty(); } }
     }
 
+    /// <summary>True to launch the game in fullscreen mode (--fullscreen arg).</summary>
+    [ObservableProperty] private bool _launchFullscreen;
+
+    /// <summary>Export the live console output to a .txt file on the desktop (HMCL feature).</summary>
+    [RelayCommand]
+    private void ExportConsoleLog()
+    {
+        try
+        {
+            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string stamp = DateTime.Now.ToString("yyyyMMdd-HHmmss");
+            string path = Path.Combine(desktop, $"nml-console-{stamp}.txt");
+            File.WriteAllText(path, ConsoleOutput ?? "(no output)");
+            Status = $"Log exported: {path}";
+        }
+        catch (Exception ex) { Status = $"Export failed: {ex.Message}"; }
+    }
+
+    partial void OnLaunchFullscreenChanged(bool value)
+    {
+        // Toggle --fullscreen in the game args.
+        if (SelectedInstance is null) return;
+        string args = SelectedInstance.CustomGameArgs ?? string.Empty;
+        if (value && !args.Contains("--fullscreen", StringComparison.OrdinalIgnoreCase))
+        {
+            SelectedInstance.CustomGameArgs = string.IsNullOrWhiteSpace(args) ? "--fullscreen" : $"{args} --fullscreen";
+            OnPropertyChanged(nameof(CustomGameArgs));
+            MarkOptionsDirty();
+        }
+        else if (!value && args.Contains("--fullscreen", StringComparison.OrdinalIgnoreCase))
+        {
+            SelectedInstance.CustomGameArgs = args.Replace("--fullscreen", "", StringComparison.OrdinalIgnoreCase).Trim();
+            OnPropertyChanged(nameof(CustomGameArgs));
+            MarkOptionsDirty();
+        }
+    }
+
     /// <summary>Two-way bindable isolation mode for the selected instance (own .minecraft vs shared).
     /// Persisted via the existing Save launch options command.</summary>
     public bool SelectedInstanceIsIsolated

@@ -86,6 +86,25 @@ public partial class SettingsPageViewModel : PageViewModelBase
     /// <summary>User-typed custom CSS body (multi-line). Bound to the textarea; persisted + applied on Apply.</summary>
     [ObservableProperty] private string _customCss = string.Empty;
 
+    /// <summary>UI font scale: 0.9=small, 1.0=normal, 1.1=large, 1.2=extra large.</summary>
+    [ObservableProperty] private double _fontScale = 1.0;
+
+    partial void OnFontScaleChanged(double value)
+    {
+        // Apply globally: set Application FontSize resource.
+        try
+        {
+            if (Avalonia.Application.Current is { } app)
+            {
+                app.Resources["FontSizeSmall"] = 11.0 * value;
+                app.Resources["FontSizeNormal"] = 13.0 * value;
+                app.Resources["FontSizeLarge"] = 16.0 * value;
+            }
+        }
+        catch { /* non-fatal */ }
+        PersistSettings();
+    }
+
     /// <summary>True when a custom stylesheet is currently active (applied to the live theme).</summary>
     [ObservableProperty] private bool _hasActiveCustomCss;
 
@@ -307,6 +326,7 @@ public partial class SettingsPageViewModel : PageViewModelBase
         MinecraftPath = s.MinecraftRoot ?? string.Empty;
         DownloadConcurrency = s.DownloadConcurrency ?? DownloadSettings.DefaultConcurrency;
         DownloadMirrorUrl = s.DownloadMirrorUrl ?? string.Empty;
+        FontScale = s.FontScale ?? 1.0;
         BackgroundImagePath = s.BackgroundImagePath ?? string.Empty;
         AccentColor = s.AccentColor ?? "#4fc3f7";
         Theme = s.Theme ?? "dark";
@@ -397,6 +417,7 @@ public partial class SettingsPageViewModel : PageViewModelBase
         s.MinecraftRoot = MinecraftPath;
         s.DownloadConcurrency = DownloadSettings.Clamp(DownloadConcurrency);
         s.DownloadMirrorUrl = string.IsNullOrEmpty(DownloadMirrorUrl) ? null : DownloadMirrorUrl;
+        s.FontScale = FontScale;
         s.BackgroundImagePath = string.IsNullOrEmpty(BackgroundImagePath) ? null : BackgroundImagePath;
         s.AccentColor = string.IsNullOrEmpty(AccentColor) ? null : AccentColor;
         s.Theme = Theme;
