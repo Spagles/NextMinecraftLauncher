@@ -8,12 +8,15 @@
 
     <!-- Single-file self-contained publish (HMCL/PCL-style: one NML.App.exe, no other files).
          Self-contained so users don't need the .NET 8 runtime installed; native libs + managed
-         assemblies are bundled into the exe and extracted to a temp dir at run time. -->
+         assemblies are bundled into the exe and extracted to a temp dir at run time.
+         The RID is NOT pinned here — pass -r at publish time to target a platform:
+           dotnet publish -c Release -r win-x64   (Windows)
+           dotnet publish -c Release -r linux-x64 (Linux)
+           dotnet publish -c Release -r osx-x64   (macOS Intel) / osx-arm64 (Apple Silicon) -->
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
 
   <ItemGroup>

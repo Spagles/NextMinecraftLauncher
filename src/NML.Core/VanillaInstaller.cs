@@ -64,6 +64,167 @@ public sealed class VanillaInstaller
         return info;
     }
 
+    /// <summary>Result of a verify/repair pass over an installed instance.</summary>
+    public sealed record VerifyResult(int Checked, int Repaired);
+
+    /// <summary>
+    /// Verify an installed instance's files (client.jar, libraries, assets) and re-download any
+    /// that are missing or fail their SHA-1/size check. The Downloader's idempotency check skips
+    /// valid files, so re-running the install phases IS the repair; we count the files that were
+    /// actually re-downloaded to report what was fixed. HMCL-style "校验/修复游戏文件".
+    /// </summary>
+    public async Task<VerifyResult> VerifyInstanceAsync(
+        string versionId,
+        MinecraftDirectory mc,
+        RuleContext? ruleCtx = null,
+        DownloadCancel? cancel = null,
+        DownloadSettings? downloadSettings = null,
+        CancellationToken ct = default)
+    {
+        ruleCtx ??= RuleContext.Current();
+        _logger.LogInformation("Verifying instance {Id}…", versionId);
+
+        VersionInfo info = await _versions.GetAsync(versionId, mc, ct);
+
+        // Enumerate the expected file set to compute the "checked" count up front.
+        int checkedCount = 1; // client.jar
+        foreach (Library lib in info.Libraries)
+        {
+            if (!RuleEvaluator.IsAllowed(lib.Rules, ruleCtx)) continue;
+            if (lib.Downloads?.Artifact is not null) checkedCount++;
+            if (lib.Natives is not null && lib.Downloads?.Classifiers is not null &&
+                lib.Natives.TryGetValue(ruleCtx.OsName, out string? cls) &&
+                lib.Downloads.Classifiers.TryGetValue(cls, out _)) checkedCount++;
+        }
+        AssetIndexRef? indexRef = info.AssetIndex;
+        if (indexRef is not null)
+        {
+            string indexPath = mc.AssetIndexPath(indexRef.Id);
+            if (File.Exists(indexPath))
+            {
+                string json = await File.ReadAllTextAsync(indexPath, ct);
+                AssetIndex? index = System.Text.Json.JsonSerializer.Deserialize<AssetIndex>(json, JsonOptions.Default);
+                checkedCount += index?.Objects.Count ?? 0;
+            }
+        }
+
+        // Repair pass: wrap the fetcher so each actual HTTP download (a file the Downloader
+        // deemed missing/corrupt) is counted. Valid files are skipped before any fetch happens.
+        int repaired = 0;
+        var countingFetcher = new CountingFetcher(
+            (url, stream, progress, token) => _http.StreamToAsync(url, stream, progress, token),
+            () => Interlocked.Increment(ref repaired));
+        var repairDownloader = new Downloader(countingFetcher,
+            Microsoft.Extensions.Logging.Abstractions.NullLogger<Downloader>.Instance);
+
+        string? mirror = downloadSettings?.MirrorUrl;
+        await DownloadClientJarWithAsync(info, mc, cancel, repairDownloader, mirror, ct);
+        await DownloadLibrariesWithAsync(info, mc, ruleCtx, cancel, repairDownloader, downloadSettings?.Concurrency ?? 8, mirror, ct);
+        await DownloadAssetsWithAsync(info, mc, cancel, repairDownloader,
+            downloadSettings?.Concurrency is { } c && c > 0 ? Math.Min(c * 2, DownloadSettings.MaxConcurrency) : 16,
+            mirror, ct);
+        await ExtractNativesAsync(info, mc, ruleCtx, ct);
+
+        _logger.LogInformation("Verify of {Id}: {Checked} checked, {Repaired} repaired.", versionId, checkedCount, repaired);
+        return new VerifyResult(checkedCount, repaired);
+    }
+
+    /// <summary>An IHttpFetcher wrapper that counts every actual stream fetch (i.e. every repair).</summary>
+    private sealed class CountingFetcher : IHttpFetcher
+    {
+        private readonly Func<string, Stream, IProgress<long>?, CancellationToken, Task> _stream;
+        private readonly Action _onFetch;
+
+        public CountingFetcher(Func<string, Stream, IProgress<long>?, CancellationToken, Task> stream, Action onFetch)
+        { _stream = stream; _onFetch = onFetch; }
+
+        public Task<byte[]> GetByteArrayAsync(string url, CancellationToken ct = default)
+        { _onFetch(); return _http2(url, ct); }
+        private readonly Func<string, CancellationToken, Task<byte[]>> _http2 = (_, _) => Task.FromResult(Array.Empty<byte>());
+
+        public Task<string> GetStringAsync(string url, CancellationToken ct = default) =>
+            Task.FromResult(string.Empty);
+        public Task StreamToAsync(string url, Stream destination, IProgress<long>? bytesReceived = null, CancellationToken ct = default)
+        { _onFetch(); return _stream(url, destination, bytesReceived, ct); }
+        public Task<RangeResponse?> TryRangeDownloadAsync(string url, long from, long? to, CancellationToken ct = default) =>
+            Task.FromResult<RangeResponse?>(null);
+    }
+
+    // Phase helpers parameterized by downloader so the normal install and the verify/repair pass
+    // share exactly the same enumeration logic.
+
+    private async Task DownloadClientJarWithAsync(VersionInfo info, MinecraftDirectory mc,
+        DownloadCancel? cancel, Downloader downloader, string? mirror, CancellationToken ct)
+    {
+        Downloadable? client = info.Downloads?.Client;
+        if (client is null)
+            throw new InvalidOperationException($"Version '{info.Id}' has no client download (server-only?).");
+        Directory.CreateDirectory(mc.VersionDir(info.Id));
+        Downloadable fetched = mirror is null ? client : WithMirror(client, mirror);
+        await downloader.DownloadAsync(fetched, info.Id + ".jar", mc.VersionDir(info.Id), cancel, null, ct);
+    }
+
+    private async Task DownloadLibrariesWithAsync(VersionInfo info, MinecraftDirectory mc, RuleContext ruleCtx,
+        DownloadCancel? cancel, Downloader downloader, int libConcurrency, string? mirror, CancellationToken ct)
+    {
+        var toFetch = new List<(Downloadable File, string RelativePath)>();
+        foreach (Library lib in info.Libraries)
+        {
+            if (!RuleEvaluator.IsAllowed(lib.Rules, ruleCtx)) continue;
+            if (lib.Downloads?.Artifact is not null)
+            {
+                string rel = lib.Downloads.Artifact.Path ?? lib.Coordinate.RelativePath;
+                toFetch.Add((lib.Downloads.Artifact, rel));
+            }
+            if (lib.Natives is not null && lib.Downloads?.Classifiers is not null &&
+                lib.Natives.TryGetValue(ruleCtx.OsName, out string? classifierKey) &&
+                lib.Downloads.Classifiers.TryGetValue(classifierKey, out Downloadable? native))
+            {
+                string rel = native.Path ?? $"{lib.Coordinate.RelativePath}-{classifierKey}";
+                toFetch.Add((native, rel));
+            }
+        }
+        if (toFetch.Count == 0) return;
+        var mirroredLibs = mirror is null
+            ? toFetch
+            : toFetch.Select(t => (WithMirror(t.File, mirror), t.RelativePath)).ToList();
+        await downloader.DownloadBatchAsync(mirroredLibs, mc.LibrariesDir, maxConcurrency: libConcurrency, cancel, null, ct);
+    }
+
+    private async Task DownloadAssetsWithAsync(VersionInfo info, MinecraftDirectory mc,
+        DownloadCancel? cancel, Downloader downloader, int assetConcurrency, string? mirror, CancellationToken ct)
+    {
+        AssetIndexRef? indexRef = info.AssetIndex;
+        if (indexRef is null) return;
+        string indexPath = mc.AssetIndexPath(indexRef.Id);
+        if (!File.Exists(indexPath))
+        {
+            Directory.CreateDirectory(mc.AssetIndexesDir);
+            string indexUrl = mirror is null ? indexRef.Url : MirrorUrlRewriter.Rewrite(indexRef.Url, mirror);
+            string indexJson = await _http.GetStringAsync(indexUrl, ct);
+            await File.WriteAllTextAsync(indexPath, indexJson, ct);
+        }
+        string json = await File.ReadAllTextAsync(indexPath, ct);
+        AssetIndex? index = System.Text.Json.JsonSerializer.Deserialize<AssetIndex>(json, JsonOptions.Default);
+        if (index?.Objects is null || index.Objects.Count == 0) return;
+
+        var toFetch = new List<(Downloadable File, string RelativePath)>(index.Objects.Count);
+        foreach ((_, AssetObject obj) in index.Objects)
+        {
+            string rel = Path.Combine(obj.Hash[..2], obj.Hash);
+            toFetch.Add((new Downloadable
+            {
+                Sha1 = obj.Hash, Size = obj.Size,
+                Url = $"https://resources.download.minecraft.net/{obj.Hash[..2]}/{obj.Hash}",
+                Path = rel,
+            }, rel));
+        }
+        var mirroredAssets = mirror is null
+            ? toFetch
+            : toFetch.Select(t => (WithMirror(t.File, mirror), t.RelativePath)).ToList();
+        await downloader.DownloadBatchAsync(mirroredAssets, mc.AssetObjectsDir, maxConcurrency: assetConcurrency, cancel, null, ct);
+    }
+
     private async Task DownloadClientJarAsync(
         VersionInfo info, MinecraftDirectory mc,
         DownloadCancel? cancel, ProgressReporter? progress, string? mirror,

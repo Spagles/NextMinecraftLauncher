@@ -25,6 +25,15 @@
                                 IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}" Margin="0,0,6,4"/>
                         <Button Content="📋" Command="{Binding CloneInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"
                                 IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}" Margin="0,0,6,4"/>
+                        <Button Content="✏️" Command="{Binding RenameInstanceCommand}" Classes="small"
+                                IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}" Margin="0,0,6,4"
+                                ToolTip.Tip="Rename instance"/>
+                        <Button Content="🩹" Command="{Binding VerifyInstanceCommand}" Classes="small"
+                                IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}" Margin="0,0,6,4"
+                                ToolTip.Tip="Verify &amp; repair game files"/>
+                        <Button Content="📜" Command="{Binding ExportLaunchScriptCommand}" Classes="small"
+                                IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}" Margin="0,0,6,4"
+                                ToolTip.Tip="Export launch script (.bat/.sh)"/>
                         <Button Content="📦" Command="{Binding ExportInstanceCommand}" CommandParameter="{Binding SelectedInstance}" Classes="small"
                                 IsEnabled="{Binding SelectedInstance, Converter={x:Static ObjectConverters.IsNotNull}}" Margin="0,0,6,4"/>
                         <Button Content="📂" Command="{Binding OpenGameDirCommand}" Classes="small"

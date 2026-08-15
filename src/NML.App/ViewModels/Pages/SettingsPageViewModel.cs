@@ -89,6 +89,10 @@ public partial class SettingsPageViewModel : PageViewModelBase
     /// <summary>UI font scale: 0.9=small, 1.0=normal, 1.1=large, 1.2=extra large.</summary>
     [ObservableProperty] private double _fontScale = 1.0;
 
+    /// <summary>HTTP proxy URL for all launcher downloads (empty = direct).</summary>
+    [ObservableProperty] private string _proxyUrl = string.Empty;
+    partial void OnProxyUrlChanged(string value) => PersistSettings();
+
     /// <summary>Whether to check GitHub Releases for a new launcher version on startup.</summary>
     [ObservableProperty] private bool _checkForUpdatesOnStartup = true;
 
@@ -357,6 +361,7 @@ public partial class SettingsPageViewModel : PageViewModelBase
         DownloadMirrorUrl = s.DownloadMirrorUrl ?? string.Empty;
         FontScale = s.FontScale ?? 1.0;
         CheckForUpdatesOnStartup = s.CheckForUpdatesOnStartup ?? true;
+        ProxyUrl = s.ProxyUrl ?? string.Empty;
         AutoBackupWorlds = s.AutoBackupWorlds ?? false;
         AutoBackupIntervalMinutes = s.AutoBackupIntervalMinutes ?? 30;
         AutoBackupKeepCount = s.AutoBackupKeepCount ?? 10;
@@ -456,6 +461,7 @@ public partial class SettingsPageViewModel : PageViewModelBase
         s.DownloadMirrorUrl = string.IsNullOrEmpty(DownloadMirrorUrl) ? null : DownloadMirrorUrl;
         s.FontScale = FontScale;
         s.CheckForUpdatesOnStartup = CheckForUpdatesOnStartup;
+        s.ProxyUrl = string.IsNullOrWhiteSpace(ProxyUrl) ? null : ProxyUrl.Trim();
         s.AutoBackupWorlds = AutoBackupWorlds;
         s.AutoBackupIntervalMinutes = AutoBackupIntervalMinutes;
         s.AutoBackupKeepCount = AutoBackupKeepCount;
@@ -540,6 +546,19 @@ public partial class SettingsPageViewModel : PageViewModelBase
             {
                 await _httpFetcher.StreamToAsync(asset.Url, System.IO.File.Create(dest), null);
             }
+
+            // If it's an exe asset and we're a single-file publish, offer in-place apply:
+            // write an updater script that waits for us to exit, swaps the exe, and relaunches.
+            if (asset.Name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) &&
+                System.OperatingSystem.IsWindows() &&
+                TryBeginSelfUpdate(dest, out string updaterScript))
+            {
+                Status = $"update.applying,{asset.Name}";
+                // Give the status a moment to render, then exit — the updater takes over.
+                await System.Threading.Tasks.Task.Delay(1200);
+                System.Environment.Exit(0);
+            }
+
             OpenInExplorer(dest);
             Status = $"update.downloaded,{dest}";
         }
@@ -547,6 +566,52 @@ public partial class SettingsPageViewModel : PageViewModelBase
         {
             Status = $"common.error,{ex.Message}";
             _logger.LogWarning(ex, "Update download failed.");
+        }
+    }
+
+    /// <summary>
+    /// Write a self-update script (Windows: .bat) that waits for the current process to exit,
+    /// replaces the running exe with <paramref name="newExe"/>, and relaunches it. Returns true
+    /// when the script was written and started; the caller should then exit the launcher.
+    /// </summary>
+    private bool TryBeginSelfUpdate(string newExe, out string updaterScript)
+    {
+        updaterScript = string.Empty;
+        try
+        {
+            string? currentExe = System.Environment.ProcessPath;
+            if (string.IsNullOrEmpty(currentExe) || !File.Exists(currentExe)) return false;
+
+            updaterScript = System.IO.Path.Combine(
+                System.IO.Path.GetTempPath(), $"nml-update-{DateTime.Now:yyyyMMddHHmmss}.bat");
+            string batch =
+                "@echo off\r\n" +
+                "rem NML self-updater: wait for the launcher to exit, swap the exe, relaunch.\r\n" +
+                $"timeout /t 2 /nobreak >nul\r\n" +
+                ":waitloop\r\n" +
+                "tasklist /FI \"PID EQ " + System.Diagnostics.Process.GetCurrentProcess().Id + "\" | find /I \"" +
+                System.IO.Path.GetFileNameWithoutExtension(currentExe) + "\" >nul\r\n" +
+                "if not errorlevel 1 (\r\n" +
+                "  timeout /t 1 /nobreak >nul\r\n" +
+                "  goto waitloop\r\n" +
+                ")\r\n" +
+                $"copy /Y \"{newExe}\" \"{currentExe}\" >nul\r\n" +
+                $"start \"\" \"{currentExe}\"\r\n" +
+                $"del \"%~f0\"\r\n";
+            File.WriteAllText(updaterScript, batch);
+
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(updaterScript)
+            {
+                UseShellExecute = true,
+                CreateNoWindow = true,
+                WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden,
+            });
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Self-update script failed; falling back to manual replace.");
+            return false;
         }
     }
 

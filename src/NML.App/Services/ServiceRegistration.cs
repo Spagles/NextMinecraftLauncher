@@ -36,6 +36,27 @@ public static class ServiceRegistration
             c.Timeout = TimeSpan.FromMinutes(30);
             c.DefaultRequestHeaders.UserAgent.ParseAdd(
                 "NextMinecraftLauncher/0.1 (https://github.com/weige0831/NextMinecraftLauncher)");
+        })
+        .ConfigurePrimaryHttpMessageHandler(sp =>
+        {
+            var handler = new System.Net.Http.HttpClientHandler();
+            // Honor the user-configured HTTP proxy (HMCL-style), applied to every launcher download
+            // (Mojang, catalogs, mirrors, updates). Invalid proxy values are ignored (direct).
+            try
+            {
+                var settings = sp.GetRequiredService<SettingsStore>().Load();
+                string? proxy = string.IsNullOrWhiteSpace(settings.ProxyUrl) ? null : settings.ProxyUrl.Trim();
+                if (proxy is not null)
+                {
+                    if (!proxy.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+                        !proxy.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                        proxy = "http://" + proxy;
+                    handler.Proxy = new System.Net.WebProxy(proxy);
+                    handler.UseProxy = true;
+                }
+            }
+            catch { /* brand-new install: no settings yet — direct connection */ }
+            return handler;
         });
         services.AddSingleton<IHttpFetcher>(sp =>
         {

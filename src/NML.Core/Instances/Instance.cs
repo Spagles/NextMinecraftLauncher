@@ -180,6 +180,52 @@ public sealed class InstanceStore
         SaveAll(all);
     }
 
+    /// <summary>
+    /// Rename an instance: updates its name in <c>instances.json</c> and, for isolated instances,
+    /// moves the on-disk game directory (<c>{InstancesRoot}/{old}/.minecraft</c> →
+    /// <c>{InstancesRoot}/{new}/.minecraft</c>). Non-isolated instances share the common dir, so
+    /// only the stored name changes. Returns the updated instance.
+    /// </summary>
+    public Instance Rename(string oldName, string newName)
+    {
+        if (string.IsNullOrWhiteSpace(newName))
+            throw new ArgumentException("New name is required.", nameof(newName));
+
+        var all = LoadAll();
+        var inst = all.FirstOrDefault(i => string.Equals(i.Name, oldName, StringComparison.OrdinalIgnoreCase))
+            ?? throw new KeyNotFoundException($"Instance '{oldName}' not found.");
+
+        // Reject a rename onto an existing different instance (would collide on disk + in the store).
+        if (!string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase) &&
+            all.Any(i => string.Equals(i.Name, newName, StringComparison.OrdinalIgnoreCase)))
+            throw new InvalidOperationException($"An instance named '{newName}' already exists.");
+
+        string oldNameSaved = inst.Name;
+        if (inst.IsIsolated)
+        {
+            string srcDir = GameDirFor(oldName);
+            string dstDir = GameDirFor(newName);
+            if (!string.Equals(Normalize(srcDir), Normalize(dstDir), StringComparison.OrdinalIgnoreCase) &&
+                Directory.Exists(srcDir))
+            {
+                if (Directory.Exists(dstDir))
+                    throw new InvalidOperationException($"Target directory already exists: {dstDir}");
+                // Directory.Move requires the destination's parent to exist; the instance root
+                // does (it's the store dir) but {root}/{newName} may not yet — create it.
+                string? dstParent = Path.GetDirectoryName(dstDir.TrimEnd(Path.DirectorySeparatorChar));
+                if (!string.IsNullOrEmpty(dstParent)) Directory.CreateDirectory(dstParent);
+                Directory.Move(srcDir, dstDir);
+            }
+        }
+
+        inst.Name = newName;
+        SaveAll(all);
+        _ = oldNameSaved; // kept for clarity: the directory move above used the pre-rename name
+        return inst;
+    }
+
+    private static string Normalize(string p) => Path.GetFullPath(p).TrimEnd(Path.DirectorySeparatorChar);
+
     /// <summary>Sanitize an instance name into a safe filesystem directory name.</summary>
     private static string SafeName(string name)
     {

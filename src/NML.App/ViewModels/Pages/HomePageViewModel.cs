@@ -1202,6 +1202,156 @@ public partial class HomePageViewModel : PageViewModelBase
         catch (Exception ex) { Status = $"home.launch_failed,{ex.Message}"; _logger.LogError(ex, "Clone failed."); }
     }
 
+    /// <summary>Rename the selected instance (store + on-disk game dir for isolated instances).</summary>
+    [RelayCommand]
+    private async Task RenameInstanceAsync()
+    {
+        if (SelectedInstance is null) return;
+        string? newName = await PromptForTextAsync(
+            title: "Rename instance",
+            message: $"Rename '{SelectedInstance.Name}' to:",
+            defaultValue: SelectedInstance.Name);
+        if (string.IsNullOrWhiteSpace(newName) ||
+            string.Equals(newName, SelectedInstance.Name, StringComparison.Ordinal)) return;
+        try
+        {
+            string oldName = SelectedInstance.Name;
+            Instance renamed = _instances.Rename(oldName, newName.Trim());
+            // Replace the in-memory entry and re-select it.
+            var stale = Instances.FirstOrDefault(i => string.Equals(i.Name, oldName, StringComparison.OrdinalIgnoreCase));
+            if (stale is not null) { Instances.Remove(stale); Instances.Add(renamed); ApplySort(); }
+            SelectedInstance = renamed;
+            Status = $"home.installed,{renamed.Name}";
+        }
+        catch (Exception ex) { Status = $"home.launch_failed,{ex.Message}"; _logger.LogError(ex, "Rename failed."); }
+    }
+
+    /// <summary>Small modal text-input dialog (Avalonia has no built-in prompt).</summary>
+    private Task<string?> PromptForTextAsync(string title, string message, string defaultValue)
+    {
+        var tcs = new TaskCompletionSource<string?>();
+        var tb = new Avalonia.Controls.TextBox
+        {
+            Text = defaultValue,
+            Watermark = message,
+            MinWidth = 320,
+            Margin = new Avalonia.Thickness(0, 8, 0, 0),
+        };
+        var ok = new Avalonia.Controls.Button { Content = "OK", Width = 80 };
+        var cancel = new Avalonia.Controls.Button { Content = "Cancel", Width = 80 };
+        var buttons = new Avalonia.Controls.StackPanel
+        {
+            Orientation = Avalonia.Layout.Orientation.Horizontal,
+            Spacing = 8,
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
+            Children = { ok, cancel },
+        };
+        var panel = new Avalonia.Controls.StackPanel
+        {
+            Margin = new Avalonia.Thickness(16),
+            Children =
+            {
+                new Avalonia.Controls.TextBlock { Text = title, FontWeight = Avalonia.Media.FontWeight.SemiBold, FontSize = 15 },
+                tb,
+                buttons,
+            },
+        };
+        var dlg = new Avalonia.Controls.Window
+        {
+            Title = title,
+            SizeToContent = Avalonia.Controls.SizeToContent.WidthAndHeight,
+            CanResize = false,
+            WindowStartupLocation = Avalonia.Controls.WindowStartupLocation.CenterOwner,
+            Content = panel,
+            ShowInTaskbar = false,
+        };
+        ok.Click += (_, _) => { tcs.TrySetResult(tb.Text); dlg.Close(); };
+        cancel.Click += (_, _) => { tcs.TrySetResult(null); dlg.Close(); };
+        dlg.Closed += (_, _) => tcs.TrySetResult(null); // window X also cancels
+        if (Avalonia.Application.Current?.ApplicationLifetime
+            is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            dlg.ShowDialog(desktop.MainWindow!);
+        }
+        else
+        {
+            tcs.TrySetResult(null);
+        }
+        return tcs.Task;
+    }
+
+    /// <summary>Verify the selected instance's game files and re-download missing/corrupt ones.</summary>
+    [RelayCommand]
+    private async Task VerifyInstanceAsync()
+    {
+        if (SelectedInstance is null) return;
+        Instance inst = SelectedInstance;
+        IsBusy = true;
+        Status = $"home.verifying,{inst.Name}";
+        try
+        {
+            var mc = new MinecraftDirectory(_instances.GameDirFor(inst));
+            var result = await _vanillaInstaller.VerifyInstanceAsync(inst.VersionId, mc,
+                downloadSettings: _settings.ResolveDownloadSettings(_manifest));
+            Status = result.Repaired == 0
+                ? $"home.verify_ok,{result.Checked}"
+                : $"home.verify_repaired,{result.Repaired},{result.Checked}";
+        }
+        catch (Exception ex) { Status = $"home.launch_failed,{ex.Message}"; _logger.LogError(ex, "Verify failed."); }
+        finally { IsBusy = false; }
+    }
+
+    /// <summary>
+    /// Export a runnable .bat/.sh launch script for the selected instance (HMCL's 导出启动脚本).
+    /// Rebuilds the same java command the launcher would run and writes it to the desktop.
+    /// </summary>
+    [RelayCommand]
+    private async Task ExportLaunchScriptAsync()
+    {
+        if (SelectedInstance is null) return;
+        Instance inst = SelectedInstance;
+        try
+        {
+            var mc = new MinecraftDirectory(_instances.GameDirFor(inst));
+            VersionInfo version = await _versions.GetAsync(inst.VersionId, mc);
+
+            List<JavaRuntime> runtimes = _javaDetector.DetectAll();
+            int requiredMajor = version.JavaVersion?.MajorVersion ?? 17;
+            JavaRuntime? java = inst.Java
+                             ?? _javaDetector.FindForVersion(requiredMajor, runtimes)
+                             ?? runtimes.FirstOrDefault();
+            if (java is null) { Status = $"home.no_java,{requiredMajor}"; return; }
+
+            // Resolve the account exactly like LaunchAsync: offline default, overridden by the
+            // active stored account (Microsoft/authlib-injector) when one is set.
+            Account scriptAccount = _offline.Create(OfflineUsername);
+            Account? activeAcc = _activeAccountStore?.LoadAll()
+                .FirstOrDefault(a => a.Uuid == _activeAccountStore?.GetActiveUuid());
+            if (activeAcc is not null) scriptAccount = activeAcc;
+
+            var opts = new LaunchOptions
+            {
+                Version = version, Mc = mc, Account = scriptAccount, Java = java,
+                MinMemoryMb = inst.MinMemoryMb, MaxMemoryMb = inst.MaxMemoryMb,
+                WindowWidth = inst.WindowWidth, WindowHeight = inst.WindowHeight,
+                ExtraJvmArgs = string.IsNullOrWhiteSpace(inst.CustomJvmArgs)
+                    ? Array.Empty<string>()
+                    : inst.CustomJvmArgs.Split(' ', StringSplitOptions.RemoveEmptyEntries),
+            };
+            List<string> argv = _launcher.Build(opts);
+
+            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            bool isWindows = OperatingSystem.IsWindows();
+            string ext = isWindows ? "bat" : "sh";
+            string safe = string.Concat(inst.Name.Where(char.IsLetterOrDigit).Take(30));
+            string path = Path.Combine(desktop, $"launch-{safe}.{ext}");
+            NML.Core.Launch.LaunchScriptExporter.Export(java.ExecutablePath, argv, mc.Root, path);
+            Status = $"home.script_exported,{path}";
+        }
+        catch (Exception ex) { Status = $"home.launch_failed,{ex.Message}"; _logger.LogError(ex, "Script export failed."); }
+    }
+
+
     /// <summary>Apply JVM auto-tuning recommendations to the selected instance.</summary>
     [RelayCommand]
     private void ApplyJvmTuning()

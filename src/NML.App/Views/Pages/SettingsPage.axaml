@@ -44,6 +44,11 @@
                         <TextBox Text="{Binding DownloadMirrorUrl}" Watermark="https://…" MinWidth="240" FontFamily="Cascadia Code,Consolas,monospace" FontSize="11"/>
                     </StackPanel>
                     <TextBlock Text="{loc:Loc 'download.settings.mirror_hint'}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10" FontStyle="Italic" TextWrapping="Wrap"/>
+                    <TextBlock Text="HTTP proxy" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,6,0,0"/>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBox Text="{Binding ProxyUrl}" Watermark="http://127.0.0.1:7890 (empty = direct)" MinWidth="280" FontFamily="Cascadia Code,Consolas,monospace" FontSize="11"/>
+                    </StackPanel>
+                    <TextBlock Text="Applied to all launcher downloads after restart." Foreground="{DynamicResource TextMutedBrush}" FontSize="10" FontStyle="Italic"/>
                 </StackPanel>
                 <StackPanel Spacing="6">
                     <TextBlock Text="{loc:Loc 'settings.background_image'}" Foreground="{DynamicResource TextPrimaryBrush}"/>

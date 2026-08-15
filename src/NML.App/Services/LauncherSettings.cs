@@ -58,6 +58,10 @@ public sealed class LauncherSettings
 
     /// <summary>Max auto-backup zips to keep per instance (oldest pruned). 0 = no pruning. Default 10.</summary>
     public int? AutoBackupKeepCount { get; set; } = 10;
+
+    /// <summary>HTTP proxy URL for all launcher downloads (e.g. "http://127.0.0.1:7890").
+    /// null/empty = direct connection. Supports http:// and https:// schemes.</summary>
+    public string? ProxyUrl { get; set; }
 }
 
 /// <summary>
